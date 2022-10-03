@@ -20,3 +20,4 @@ Load multiple files.
 ## missing features vs TAT
 
 -- filters that hide lines
+-- perf improvement, run filters once on all lines and save the color to the line object, lines renderer should not have to do filter comparison again
