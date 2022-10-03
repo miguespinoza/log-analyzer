@@ -1,0 +1,12 @@
+2022-09-26T15:49:53.444Z Inf	CID[main] useThemeResolution: useThemeResolution returned { themeType: dark }
+2022-09-26T15:49:53.444Z Inf	CID[main] RootProviderInner: isForcedColorsActive: false
+2022-09-26T15:49:53.444Z Inf	CID[main] RootProviderInner: Setting initial themeType to dark
+2022-09-26T15:49:53.445Z Inf	CID[main] Core Rendering Layer, useResponsiveTemplatesForSlots: slotsDimensionsOverrides, {"end":{},"header":{},"notifications":{}} ccfd-46ba-9d34-cf8fb2704a07, HyER: false, layoutMode: focus, slotsConfigKeys: notifications,main,modal
+2022-09-26T15:49:53.445Z Inf	CID[main] Core Rendering Layer, useSlotsConfig – useThemeOverrides: themeType: dark, isThemePinnedToDarkOrHighContrast: false, overriddenThemeType: dark
+2022-09-26T15:49:53.446Z Inf	CID[main] Core Rendering Layer, useResponsiveTemplatesForSlots: slotsDimensionsOverrides, {"end":{},"header":{},"notifications":{}}
+2022-09-26T15:49:53.446Z Inf	CID[main] Core Rendering Layer, useShouldRootLayoutThrowError: ResponsiveTemplat
+2022-09-26T15:49:53.444Z Inf	CID[main] RootProviderInner: Setting initial themeType to dark
+2022-09-26T15:49:53.444Z Inf	CID[main] useDisableAnimations: 
+    disableAnimationsFromHostSettings: false,
+    disableAnimationsFromPreferences: false,
+    disableAnimations: false

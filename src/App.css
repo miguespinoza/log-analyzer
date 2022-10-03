@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+.App {
+  display: grid;
+  grid-template-areas: "logs logs"
+  "toolbar toolbar"
+  "filters files";
+  grid-template-columns: 2fr 1fr;
+  grid-template-rows: calc(100vh - 15rem) fit-content(3rem) 1fr;
+}
+
+/* Language: css */
+/* media query > 1080px */
+/* @media (min-width: 1280px) {
+  .App {
+    grid-template-areas: "logs filters"
+    "logs files";
+    grid-template-columns: calc(100% - 15rem) 15rem;
+    grid-template-rows: 2fr 1fr;
+  }
+} */
+
+.toolbar{
+  grid-area: toolbar;
+}
+
+.filters 
+{
+  grid-area: filters;
+}
+
+.logs 
+{
+  grid-area: logs;
+  max-width: 100vw;
+} 
+
+.files 
+{
+  grid-area: files;
+}
