@@ -16,21 +16,31 @@ function splitTextByLines(text: string): string[] {
   return text.split(/\r?\n/);
 }
 
+function isEmptyOrhasOnlySpaces(text: string) {
+  return text.trim().length === 0;
+}
+
 function separateLogLines(text: string): string[] {
   const rawLines = splitTextByLines(text);
   const logLines = [];
+  let processedLinesCount = 0;
   for (const line of rawLines) {
     if (isNewLogLine(line)) {
       logLines.push(line);
+      processedLinesCount++;
     } else {
       if (logLines[logLines.length - 1]) {
         logLines[logLines.length - 1] += `\n${line}`;
+        processedLinesCount++;
       } else {
+        if (isEmptyOrhasOnlySpaces(line)) {
+          processedLinesCount++;
+        }
         logLines.push(line);
       }
     }
   }
-  if (logLines.length / rawLines.length < 0.5) {
+  if (processedLinesCount / rawLines.length < 0.5) {
     console.log("too many lines were not parsed, returning raw lines");
     return rawLines;
   }
