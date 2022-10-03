@@ -4,12 +4,13 @@ import { Virtuoso } from "react-virtuoso";
 import useResizeObserver from "use-resize-observer";
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
+import { FilterFormModal } from "./Filters";
 
 export function LinesRenderer() {
   const { lines } = useLogFilesContext();
   const listRef = useRef<any>();
   const linesLengthRef = useRef<number>();
-
+  const [isNewFilterModalOpen, setIsNewFilterModalOpen] = useState(false);
   const { ref, width = 1, height = 1 } = useResizeObserver<HTMLDivElement>();
   const [focusedLine, setFocusedLine] = useState<LogLine | null>(null);
 
@@ -61,6 +62,9 @@ export function LinesRenderer() {
         focusedLine={focusedLine}
         line={line}
         onClick={setFocusedLine}
+        onDoubleClick={() => {
+          setIsNewFilterModalOpen(true);
+        }}
       />
     );
   };
@@ -73,6 +77,11 @@ export function LinesRenderer() {
         totalCount={lines.length}
         itemContent={LineRenderer}
       ></Virtuoso>
+      <FilterFormModal
+        hint={focusedLine?.text}
+        showModal={isNewFilterModalOpen}
+        setShowModal={setIsNewFilterModalOpen}
+      ></FilterFormModal>
     </div>
   );
 }
@@ -84,10 +93,12 @@ function LogLineRenderer({
   line,
   onClick,
   focusedLine,
+  onDoubleClick,
 }: {
   line: LogLine;
   focusedLine: LogLine | null;
   onClick?: (line: LogLine) => void;
+  onDoubleClick?: (line: LogLine) => void;
 }) {
   const { getLineColorByFilter } = useLogFilesContext();
 
@@ -103,6 +114,7 @@ function LogLineRenderer({
         backgroundColor: focusedLine?.hash === line.hash ? calmBlue : color,
       }}
       onClick={() => onClick && onClick(line)}
+      onDoubleClick={() => onDoubleClick && onDoubleClick(line)}
     >
       <span
         style={{

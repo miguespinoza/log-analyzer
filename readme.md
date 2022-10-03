@@ -18,6 +18,6 @@ Load multiple files.
 - sort by date / file
 
 ## missing features vs TAT
-
+-- resize bottom part (filters and files) with mouse
 -- filters that hide lines
 -- perf improvement, run filters once on all lines and save the color to the line object, lines renderer should not have to do filter comparison again

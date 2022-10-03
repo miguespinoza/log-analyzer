@@ -109,8 +109,10 @@ export function FilterFormModal({
   showModal,
   setShowModal,
   filter,
+  hint,
 }: {
   filter?: Filter;
+  hint?: string;
   showModal: boolean;
   setShowModal: (show: boolean) => void;
 }) {
@@ -132,6 +134,7 @@ export function FilterFormModal({
     >
       <FilterForm
         filter={filter}
+        hint={hint}
         onSaved={() => setShowModal(false)}
         copactMode={false}
       />

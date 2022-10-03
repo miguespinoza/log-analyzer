@@ -8,10 +8,12 @@ const softgreen = "#b3e5fc";
 
 export default function FilterForm({
   filter: edditingFilter,
+  hint,
   onSaved,
   copactMode = true,
 }: {
   filter?: Filter;
+  hint?: string;
   onSaved?: () => void;
   copactMode?: boolean;
 }) {
@@ -57,7 +59,7 @@ export default function FilterForm({
             label="Filter"
             inputProps={{
               name: "filter",
-              defaultValue: edditingFilter?.filter,
+              defaultValue: edditingFilter?.filter ?? hint,
             }}
           />
           <LabeledTextField
