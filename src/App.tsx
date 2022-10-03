@@ -9,19 +9,22 @@ import { Filters } from "./components/Filters";
 import { KeyboardShortCuts } from "./components/KeyboardShortCuts";
 import { FilesProvider } from "./components/FileContext";
 import { Toolbar } from "./components/Toolbar";
+import DropFileZone from "./components/DropFileZone";
 
 function App() {
   return (
     <FilesProvider>
       <DateFilterContextProvider>
         <LogFilesContextProvider>
-          <div className="App">
-            <LoadFiles />
-            <Filters />
-            <Toolbar />
-            <LinesRenderer></LinesRenderer>
-            <KeyboardShortCuts />
-          </div>
+          <DropFileZone>
+            <div className="App">
+              <LoadFiles />
+              <Filters />
+              <Toolbar />
+              <LinesRenderer></LinesRenderer>
+              <KeyboardShortCuts />
+            </div>
+          </DropFileZone>
         </LogFilesContextProvider>
       </DateFilterContextProvider>
     </FilesProvider>

@@ -11,6 +11,8 @@ export const fileLoadingSubject = new ReplaySubject<TextFile>(100, 10000);
 export const fileLoading$ = fileLoadingSubject
   .asObservable()
   .pipe(map(preProcessLogFile));
+
+
 export function makeHandleHTMLFileInputReactive() {
   return makeHTMLFileInputHandler((file) => fileLoadingSubject.next(file));
 }
@@ -30,6 +32,37 @@ export const makeHTMLFileInputHandler: (
           onFileLoaded({ name: file.name, content: text });
         };
         reader.readAsText(file);
+      }
+    }
+  };
+};
+
+export function makeDragLogFileImportReactive() {
+  return makeDragFileInputHandler((file) => fileLoadingSubject.next(file));
+}
+
+export const makeDragFileInputHandler: (
+  onFileLoaded: (file: TextFile) => void
+) => (evt: React.DragEvent<HTMLDivElement>) => void = (onFileLoaded) => {
+  return (evt: React.DragEvent<HTMLDivElement>) => {
+    evt.preventDefault();
+    evt.stopPropagation();
+    const items = evt.dataTransfer.items;
+    for (const item of items) {
+      if (item.kind === "file") {
+        const file = item.getAsFile();
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const text =
+              (e.target?.result as string) ?? "Error while reading file";
+
+            onFileLoaded({ name: file.name, content: text });
+          };
+          reader.readAsText(file);
+        } else {
+          console.log("file is null");
+        }
       }
     }
   };
