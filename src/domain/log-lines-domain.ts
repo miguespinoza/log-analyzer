@@ -31,7 +31,9 @@ function separateLogLines(text: string): string[] {
     } else {
       if (logLines[logLines.length - 1]) {
         logLines[logLines.length - 1] += `\n${line}`;
-        processedLinesCount++;
+        if (isEmptyOrhasOnlySpaces(line)) {
+          processedLinesCount++;
+        }
       } else {
         if (isEmptyOrhasOnlySpaces(line)) {
           processedLinesCount++;
@@ -130,6 +132,7 @@ export function dedupeLogLines(
 
 export function searchLines(
   lines: LogLine[],
+  hideUnfiltered: boolean,
   filters?: Filter[],
   startDate?: Date,
   endDate?: Date
@@ -158,12 +161,18 @@ export function searchLines(
             }
             filter.hitCount++;
             break;
+          } else if (!hideUnfiltered) {
+            filteredLines.push(line);
           }
         }
       }
     } else {
       if (matchesStartDate && matchesEndDate) {
         filteredLines.push(line);
+      } else {
+        if (!hideUnfiltered) {
+          filteredLines.push(line);
+        }
       }
     }
   }

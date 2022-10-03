@@ -37,7 +37,7 @@ test("should search lines with filters", () => {
     filter: "test filter",
     hitCount: 0,
   };
-  const result = searchLines(aLines, [filter]);
+  const result = searchLines(aLines, true, [filter]);
   expect(result.lines.length).toEqual(2);
   expect(result.filters[0].hitCount).toEqual(2);
 });
@@ -85,8 +85,8 @@ test("should parse logs witout dates", () => {
     "a",
     "white"
   );
-  expect(linesWithoutDateCount).toEqual(8);
   expect(aLines.length).toEqual(8);
+  expect(linesWithoutDateCount).toEqual(8);
 });
 
 test("should parse UWP etl file", () => {
