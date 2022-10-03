@@ -56,7 +56,6 @@ export function LinesRenderer() {
 
   const LineRenderer = (index: number) => {
     const line = lines[index];
-
     return (
       <LogLineRenderer
         focusedLine={focusedLine}
@@ -90,7 +89,9 @@ function LogLineRenderer({
   focusedLine: LogLine | null;
   onClick?: (line: LogLine) => void;
 }) {
-  const color = line?.matchedFilters?.color ?? "white";
+  const { getLineColorByFilter } = useLogFilesContext();
+
+  const color = getLineColorByFilter(line) ?? "white";
   const date =
     line.date == null || isNaN(line.date?.getTime() ?? NaN)
       ? null

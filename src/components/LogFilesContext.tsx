@@ -236,6 +236,9 @@ export const LogFilesContextProvider = ({ children }: any) => {
       start,
       end
     );
+    if (!hideUnfiltered) {
+      return { lines, filters: filtersResult.filters };
+    }
 
     return filtersResult;
   }, [lines, filters, hideUnfiltered, start, end]);

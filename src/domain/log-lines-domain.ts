@@ -161,18 +161,12 @@ export function searchLines(
             }
             filter.hitCount++;
             break;
-          } else if (!hideUnfiltered) {
-            filteredLines.push(line);
-          }
+          } 
         }
       }
     } else {
       if (matchesStartDate && matchesEndDate) {
         filteredLines.push(line);
-      } else {
-        if (!hideUnfiltered) {
-          filteredLines.push(line);
-        }
       }
     }
   }
