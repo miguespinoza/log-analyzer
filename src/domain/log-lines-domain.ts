@@ -195,9 +195,17 @@ export function sortLines(
         } ommited due to sorting by date`
       );
     }
-    return dateLogLines.sort(
-      (a, b) => (b.date?.getTime() ?? 0) - (a.date?.getTime() ?? 0)
-    );
+    return dateLogLines.sort((a, b) => {
+      const aTime = a.date?.getTime() ?? 0;
+      const bTime = a.date?.getTime() ?? 0;
+      if (aTime > bTime) {
+        return -1;
+      } else if (aTime < bTime) {
+        return 1;
+      } else {
+        return b.count - a.count;
+      }
+    });
   } else if (sortBy === "file") {
     return lines.sort((a, b) => {
       if (a.fileName !== b.fileName) {

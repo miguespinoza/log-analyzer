@@ -1,6 +1,11 @@
 import { expect, test } from "vitest";
 import { Filter } from "../components/LogFilesContext";
-import { parseLogFile, parseLogLines, searchLines } from "./log-lines-domain";
+import {
+  parseLogFile,
+  parseLogLines,
+  searchLines,
+  sortLines,
+} from "./log-lines-domain";
 
 test("should parse log line", () => {
   const logLine = "2022-09-26T15:49:53.444Z Inf	CID[main] log line";
@@ -84,7 +89,7 @@ test("should parse log file", () => {
   expect(aLines.length).toEqual(13);
 });
 
-test.only("should parse teams desktop client logs.txt", () => {
+test("should parse teams desktop client logs.txt", () => {
   const { lines: aLines, linesWithoutDateCount } = parseLogFile(
     desktopClientLogs,
     "a",
@@ -113,6 +118,21 @@ test("should parse UWP etl file", () => {
   );
   expect(aLines.length).toEqual(12);
   expect(linesWithoutDateCount).toEqual(0);
+});
+
+test("should sort by date preserving the same file order if timestamp is the same", () => {
+  const desktopClientLogs = `Wed Sep 28 2022 12:59:57 GMT-0700 (Pacific Daylight Time) <912> -- info -- ...log
+Wed Sep 28 2022 13:00:27 GMT-0700 (Pacific Daylight Time) <912> -- info -- ...log target
+Wed Sep 28 2022 13:00:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- ...log 1
+Wed Sep 28 2022 13:00:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- ...log 2
+Wed Sep 28 2022 13:00:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- ...log 3
+Wed Sep 28 2022 13:00:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- ...log 4
+Wed Sep 28 2022 13:00:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- ...log 5
+Wed Sep 28 2022 13:00:57 GMT-0700 (Pacific Daylight Time) <912> -- info -- ...log
+Wed Sep 28 2022 13:01:27 GMT-0700 (Pacific Daylight Time) <912> -- info -- ...log`;
+  const { lines } = parseLogFile(desktopClientLogs, "a", "white");
+  const sorted = sortLines("date", lines);
+  expect(sorted.map((l) => l.count)).toEqual([9, 8, 7, 6, 5, 4, 3, 2, 1]);
 });
 
 const TMPTestLogs = `2022-09-26T15:49:53.444Z Inf	CID[main] ...log line
@@ -158,11 +178,11 @@ const NoDatesLogs = `<7200> -- info -- ... log line
 <7200> -- event -- ...log line`;
 
 const desktopClientLogs = `Wed Sep 28 2022 12:59:57 GMT-0700 (Pacific Daylight Time) <912> -- info -- ...log
-Wed Sep 28 2022 13:00:27 GMT-0700 (Pacific Daylight Time) <912> -- info -- ...log
-Wed Sep 28 2022 13:00:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- ...log
-Wed Sep 28 2022 13:00:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- ...log
-Wed Sep 28 2022 13:00:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- ...log
-Wed Sep 28 2022 13:00:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- ...log
-Wed Sep 28 2022 13:00:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- ...log
+Wed Sep 28 2022 13:00:27 GMT-0700 (Pacific Daylight Time) <912> -- info -- ...log target
+Wed Sep 28 2022 13:00:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- ...log 1
+Wed Sep 28 2022 13:00:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- ...log 2
+Wed Sep 28 2022 13:00:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- ...log 3
+Wed Sep 28 2022 13:00:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- ...log 4
+Wed Sep 28 2022 13:00:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- ...log 5
 Wed Sep 28 2022 13:00:57 GMT-0700 (Pacific Daylight Time) <912> -- info -- ...log
 Wed Sep 28 2022 13:01:27 GMT-0700 (Pacific Daylight Time) <912> -- info -- ...log`;
