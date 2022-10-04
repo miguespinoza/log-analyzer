@@ -229,18 +229,12 @@ export const LogFilesContextProvider = ({ children }: any) => {
     [sethideUnfiltered]
   );
   const filteredLines = useMemo(() => {
-    const filtersResult = searchLines(
-      lines,
-      hideUnfiltered,
-      filters,
-      start,
-      end
-    );
+    const filtersResult = searchLines(lines, hideUnfiltered, filters);
     return {
       lines: filtersResult.lines,
       filters: filtersResult.filters,
     };
-  }, [lines, filters, hideUnfiltered, start, end]);
+  }, [lines, filters, hideUnfiltered]);
 
   const sortedLines = useMemo(() => {
     return sortLines(sortBy, filteredLines.lines);

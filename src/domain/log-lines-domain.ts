@@ -134,48 +134,39 @@ export function dedupeLogLines(
 export function searchLines(
   lines: LogLine[],
   hideUnmatchedLines: boolean,
-  filters?: Filter[],
-  startDate?: Date,
-  endDate?: Date
+  filters?: Filter[]
 ): { lines: LogLine[]; filters: Filter[] } {
+  if (filters == null || filters.length === 0) {
+    return { lines, filters: [] };
+  }
+
   const activeFilters = (filters ?? []).filter((f) => !f.isDisabled);
   lines.forEach((line) => {
     line.isVisible = !hideUnmatchedLines;
     line.matchedFilters = undefined;
   });
 
-  if (activeFilters.length === 0 && !startDate && !endDate) {
+  if (activeFilters.length === 0) {
     return { lines, filters: filters ?? [] };
   }
   (filters ?? []).forEach((f) => {
     f.hitCount = 0;
   });
   for (const line of lines) {
-    const matchesStartDate =
-      startDate != null && line.date != null ? line.date >= startDate : true;
-    const matchesEndDate =
-      endDate != null && line.date != null ? line.date <= endDate : true;
-
-    if (filters != null) {
-      for (const filter of filters) {
-        const matchedFilters = filterMatchesLine(filter, line);
-        if (matchedFilters && matchesStartDate && matchesEndDate) {
-          filter.hitCount++;
-          line.isVisible = true;
-          if (filter.isDisabled) {
-            // increase filter hit count and continue to next filter
-            continue;
-          }
-          if (filter.excluding) {
-            line.isVisible = false;
-          }
-          line.matchedFilters = filter;
-          break;
+    for (const filter of filters) {
+      const matchedFilter = filterMatchesLine(filter, line);
+      if (matchedFilter) {
+        filter.hitCount++;
+        if (filter.isDisabled) {
+          // increase filter hit count and continue to next filter
+          continue;
         }
-      }
-    } else {
-      if (matchesStartDate && matchesEndDate) {
         line.isVisible = true;
+        if (filter.excluding) {
+          line.isVisible = false;
+        }
+        line.matchedFilters = filter;
+        break;
       }
     }
   }
