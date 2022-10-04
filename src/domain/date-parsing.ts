@@ -75,7 +75,7 @@ function parseEtlDate(line: string, timezoneDelta: number) {
     const dString = `${dateString.substring(10).trim()} ${getTimeZoneString(
       timezoneDelta
     )}`;
-    const date = parse(dString, "MM/dd/yyyy-hh:mm:ss.SSS X", new Date());
+    const date = new Date(dString);
     return date;
   }
   return null;
