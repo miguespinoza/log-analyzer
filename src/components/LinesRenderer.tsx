@@ -43,9 +43,14 @@ export function LinesRenderer() {
     if (linesLengthRef.current !== lines.length) {
       if (focusedLine && listRef.current) {
         const lineIndex = focusedLineIndex;
-
         if (lineIndex !== -1) {
-          listRef.current.scrollToIndex({ index: lineIndex, align: "center" });
+          console.log("scrolling to", lineIndex);
+          setTimeout(() => {
+            listRef.current.scrollToIndex({
+              index: lineIndex,
+              align: "center",
+            });
+          }, 0);
         } else {
           console.warn("Focused line not found");
         }
