@@ -100,9 +100,7 @@ function LogLineRenderer({
   onClick?: (line: LogLine) => void;
   onDoubleClick?: (line: LogLine) => void;
 }) {
-  const { getLineColorByFilter } = useLogFilesContext();
-
-  const color = getLineColorByFilter(line) ?? "white";
+  const color = line.matchedFilters?.color ?? "white";
   const date =
     line.date == null || isNaN(line.date?.getTime() ?? NaN)
       ? null

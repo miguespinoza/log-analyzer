@@ -37,8 +37,24 @@ test("should search lines with filters", () => {
     filter: "test filter",
     hitCount: 0,
   };
+  const result = searchLines(aLines, false, [filter]);
+  expect(result.lines.length).toEqual(9);
+
+  expect(result.filters[0].hitCount).toEqual(2);
+});
+
+test("should search lines with filters and hide all the lines that are not metched by a filter", () => {
+  const { lines: aLines } = parseLogFile(TMPTestLogs, "a", "white");
+  expect(aLines.length).toEqual(9);
+  const filter: Filter = {
+    id: "test",
+    color: "red",
+    filter: "test filter",
+    hitCount: 0,
+  };
   const result = searchLines(aLines, true, [filter]);
   expect(result.lines.length).toEqual(2);
+
   expect(result.filters[0].hitCount).toEqual(2);
 });
 

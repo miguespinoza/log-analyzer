@@ -236,11 +236,10 @@ export const LogFilesContextProvider = ({ children }: any) => {
       start,
       end
     );
-    if (!hideUnfiltered) {
-      return { lines, filters: filtersResult.filters };
-    }
-
-    return filtersResult;
+    return {
+      lines: filtersResult.lines,
+      filters: filtersResult.filters,
+    };
   }, [lines, filters, hideUnfiltered, start, end]);
 
   const sortedLines = useMemo(() => {

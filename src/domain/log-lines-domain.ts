@@ -57,6 +57,7 @@ export interface LogLine {
   fileName: string;
   text: string;
   matchedFilters?: Omit<Filter, "hitCount">;
+  isVisible?: boolean;
   fileColor: string;
 }
 const MY_NAMESPACE = "1b671a64-40d5-491e-99b0-da01ff1f3341";
@@ -132,19 +133,23 @@ export function dedupeLogLines(
 
 export function searchLines(
   lines: LogLine[],
-  hideUnfiltered: boolean,
+  hideUnmatchedLines: boolean,
   filters?: Filter[],
   startDate?: Date,
   endDate?: Date
 ): { lines: LogLine[]; filters: Filter[] } {
   const activeFilters = (filters ?? []).filter((f) => !f.isDisabled);
+  lines.forEach((line) => {
+    line.isVisible = !hideUnmatchedLines;
+    line.matchedFilters = undefined;
+  });
+
   if (activeFilters.length === 0 && !startDate && !endDate) {
     return { lines, filters: filters ?? [] };
   }
   (filters ?? []).forEach((f) => {
     f.hitCount = 0;
   });
-  const filteredLines: LogLine[] = [];
   for (const line of lines) {
     const matchesStartDate =
       startDate != null && line.date != null ? line.date >= startDate : true;
@@ -153,25 +158,33 @@ export function searchLines(
 
     if (filters != null) {
       for (const filter of filters) {
-        if (!filter.excluding) {
-          const matchedFilters = filterMatchesLine(filter, line);
-          if (matchedFilters && matchesStartDate && matchesEndDate) {
-            if (!filter.isDisabled) {
-              filteredLines.push({ ...line, matchedFilters: filter });
-            }
-            filter.hitCount++;
-            break;
-          } 
+        const matchedFilters = filterMatchesLine(filter, line);
+        if (matchedFilters && matchesStartDate && matchesEndDate) {
+          filter.hitCount++;
+          line.isVisible = true;
+          if (filter.isDisabled) {
+            // increase filter hit count and continue to next filter
+            continue;
+          }
+          if (filter.excluding) {
+            line.isVisible = false;
+          }
+          line.matchedFilters = filter;
+          break;
         }
       }
     } else {
       if (matchesStartDate && matchesEndDate) {
-        filteredLines.push(line);
+        line.isVisible = true;
       }
     }
   }
   const newFilters = filters?.map((f) => f) ?? [];
-  return { lines: filteredLines, filters: newFilters };
+  const filteredLines = lines.filter((line) => line.isVisible);
+  return {
+    lines: filteredLines,
+    filters: newFilters,
+  };
 }
 
 function filterMatchesLine(filter: Filter, line: LogLine) {
