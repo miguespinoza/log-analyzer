@@ -157,12 +157,55 @@ const NoDatesLogs = `<7200> -- info -- ... log line
 <7200> -- event -- ...log line
 <7200> -- event -- ...log line`;
 
-const desktopClientLogs = `Fri Sep 16 2022 07:58:15 GMT+1000 (Australian Eastern Standard Time) <7200> -- info -- ... log line
-Fri Sep 16 2022 07:58:15 GMT+1000 (Australian Eastern Standard Time) <7200> -- info -- ... log line
-Fri Sep 16 2022 07:58:15 GMT+1000 (Australian Eastern Standard Time) <7200> -- info -- ... log line
-Fri Sep 16 2022 07:58:16 GMT+1000 (Australian Eastern Standard Time) <7200> -- event -- ...log line
-Fri Sep 16 2022 07:58:16 GMT+1000 (Australian Eastern Standard Time) <7200> -- event -- ...log line
-Fri Sep 16 2022 07:58:16 GMT+1000 (Australian Eastern Standard Time) <7200> -- event -- ...log line
-Fri Sep 16 2022 07:58:16 GMT-1000 (Australian Eastern Standard Time) <7200> -- event -- ...log line
-Fri Sep 16 2022 07:58:16 GMT-1000 (Australian Eastern Standard Time) <7200> -- event -- ...log line
-`;
+const desktopClientLogs = `Wed Sep 28 2022 12:59:57 GMT-0700 (Pacific Daylight Time) <912> -- info -- Machine has been idle for 781 seconds 
+Wed Sep 28 2022 13:00:27 GMT-0700 (Pacific Daylight Time) <912> -- info -- Machine has been idle for 811 seconds 
+Wed Sep 28 2022 13:00:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- BluetoothLE Desktop:  ble:advertisement-start requested with [6,{"0":52,"1":240,"2":0,"3":229,"4":205,"5":192,"6":9,"7":36,"8":75,"9":113,"10":66,"11":182,"12":149,"13":253,"14":180,"15":80,"16":32,"17":100,"18":79,"19":116,"20":148}] 
+Wed Sep 28 2022 13:00:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- BluetoothLE Desktop: ble:publisher-status-changed 0 
+Wed Sep 28 2022 13:00:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- BluetoothLE Desktop: ble:publisher-status-changed 1 
+Wed Sep 28 2022 13:00:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- BluetoothLE Desktop: ble:publisher-status-changed 2 
+Wed Sep 28 2022 13:00:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- RIGEL-SERVICE: RigelService::UpdateBluetoothAdvertisementState true 
+Wed Sep 28 2022 13:00:57 GMT-0700 (Pacific Daylight Time) <912> -- info -- Machine has been idle for 841 seconds 
+Wed Sep 28 2022 13:01:27 GMT-0700 (Pacific Daylight Time) <912> -- info -- Machine has been idle for 871 seconds 
+Wed Sep 28 2022 13:01:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- BluetoothLE Desktop:  ble:advertisement-start requested with [6,{"0":52,"1":240,"2":0,"3":229,"4":205,"5":192,"6":9,"7":36,"8":75,"9":113,"10":66,"11":182,"12":149,"13":253,"14":180,"15":80,"16":32,"17":100,"18":79,"19":67,"20":6}] 
+Wed Sep 28 2022 13:01:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- BluetoothLE Desktop: ble:publisher-status-changed 0 
+Wed Sep 28 2022 13:01:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- BluetoothLE Desktop: ble:publisher-status-changed 1 
+Wed Sep 28 2022 13:01:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- BluetoothLE Desktop: ble:publisher-status-changed 2 
+Wed Sep 28 2022 13:01:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- RIGEL-SERVICE: RigelService::UpdateBluetoothAdvertisementState true 
+Wed Sep 28 2022 13:01:57 GMT-0700 (Pacific Daylight Time) <912> -- info -- Machine has been idle for 901 seconds 
+Wed Sep 28 2022 13:02:27 GMT-0700 (Pacific Daylight Time) <912> -- info -- Machine has been idle for 931 seconds 
+Wed Sep 28 2022 13:02:46 GMT-0700 (Pacific Daylight Time) <912> -- event -- eventpdclevel: 2, name: desktop_set_permission_request_handler, permissions: media, webContentsId: 1, mainWindowURL: https://teams.microsoft.com, tabURL: https://teams.microsoft.com, sameHost: true, isMainWindowWebContents: true, permissionGranted: true, AppInfo.Language: en-us, complianceEnvironmentType: 0, isDataCategorizationEnabled: true, userpdclevel: 0, processMemory: 43326820, freeMemory: 4126773248, clientType: rigel, AppInfo.ClientType: rigel, deviceType: MeetRoom, deviceName: Rigel, rigelVersion: 4.15.6.0, desktopBuildAge: 13, batterylevel: 1, pluggedin: true, Window.Focus: foreground, windowIsVisible: true, Window.Status: systray, UserInfo.TimeZone: -07:00, vdiMode: 0,  
+Wed Sep 28 2022 13:02:46 GMT-0700 (Pacific Daylight Time) <912> -- event -- eventpdclevel: 2, name: desktop_set_permission_request_handler, permissions: media, webContentsId: 1, mainWindowURL: https://teams.microsoft.com, tabURL: https://teams.microsoft.com, sameHost: true, isMainWindowWebContents: true, permissionGranted: true, AppInfo.Language: en-us, complianceEnvironmentType: 0, isDataCategorizationEnabled: true, userpdclevel: 0, processMemory: 43353504, freeMemory: 4080619520, clientType: rigel, AppInfo.ClientType: rigel, deviceType: MeetRoom, deviceName: Rigel, rigelVersion: 4.15.6.0, desktopBuildAge: 13, batterylevel: 1, pluggedin: true, Window.Focus: foreground, windowIsVisible: true, Window.Status: systray, UserInfo.TimeZone: -07:00, vdiMode: 0,  
+Wed Sep 28 2022 13:02:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- BluetoothLE Desktop:  ble:advertisement-start requested with [6,{"0":52,"1":240,"2":0,"3":229,"4":205,"5":192,"6":9,"7":36,"8":75,"9":113,"10":66,"11":182,"12":149,"13":253,"14":180,"15":80,"16":32,"17":100,"18":79,"19":181,"20":17}] 
+Wed Sep 28 2022 13:02:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- BluetoothLE Desktop: ble:publisher-status-changed 0 
+Wed Sep 28 2022 13:02:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- BluetoothLE Desktop: ble:publisher-status-changed 1 
+Wed Sep 28 2022 13:02:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- BluetoothLE Desktop: ble:publisher-status-changed 2 
+Wed Sep 28 2022 13:02:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- RIGEL-SERVICE: RigelService::UpdateBluetoothAdvertisementState true 
+Wed Sep 28 2022 13:02:57 GMT-0700 (Pacific Daylight Time) <912> -- info -- Machine has been idle for 961 seconds 
+Wed Sep 28 2022 13:03:27 GMT-0700 (Pacific Daylight Time) <912> -- info -- Machine has been idle for 991 seconds 
+Wed Sep 28 2022 13:03:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- BluetoothLE Desktop:  ble:advertisement-start requested with [6,{"0":52,"1":240,"2":0,"3":229,"4":205,"5":192,"6":9,"7":36,"8":75,"9":113,"10":66,"11":182,"12":149,"13":253,"14":180,"15":80,"16":32,"17":100,"18":79,"19":115,"20":98}] 
+Wed Sep 28 2022 13:03:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- BluetoothLE Desktop: ble:publisher-status-changed 0 
+Wed Sep 28 2022 13:03:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- BluetoothLE Desktop: ble:publisher-status-changed 1 
+Wed Sep 28 2022 13:03:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- BluetoothLE Desktop: ble:publisher-status-changed 2 
+Wed Sep 28 2022 13:03:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- RIGEL-SERVICE: RigelService::UpdateBluetoothAdvertisementState true 
+Wed Sep 28 2022 13:03:57 GMT-0700 (Pacific Daylight Time) <912> -- info -- Machine has been idle for 1021 seconds 
+Wed Sep 28 2022 13:04:27 GMT-0700 (Pacific Daylight Time) <912> -- info -- Machine has been idle for 1051 seconds 
+Wed Sep 28 2022 13:04:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- BluetoothLE Desktop:  ble:advertisement-start requested with [6,{"0":52,"1":240,"2":0,"3":229,"4":205,"5":192,"6":9,"7":36,"8":75,"9":113,"10":66,"11":182,"12":149,"13":253,"14":180,"15":80,"16":32,"17":100,"18":79,"19":157,"20":178}] 
+Wed Sep 28 2022 13:04:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- BluetoothLE Desktop: ble:publisher-status-changed 0 
+Wed Sep 28 2022 13:04:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- BluetoothLE Desktop: ble:publisher-status-changed 1 
+Wed Sep 28 2022 13:04:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- BluetoothLE Desktop: ble:publisher-status-changed 2 
+Wed Sep 28 2022 13:04:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- RIGEL-SERVICE: RigelService::UpdateBluetoothAdvertisementState true 
+Wed Sep 28 2022 13:04:57 GMT-0700 (Pacific Daylight Time) <912> -- info -- Machine has been idle for 1081 seconds 
+Wed Sep 28 2022 13:05:27 GMT-0700 (Pacific Daylight Time) <912> -- info -- Machine has been idle for 1111 seconds 
+Wed Sep 28 2022 13:05:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- BluetoothLE Desktop:  ble:advertisement-start requested with [6,{"0":52,"1":240,"2":0,"3":229,"4":205,"5":192,"6":9,"7":36,"8":75,"9":113,"10":66,"11":182,"12":149,"13":253,"14":180,"15":80,"16":32,"17":100,"18":79,"19":42,"20":215}] 
+Wed Sep 28 2022 13:05:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- BluetoothLE Desktop: ble:publisher-status-changed 0 
+Wed Sep 28 2022 13:05:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- BluetoothLE Desktop: ble:publisher-status-changed 1 
+Wed Sep 28 2022 13:05:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- BluetoothLE Desktop: ble:publisher-status-changed 2 
+Wed Sep 28 2022 13:05:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- RIGEL-SERVICE: RigelService::UpdateBluetoothAdvertisementState true 
+Wed Sep 28 2022 13:05:57 GMT-0700 (Pacific Daylight Time) <912> -- info -- Machine has been idle for 1141 seconds 
+Wed Sep 28 2022 13:06:27 GMT-0700 (Pacific Daylight Time) <912> -- info -- Machine has been idle for 1171 seconds 
+Wed Sep 28 2022 13:06:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- Logging telemetry event: idle_investigation 
+Wed Sep 28 2022 13:06:55 GMT-0700 (Pacific Daylight Time) <912> -- event -- eventpdclevel: 2, name: idle_investigation, reason: triggered, AppInfo.Language: en-us, complianceEnvironmentType: 0, isDataCategorizationEnabled: true, userpdclevel: 0, processMemory: 43852344, freeMemory: 4052987904, clientType: rigel, AppInfo.ClientType: rigel, deviceType: MeetRoom, deviceName: Rigel, rigelVersion: 4.15.6.0, desktopBuildAge: 13, batterylevel: 1, pluggedin: true, Window.Focus: foreground, windowIsVisible: true, Window.Status: systray, UserInfo.TimeZone: -07:00, vdiMode: 0,  
+Wed Sep 28 2022 13:06:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- silent update: restartAppIfPending function - false, false 
+Wed Sep 28 2022 13:06:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- Logging telemetry event: idle_investigation 
+Wed Sep 28 2022 13:06:55 GMT-0700 (Pacific Daylight Time) <912> -- event -- eventpdclevel: 2, name: idle_investigation, reason: restart-if-pending, AppInfo.Language: en-us, complianceEnvironmentType: 0, isDataCategorizationEnabled: true, userpdclevel: 0, processMemory: 43927504, freeMemory: 4052987904, clientType: rigel, AppInfo.ClientType: rigel, deviceType: MeetRoom, deviceName: Rigel, rigelVersion: 4.15.6.0, desktopBuildAge: 13, batterylevel: 1, pluggedin: true, Window.Focus: foreground, windowIsVisible: true, Window.Status: systray, UserInfo.TimeZone: -07:00, vdiMode: 0,  
+Wed Sep 28 2022 13:06:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- BluetoothLE Desktop:  ble:advertisement-start requested with [6,{"0":52,"1":240,"2":0,"3":229,"4":205,"5":192,"6":9,"7":36,"8":75,"9":113,"10":66,"11":182,"12":149,"13":253,"14":180,"15":80,"16":32,"17":100,"18":79,"19":234,"20…`;

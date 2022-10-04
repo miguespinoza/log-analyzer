@@ -108,7 +108,7 @@ function parseTeamsDesktopDate(line: string) {
   const dateString = line.match(TeamsDesktopDateRegex)?.[0];
   if (dateString) {
     const dString = dateString.substring(4).replace("GMT", "");
-    const date = parse(dString, "MMM dd yyyy hh:mm:ss XX", new Date());
+    const date = new Date(dString);
     return date;
   }
   return null;
