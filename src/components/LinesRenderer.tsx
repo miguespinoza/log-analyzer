@@ -15,7 +15,7 @@ export function LinesRenderer() {
   const [focusedLine, setFocusedLine] = useState<LogLine | null>(null);
 
   const focusedLineIndex = useMemo(
-    () => lines.findIndex((l) => l.hash === focusedLine?.hash),
+    () => lines.findIndex((l) => l.id === focusedLine?.id),
     [focusedLine, lines]
   );
 
@@ -46,6 +46,8 @@ export function LinesRenderer() {
 
         if (lineIndex !== -1) {
           listRef.current.scrollToIndex({ index: lineIndex, align: "center" });
+        } else {
+          console.warn("Focused line not found");
         }
       }
     }
