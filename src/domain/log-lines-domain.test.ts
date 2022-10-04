@@ -84,7 +84,7 @@ test("should parse log file", () => {
   expect(aLines.length).toEqual(13);
 });
 
-test("should parse teams desktop client logs.txt", () => {
+test.only("should parse teams desktop client logs.txt", () => {
   const { lines: aLines, linesWithoutDateCount } = parseLogFile(
     desktopClientLogs,
     "a",
@@ -163,6 +163,6 @@ Fri Sep 16 2022 07:58:15 GMT+1000 (Australian Eastern Standard Time) <7200> -- i
 Fri Sep 16 2022 07:58:16 GMT+1000 (Australian Eastern Standard Time) <7200> -- event -- ...log line
 Fri Sep 16 2022 07:58:16 GMT+1000 (Australian Eastern Standard Time) <7200> -- event -- ...log line
 Fri Sep 16 2022 07:58:16 GMT+1000 (Australian Eastern Standard Time) <7200> -- event -- ...log line
-Fri Sep 16 2022 07:58:16 GMT+1000 (Australian Eastern Standard Time) <7200> -- event -- ...log line
-Fri Sep 16 2022 07:58:16 GMT+1000 (Australian Eastern Standard Time) <7200> -- event -- ...log line
+Fri Sep 16 2022 07:58:16 GMT-1000 (Australian Eastern Standard Time) <7200> -- event -- ...log line
+Fri Sep 16 2022 07:58:16 GMT-1000 (Australian Eastern Standard Time) <7200> -- event -- ...log line
 `;
