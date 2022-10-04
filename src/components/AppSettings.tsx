@@ -28,10 +28,28 @@ export default function AppSettings() {
             label="Project Name"
             inputProps={{ name: "projectName", defaultValue: projectName }}
           />
+          <LabeledTextField
+            label="Create Quick Filter Shortcut"
+            inputProps={{
+              name: "createFilterSC",
+              defaultValue: "ctrl+alt+f",
+              disabled: true,
+            }}
+          />
+          <LabeledTextField
+            label="Show/hide Shortcut"
+            inputProps={{
+              name: "createFilterSC",
+              defaultValue: "ctrl+alt+h",
+              disabled: true,
+            }}
+          />
           <Button type="submit">Save</Button>
         </div>
         <div className="p-2 border">
-          <ManageTaTFilters />
+          <ManageTaTFilters
+            projectName={projectName === "" ? "filters" : projectName}
+          />
         </div>
       </form>
       <Helmet>

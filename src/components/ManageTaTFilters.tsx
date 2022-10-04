@@ -8,7 +8,11 @@ import { Button } from "./Button";
 import { LabeledTextField } from "./LabeledTextField";
 import { useLogFilesContext } from "./LogFilesContext";
 
-export default function ManageTaTFilters() {
+export default function ManageTaTFilters({
+  projectName,
+}: {
+  projectName: string;
+}) {
   const { setFilters, filters } = useLogFilesContext();
   const ref = React.useRef<HTMLInputElement>(null);
 
@@ -28,7 +32,7 @@ export default function ManageTaTFilters() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = "filters.tat";
+    link.download = `${projectName}.tat`;
     link.click();
   };
 
