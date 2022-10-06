@@ -195,17 +195,7 @@ export function sortLines(
         } ommited due to sorting by date`
       );
     }
-    return dateLogLines.sort((a, b) => {
-      const aTime = a.date?.getTime() ?? 0;
-      const bTime = a.date?.getTime() ?? 0;
-      if (aTime > bTime) {
-        return -1;
-      } else if (aTime < bTime) {
-        return 1;
-      } else {
-        return b.count - a.count;
-      }
-    });
+    return sortObjectsByDate<LogLine>(dateLogLines, true);
   } else if (sortBy === "file") {
     return lines.sort((a, b) => {
       if (a.fileName !== b.fileName) {
@@ -217,4 +207,30 @@ export function sortLines(
   } else {
     return lines;
   }
+}
+
+// sort objects by date
+export function sortObjectsByDate<
+  T extends { date: Date | null; count: number }
+>(objects: T[], descending: boolean): T[] {
+  return objects.sort((a, b) => {
+    if (a.date == null) {
+      return -1;
+    }
+    if (b.date == null) {
+      return 1;
+    }
+    if (b.date.getTime() === a.date.getTime()) {
+      if (descending) {
+        return b.count - a.count;
+      } else {
+        return a.count - b.count;
+      }
+    }
+    if (descending) {
+      return b.date.getTime() - a.date.getTime();
+    } else {
+      return a.date.getTime() - b.date.getTime();
+    }
+  });
 }

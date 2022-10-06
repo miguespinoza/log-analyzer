@@ -1,6 +1,8 @@
 import { expect, test } from "vitest";
 import { Filter } from "../components/LogFilesContext";
+import { preProcessLogFile } from "./file-handling";
 import {
+  dedupeLogLines,
   parseLogFile,
   parseLogLines,
   searchLines,
@@ -148,6 +150,63 @@ const TMPTestLogs = `2022-09-26T15:49:53.444Z Inf	CID[main] ...log line
     grouped line
     grouped line
 `;
+
+const TMPTestLogsDateSorting = `2022-09-26T15:50:18.624Z Inf	CDL: ...log
+2022-09-26T15:50:18.632Z Inf	CDL: ...log
+2022-09-26T15:50:18.634Z Inf	CDL: ...log
+2022-09-26T15:50:18.636Z Inf	CDL: ...log
+2022-09-26T15:50:18.636Z Inf	CDL: ...log
+2022-09-26T15:50:18.637Z Inf	CDL: ...log
+2022-09-26T15:50:18.653Z Inf	...log
+2022-09-26T15:51:00.311Z Inf	...log
+`;
+
+const tmplogsDateSorting2 = `2022-09-26T15:50:34.452Z Inf	CDL: ...log
+2022-09-26T15:50:34.452Z Inf	CDL: ...log
+2022-09-26T15:50:34.453Z Inf	CDL: ...log
+2022-09-26T15:50:34.455Z Inf	CDL: target
+2022-09-26T15:50:34.455Z Inf	CDL: 1
+2022-09-26T15:50:34.455Z Inf	CDL: 2
+2022-09-26T15:50:34.455Z Inf	CDL: 3
+2022-09-26T15:50:34.460Z Inf	CDL: ...log
+2022-09-26T15:50:34.463Z Inf	...log
+2022-09-26T15:50:34.463Z Inf	...log`;
+
+test("test date sorting", () => {
+  const file1 = preProcessLogFile({
+    content: TMPTestLogsDateSorting,
+    name: "one",
+  });
+  const file2 = preProcessLogFile({
+    content: tmplogsDateSorting2,
+    name: "two",
+  });
+
+  const merged = dedupeLogLines([file1, file2], true);
+  const sorted = sortLines("date", merged);
+  const linesDates = sorted.map((l) => l.text);
+  expect(linesDates.map((d) => d)).toMatchInlineSnapshot(`
+    [
+      "2022-09-26T15:51:00.311Z Inf	...log
+    ",
+      "2022-09-26T15:50:34.463Z Inf	...log",
+      "2022-09-26T15:50:34.460Z Inf	CDL: ...log",
+      "2022-09-26T15:50:34.455Z Inf	CDL: 3",
+      "2022-09-26T15:50:34.455Z Inf	CDL: 2",
+      "2022-09-26T15:50:34.455Z Inf	CDL: 1",
+      "2022-09-26T15:50:34.455Z Inf	CDL: target",
+      "2022-09-26T15:50:34.453Z Inf	CDL: ...log",
+      "2022-09-26T15:50:34.452Z Inf	CDL: ...log",
+      "2022-09-26T15:50:18.653Z Inf	...log",
+      "2022-09-26T15:50:18.637Z Inf	CDL: ...log",
+      "2022-09-26T15:50:18.636Z Inf	CDL: ...log",
+      "2022-09-26T15:50:18.634Z Inf	CDL: ...log",
+      "2022-09-26T15:50:18.632Z Inf	CDL: ...log",
+      "2022-09-26T15:50:18.624Z Inf	CDL: ...log",
+    ]
+  `);
+});
+
 
 const etlTestLogs = `36E0.0E80,09/15/2022-09:34:53.583,,TL_INFO ... log line
 36E0.0E80,09/15/2022-09:34:53.583,,TL_INFO ... log line
