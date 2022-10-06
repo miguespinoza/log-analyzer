@@ -4,7 +4,7 @@ import { LabeledTextField } from "./LabeledTextField";
 import { Button } from "./Button";
 import { Helmet } from "react-helmet";
 import ManageTaTFilters from "./ManageTaTFilters";
-import { useProjectFileContext } from "./ProjectFileContext";
+import { useProjectFileContext } from "../context/ProjectFileContext";
 const appShortName = "RLA";
 
 export default function AppSettings() {

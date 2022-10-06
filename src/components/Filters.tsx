@@ -7,7 +7,7 @@ import {
   TrashIcon,
 } from "@heroicons/react/24/solid";
 import FilterForm from "./FilterForm";
-import { Filter, useLogFilesContext } from "./LogFilesContext";
+import { Filter, useLogFilesContext } from "../context/LogFilesContext";
 import ReactModal from "react-modal";
 import { useState } from "react";
 import { IconButton } from "./IconButton";

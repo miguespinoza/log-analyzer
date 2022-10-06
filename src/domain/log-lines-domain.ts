@@ -1,5 +1,5 @@
 import { v4 as uuidv4, v5 as uuidHash } from "uuid";
-import { Filter, LogFile } from "../components/LogFilesContext";
+import { Filter, LogFile } from "../context/LogFilesContext";
 import { extractLineDate, removeOriginalDate } from "./date-parsing";
 
 // line starts with date 2022-09-26T15:49:53.444Z

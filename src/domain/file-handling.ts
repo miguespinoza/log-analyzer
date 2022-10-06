@@ -1,5 +1,5 @@
 import { ChangeEvent, ChangeEventHandler } from "react";
-import { LogFile } from "../components/LogFilesContext";
+import { LogFile } from "../context/LogFilesContext";
 import { parseLogFile } from "./log-lines-domain";
 import { map, ReplaySubject } from "rxjs";
 interface TextFile {

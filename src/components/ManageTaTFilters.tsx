@@ -13,9 +13,9 @@ import {
   extractFiltersFromXML,
 } from "../domain/tat-xml-files";
 import { Button } from "./Button";
-import { useProjectFileContext } from "./ProjectFileContext";
+import { useProjectFileContext } from "../context/ProjectFileContext";
 import { LabeledTextField } from "./LabeledTextField";
-import { Filter, useLogFilesContext } from "./LogFilesContext";
+import { Filter, useLogFilesContext } from "../context/LogFilesContext";
 
 export default function ManageTaTFilters({
   projectName,

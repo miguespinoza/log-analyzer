@@ -3,14 +3,14 @@ import LoadFiles from "./components/LoadFiles";
 import {
   DateFilterContextProvider,
   LogFilesContextProvider,
-} from "./components/LogFilesContext";
+} from "./context/LogFilesContext";
 import { LinesRenderer } from "./components/LinesRenderer";
 import { Filters } from "./components/Filters";
 import { KeyboardShortCuts } from "./components/KeyboardShortCuts";
-import { FilesProvider } from "./components/FileContext";
+import { FilesProvider } from "./context/FileContext";
 import { Toolbar } from "./components/Toolbar";
 import DropFileZone from "./components/DropFileZone";
-import ProjectFileContextProvider from "./components/ProjectFileContext";
+import ProjectFileContextProvider from "./context/ProjectFileContext";
 
 function App() {
   return (

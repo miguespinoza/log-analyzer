@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { Filter } from "../components/LogFilesContext";
+import { Filter } from "../context/LogFilesContext";
 import { preProcessLogFile } from "./file-handling";
 import {
   dedupeLogLines,

@@ -1,8 +1,8 @@
 import { useHotkeys } from "react-hotkeys-hook";
 import { getFileColor } from "../domain/file-handling";
-import { useLogFilesContext } from "./LogFilesContext";
+import { useLogFilesContext } from "../context/LogFilesContext";
 import { v4 as uuid } from "uuid";
-import { useProjectFileContext } from "./ProjectFileContext";
+import { useProjectFileContext } from "../context/ProjectFileContext";
 
 export function KeyboardShortCuts() {
   const { updateProject, project } = useProjectFileContext();

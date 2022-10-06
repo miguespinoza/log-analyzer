@@ -7,9 +7,9 @@ import {
   makeHandleHTMLFileInputReactive,
   onLogFilePickerClick,
 } from "../domain/file-handling";
-import { useLogFilesContext } from "./LogFilesContext";
+import { useLogFilesContext } from "../context/LogFilesContext";
 import { ExclamationTriangleIcon, XMarkIcon } from "@heroicons/react/24/solid";
-import { useFilesContext } from "./FileContext";
+import { useFilesContext } from "../context/FileContext";
 import { LabeledTextField } from "./LabeledTextField";
 import { Button } from "./Button";
 const fileNameLength = 60;

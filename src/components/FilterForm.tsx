@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "./Button";
 import { LabeledTextField } from "./LabeledTextField";
-import { Filter, useLogFilesContext } from "./LogFilesContext";
+import { Filter, useLogFilesContext } from "../context/LogFilesContext";
 import { v4 as uuid } from "uuid";
 
 const softgreen = "#b3e5fc";

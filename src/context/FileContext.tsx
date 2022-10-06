@@ -2,7 +2,7 @@ import React from "react";
 import { fileLoading$ } from "../domain/file-handling";
 import { LogFile } from "./LogFilesContext";
 import { concatMap, Subscription } from "rxjs";
-import { MemoComponent } from "./MemoComponent";
+import { MemoComponent } from "../components/MemoComponent";
 
 export type LogFilesContextType = {
   logFiles: LogFile[];

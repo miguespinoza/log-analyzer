@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { MemoComponent } from "./MemoComponent";
+import { MemoComponent } from "../components/MemoComponent";
 
 type ProjectType = {
   name: string;

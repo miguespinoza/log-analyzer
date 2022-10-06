@@ -1,5 +1,5 @@
 import { LogLine } from "../domain/log-lines-domain";
-import { useLogFilesContext } from "./LogFilesContext";
+import { useLogFilesContext } from "../context/LogFilesContext";
 import { Virtuoso } from "react-virtuoso";
 import useResizeObserver from "use-resize-observer";
 import { useLayoutEffect, useMemo, useRef, useState } from "react";

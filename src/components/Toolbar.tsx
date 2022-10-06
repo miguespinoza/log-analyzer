@@ -4,7 +4,7 @@ import { AppSettingsModal } from "./AppSettings";
 import { Button } from "./Button";
 import FilterForm from "./FilterForm";
 import { OpenFilesInput } from "./LoadFiles";
-import { useProjectFileContext } from "./ProjectFileContext";
+import { useProjectFileContext } from "../context/ProjectFileContext";
 
 export function Toolbar() {
   const { project, updateProject: setProjectProperty } =

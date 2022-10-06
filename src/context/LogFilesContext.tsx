@@ -6,7 +6,7 @@ import {
   sortLines,
 } from "../domain/log-lines-domain";
 import { useFilesContext } from "./FileContext";
-import { MemoComponent } from "./MemoComponent";
+import { MemoComponent } from "../components/MemoComponent";
 
 export type LogFilesContextType = {
   logFiles: LogFile[];
