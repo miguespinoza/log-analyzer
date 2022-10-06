@@ -7,6 +7,7 @@ import {
 import { useFilesContext } from "./FileContext";
 import { MemoComponent } from "../components/MemoComponent";
 import { Filter, LogFile, LogLine } from "../domain/types";
+import { useProjectFileContext } from "./ProjectFileContext";
 
 export type LogLinesContextType = {
   logFiles: LogFile[];
@@ -69,7 +70,7 @@ export const LogLinesContextProvider = ({ children }: any) => {
   const [filters, setFilters] = useState<Filter[]>([]);
   const [lines, setLines] = React.useState<LogLine[]>([]);
   const { logFiles, updateLogFile } = useFilesContext();
-  const { project } = useProjectContext();
+  const { project } = useProjectFileContext();
   const { hideUnfiltered, showOGDate, sortBy } = project;
 
   const mergeLogFiles = React.useCallback(() => {
@@ -210,7 +211,4 @@ export const LogLinesContextProvider = ({ children }: any) => {
 
 export function useLogLinesContext() {
   return React.useContext(LogLinesContext);
-}
-function useProjectContext(): { project: any; setProjectProperty: any } {
-  throw new Error("Function not implemented.");
 }
