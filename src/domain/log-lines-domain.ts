@@ -1,5 +1,6 @@
 import { v4 as uuidv4, v5 as uuidHash } from "uuid";
-import { Filter, LogFile } from "../context/LogFilesContext";
+import { Filter, LogFile } from "./types";
+import { LogLine } from "./types";
 import { extractLineDate, removeOriginalDate } from "./date-parsing";
 
 // line starts with date 2022-09-26T15:49:53.444Z
@@ -49,17 +50,6 @@ function separateLogLines(text: string): string[] {
   return logLines;
 }
 
-export interface LogLine {
-  id: string;
-  date: Date | null;
-  count: number;
-  hash: string;
-  fileName: string;
-  text: string;
-  matchedFilters?: Omit<Filter, "hitCount">;
-  isVisible?: boolean;
-  fileColor: string;
-}
 const MY_NAMESPACE = "1b671a64-40d5-491e-99b0-da01ff1f3341";
 
 export function parseLogLines(

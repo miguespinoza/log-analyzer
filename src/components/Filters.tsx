@@ -7,11 +7,12 @@ import {
   TrashIcon,
 } from "@heroicons/react/24/solid";
 import FilterForm from "./FilterForm";
-import { Filter, useLogFilesContext } from "../context/LogFilesContext";
+import { useLogFilesContext } from "../context/LogFilesContext";
 import ReactModal from "react-modal";
 import { useState } from "react";
 import { IconButton } from "./IconButton";
-//TODO disable date filter, instead of reset
+import { Filter } from "../domain/types";
+
 export function Filters() {
   const { filters } = useLogFilesContext();
   return (

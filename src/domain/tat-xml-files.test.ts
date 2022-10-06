@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { Filter } from "../context/LogFilesContext";
+import { Filter } from "./types";
 import { adaptFiltersToXML, extractFiltersFromXML } from "./tat-xml-files";
 
 test("extractFiltersFromXML", () => {

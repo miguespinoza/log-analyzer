@@ -1,5 +1,5 @@
 import { v4 } from "uuid";
-import { Filter } from "../context/LogFilesContext";
+import { Filter } from "./types";
 
 /*
 

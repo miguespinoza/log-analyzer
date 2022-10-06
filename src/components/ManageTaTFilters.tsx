@@ -15,7 +15,8 @@ import {
 import { Button } from "./Button";
 import { useProjectFileContext } from "../context/ProjectFileContext";
 import { LabeledTextField } from "./LabeledTextField";
-import { Filter, useLogFilesContext } from "../context/LogFilesContext";
+import { useLogFilesContext } from "../context/LogFilesContext";
+import { Filter } from "../domain/types";
 
 export default function ManageTaTFilters({
   projectName,

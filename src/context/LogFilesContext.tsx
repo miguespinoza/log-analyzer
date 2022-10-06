@@ -1,12 +1,12 @@
 import React, { useEffect, useMemo, useState } from "react";
 import {
   dedupeLogLines,
-  LogLine,
   searchLines,
   sortLines,
 } from "../domain/log-lines-domain";
 import { useFilesContext } from "./FileContext";
 import { MemoComponent } from "../components/MemoComponent";
+import { Filter, LogFile, LogLine } from "../domain/types";
 
 export type LogFilesContextType = {
   logFiles: LogFile[];
@@ -46,28 +46,6 @@ export const DateFilterContextProvider = ({ children }: any) => {
       {children}
     </DateFilterContext.Provider>
   );
-};
-
-export type Filter = {
-  id: string;
-  filter: string;
-  color: string;
-  isDisabled?: boolean;
-  excluding?: boolean;
-  hitCount: number;
-  description?: string;
-  type?: string;
-};
-
-export type LogFile = {
-  name: string;
-  color: string;
-  fileHandle?: FileSystemFileHandle;
-  text: string;
-  lines: LogLine[];
-  timezone: number;
-  linesWithoutDateCount: number;
-  isVisible: boolean;
 };
 
 export const LogFilesContext = React.createContext<LogFilesContextType>({

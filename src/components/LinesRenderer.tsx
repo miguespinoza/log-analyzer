@@ -1,10 +1,10 @@
-import { LogLine } from "../domain/log-lines-domain";
 import { useLogFilesContext } from "../context/LogFilesContext";
 import { Virtuoso } from "react-virtuoso";
 import useResizeObserver from "use-resize-observer";
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { FilterFormModal } from "./Filters";
+import { LogLine } from "../domain/types";
 
 export function LinesRenderer() {
   const { lines } = useLogFilesContext();

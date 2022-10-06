@@ -1,5 +1,4 @@
 import { expect, test } from "vitest";
-import { Filter } from "../context/LogFilesContext";
 import { preProcessLogFile } from "./file-handling";
 import {
   dedupeLogLines,
@@ -8,6 +7,7 @@ import {
   searchLines,
   sortLines,
 } from "./log-lines-domain";
+import { Filter } from "./types";
 
 test("should parse log line", () => {
   const logLine = "2022-09-26T15:49:53.444Z Inf	CID[main] log line";
