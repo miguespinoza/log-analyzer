@@ -2,16 +2,18 @@ import { useHotkeys } from "react-hotkeys-hook";
 import { getFileColor } from "../domain/file-handling";
 import { useLogFilesContext } from "./LogFilesContext";
 import { v4 as uuid } from "uuid";
+import { useProjectFileContext } from "./ProjectFileContext";
 
 export function KeyboardShortCuts() {
+  const { updateProject, project } = useProjectFileContext();
   const context = useLogFilesContext();
 
   useHotkeys(
     "ctrl+alt+h",
     () => {
-      context.setHideUnfiltered(!context.hideUnfiltered);
+      updateProject({ hideUnfiltered: !project.hideUnfiltered });
     },
-    [context.hideUnfiltered, context.setHideUnfiltered]
+    [updateProject, project.hideUnfiltered]
   );
 
   useHotkeys(

@@ -3,18 +3,13 @@ import React, { useState } from "react";
 import { AppSettingsModal } from "./AppSettings";
 import { Button } from "./Button";
 import FilterForm from "./FilterForm";
-import { IconButton } from "./IconButton";
 import { OpenFilesInput } from "./LoadFiles";
-import { useLogFilesContext } from "./LogFilesContext";
+import { useProjectFileContext } from "./ProjectFileContext";
 
 export function Toolbar() {
-  const {
-    setSortBy,
-    setHideUnfiltered,
-    setShowOGDate,
-    showOGDate,
-    hideUnfiltered,
-  } = useLogFilesContext();
+  const { project, updateProject: setProjectProperty } =
+    useProjectFileContext();
+  const { showOGDate, hideUnfiltered } = project;
   const [showSettingsModal, setShowSettingsModal] = useState(false);
 
   return (
@@ -22,7 +17,9 @@ export function Toolbar() {
       <div className="flex gap-2">
         <Button
           title="ctl+alt+h"
-          onClick={() => setHideUnfiltered(!hideUnfiltered)}
+          onClick={() =>
+            setProjectProperty({ hideUnfiltered: !hideUnfiltered })
+          }
           look={hideUnfiltered ? "primary" : "destructive"}
         >
           {hideUnfiltered ? "Show" : "Hide"} Lines
@@ -33,7 +30,7 @@ export function Toolbar() {
             id="showOGdate"
             type="checkbox"
             onChange={(e) => {
-              setShowOGDate(e.target.checked);
+              setProjectProperty({ showOGDate: e.target.checked });
             }}
             checked={showOGDate}
             className="p-1"
@@ -50,7 +47,7 @@ export function Toolbar() {
             value="date"
             className="p-1"
             onClick={(e) => {
-              setSortBy((e.target as any).value);
+              setProjectProperty({ sortBy: (e.target as any).value });
             }}
           ></input>
           <label htmlFor="Sort By Date" className="p-1">
@@ -65,7 +62,7 @@ export function Toolbar() {
             value="file"
             className="p-1"
             onClick={(e) => {
-              setSortBy((e.target as any).value);
+              setProjectProperty({ sortBy: (e.target as any).value });
             }}
           ></input>
           <label htmlFor="Sort By File" className="p-1">

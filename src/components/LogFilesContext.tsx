@@ -22,13 +22,6 @@ export type LogFilesContextType = {
   enableFilter: (filter: string) => void;
   updateFilter: (filter: Filter) => void;
   updateFilterPriority: (filter: Filter, delta: number) => void;
-  getLineColorByFilter: (line: LogLine) => string;
-  hideUnfiltered: boolean;
-  setHideUnfiltered: (hideUnfiltered: boolean) => void;
-  sortBy: "date" | "file";
-  setSortBy: (sortBy: "date" | "file") => void;
-  showOGDate: boolean;
-  setShowOGDate: (showOGDate: boolean) => void;
 };
 
 export type DateFilterContextType = {
@@ -89,35 +82,17 @@ export const LogFilesContext = React.createContext<LogFilesContextType>({
   removeFilter: () => {},
   disableFilter: () => {},
   enableFilter: () => {},
-  getLineColorByFilter: () => "white",
-  hideUnfiltered: false,
-  setHideUnfiltered: () => {},
-  sortBy: "file",
-  setSortBy: () => {},
   updateFilterPriority: () => {},
-  showOGDate: false,
-  setShowOGDate: () => {},
   updateFilter: () => {},
 });
 
 export const LogFilesContextProvider = ({ children }: any) => {
-  const { start, end } = React.useContext(DateFilterContext);
-  const [showOGDate, setShowOGDate] = useState(false);
   const [logsAreInSync, setLogsAreInSync] = useState(true);
-  const [sortBy, setsortBy] = useState<"date" | "file">("date");
-  const [hideUnfiltered, sethideUnfiltered] = useState(false);
   const [filters, setFilters] = useState<Filter[]>([]);
   const [lines, setLines] = React.useState<LogLine[]>([]);
-
   const { logFiles, updateLogFile } = useFilesContext();
-
-  const setShowOGDateCb = React.useCallback(
-    (showOGDate: boolean) => {
-      setShowOGDate(showOGDate);
-      setLogsAreInSync(false);
-    },
-    [setShowOGDate, setLogsAreInSync]
-  );
+  const { project } = useProjectContext();
+  const { hideUnfiltered, showOGDate, sortBy } = project;
 
   const mergeLogFiles = React.useCallback(() => {
     const mergedLines = dedupeLogLines(
@@ -131,11 +106,6 @@ export const LogFilesContextProvider = ({ children }: any) => {
   useEffect(() => {
     mergeLogFiles();
   }, [mergeLogFiles]);
-
-  const setSortByCb = React.useCallback(
-    (sortBy: "date" | "file") => setsortBy(sortBy),
-    [setsortBy]
-  );
 
   const setFilter = React.useCallback(
     (filter: Filter) => {
@@ -161,20 +131,6 @@ export const LogFilesContextProvider = ({ children }: any) => {
       setFilters(filters.filter((f) => f.id !== filterId));
     },
     [setFilters, filters]
-  );
-
-  const getLineColorByFilter = React.useCallback(
-    (line: LogLine) => {
-      for (let filter of filters) {
-        if (!filter.isDisabled) {
-          if (line.text.toLowerCase().includes(filter.filter.toLowerCase())) {
-            return filter.color;
-          }
-        }
-      }
-      return "white";
-    },
-    [filters]
   );
 
   const disableFilter = React.useCallback(
@@ -222,12 +178,7 @@ export const LogFilesContextProvider = ({ children }: any) => {
     },
     [setFilters, filters]
   );
-  const setHideUnfilteredExternal = React.useCallback(
-    (value: boolean) => {
-      sethideUnfiltered(value);
-    },
-    [sethideUnfiltered]
-  );
+
   const filteredLines = useMemo(() => {
     const filtersResult = searchLines(lines, hideUnfiltered, filters);
     return {
@@ -250,16 +201,9 @@ export const LogFilesContextProvider = ({ children }: any) => {
       removeFilter,
       disableFilter,
       enableFilter,
-      getLineColorByFilter,
-      setHideUnfiltered: setHideUnfilteredExternal,
-      hideUnfiltered,
-      sortBy,
-      setSortBy: setSortByCb,
       updateLogFile,
       updateFilterPriority,
       logsAreInSync,
-      showOGDate,
-      setShowOGDate: setShowOGDateCb,
       updateFilter,
       setFilters: setFiltersCb,
     }),
@@ -272,16 +216,9 @@ export const LogFilesContextProvider = ({ children }: any) => {
       removeFilter,
       disableFilter,
       enableFilter,
-      getLineColorByFilter,
-      setHideUnfilteredExternal,
-      hideUnfiltered,
-      setSortByCb,
-      sortBy,
       updateFilterPriority,
       updateLogFile,
       logsAreInSync,
-      showOGDate,
-      setShowOGDateCb,
       updateFilter,
       setFiltersCb,
     ]
@@ -295,4 +232,7 @@ export const LogFilesContextProvider = ({ children }: any) => {
 
 export function useLogFilesContext() {
   return React.useContext(LogFilesContext);
+}
+function useProjectContext(): { project: any; setProjectProperty: any } {
+  throw new Error("Function not implemented.");
 }
