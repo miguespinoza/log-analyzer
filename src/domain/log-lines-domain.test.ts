@@ -174,10 +174,12 @@ const tmplogsDateSorting2 = `2022-09-26T15:50:34.452Z Inf	CDL: ...log
 
 test("test date sorting", () => {
   const file1 = preProcessLogFile({
+    fileHandle: {} as any,
     content: TMPTestLogsDateSorting,
     name: "one",
   });
   const file2 = preProcessLogFile({
+    fileHandle: {} as any,
     content: tmplogsDateSorting2,
     name: "two",
   });
@@ -206,7 +208,6 @@ test("test date sorting", () => {
     ]
   `);
 });
-
 
 const etlTestLogs = `36E0.0E80,09/15/2022-09:34:53.583,,TL_INFO ... log line
 36E0.0E80,09/15/2022-09:34:53.583,,TL_INFO ... log line
