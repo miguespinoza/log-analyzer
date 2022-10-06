@@ -15,9 +15,9 @@ import ProjectFileContextProvider from "./context/ProjectFileContext";
 function App() {
   return (
     <FilesProvider>
-      <DateFilterContextProvider>
-        <LogLinesContextProvider>
-          <ProjectFileContextProvider>
+      <ProjectFileContextProvider>
+        <DateFilterContextProvider>
+          <LogLinesContextProvider>
             <DropFileZone>
               <div className="App">
                 <LoadFiles />
@@ -27,9 +27,9 @@ function App() {
                 <KeyboardShortCuts />
               </div>
             </DropFileZone>
-          </ProjectFileContextProvider>
-        </LogLinesContextProvider>
-      </DateFilterContextProvider>
+          </LogLinesContextProvider>
+        </DateFilterContextProvider>
+      </ProjectFileContextProvider>
     </FilesProvider>
   );
 }
