@@ -33,7 +33,7 @@ export default function ManageTaTFilters({
       if (filtersFile) {
         saveFile(filtersFile, xml);
       } else {
-        saveFileAs(`${projectName}-filters.xml`, xml);
+        saveFileAs(`${projectName}.tat`, xml);
       }
     } else {
       downloadFile(`${projectName}.tat`, xml, "text/xml");

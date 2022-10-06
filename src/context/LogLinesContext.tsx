@@ -167,8 +167,8 @@ export const LogLinesContextProvider = ({ children }: any) => {
   }, [lines, filters, hideUnfiltered]);
 
   const sortedLines = useMemo(() => {
-    return sortLines(sortBy, filteredLines.lines);
-  }, [filteredLines, sortBy]);
+    return sortLines(sortBy, filteredLines.lines, logFiles);
+  }, [filteredLines, sortBy, logFiles]);
 
   const data = useMemo(
     () => ({
