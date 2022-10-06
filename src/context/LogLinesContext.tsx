@@ -15,14 +15,6 @@ export type LogLinesContextType = {
   updateLogFile: (file: LogFile) => void;
   mergeLogFiles: () => void;
   logsAreInSync: boolean;
-  filters: Filter[];
-  setFilter: (filter: Filter) => void;
-  setFilters: (filters: Filter[]) => void;
-  removeFilter: (filter: string) => void;
-  disableFilter: (filter: string) => void;
-  enableFilter: (filter: string) => void;
-  updateFilter: (filter: Filter) => void;
-  updateFilterPriority: (filter: Filter, delta: number) => void;
 };
 
 export type DateFilterContextType = {
@@ -55,14 +47,6 @@ export const LogLinesContext = React.createContext<LogLinesContextType>({
   updateLogFile: () => {},
   logsAreInSync: true,
   mergeLogFiles: () => {},
-  filters: [],
-  setFilter: () => {},
-  setFilters: () => {},
-  removeFilter: () => {},
-  disableFilter: () => {},
-  enableFilter: () => {},
-  updateFilterPriority: () => {},
-  updateFilter: () => {},
 });
 
 export const LogLinesContextProvider = ({ children }: any) => {
@@ -181,15 +165,8 @@ export const LogLinesContextProvider = ({ children }: any) => {
       lines: sortedLines,
       mergeLogFiles,
       filters: filteredLines.filters,
-      setFilter,
-      removeFilter,
-      disableFilter,
-      enableFilter,
       updateLogFile,
-      updateFilterPriority,
       logsAreInSync,
-      updateFilter,
-      setFilters: setFiltersCb,
     }),
     [
       logFiles,

@@ -1,4 +1,5 @@
 import { v4 } from "uuid";
+import { ProjectType } from "../context/ProjectFileContext";
 import { Filter } from "./types";
 
 /*
@@ -24,6 +25,26 @@ export function extractFiltersFromXML(xml: string): {
   }
 
   return { filters, errors: [] };
+}
+
+export function extractProjectFromXML(xml: string): ProjectType {
+  const regex = /<project.*?\/>/g;
+  const match = regex.exec(xml);
+  if (match && match[0]) {
+    return extractProjectFromXMLProject(match[0]);
+  } else {
+    throw new Error("Could not find project in xml");
+  }
+}
+
+function extractProjectFromXMLProject(xml: string): ProjectType {
+  return {
+    name: getXMLPropery(xml, "name"),
+    sortBy: getXMLPropery(xml, "sortBy") as "file" | "date",
+    sortDirection: getXMLPropery(xml, "sortDirection") as "asc" | "desc",
+    showOGDate: getXMLPropery(xml, "showOGDate") === "y",
+    hideUnfiltered: getXMLPropery(xml, "hideUnfiltered") === "y",
+  };
 }
 
 export function adaptFiltersToXML(filters: Filter[]): string {

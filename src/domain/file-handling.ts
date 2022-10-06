@@ -8,7 +8,7 @@ interface TextFile {
   content: string;
 }
 
-interface TextFilev2 extends TextFile {
+export interface TextFilev2 extends TextFile {
   fileHandle: FileSystemFileHandle;
 }
 
@@ -46,6 +46,13 @@ export function downloadFile(
   link.download = name;
   link.click();
 }
+
+
+export const projectFileLoadingSubject = new ReplaySubject<TextFilev2>(
+  100,
+  10000
+);
+export const projectFileLoading$ = projectFileLoadingSubject.asObservable();
 
 export const fileLoadingSubject = new ReplaySubject<TextFilev2>(100, 10000);
 export const fileLoading$ = fileLoadingSubject
