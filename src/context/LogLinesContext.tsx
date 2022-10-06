@@ -8,7 +8,7 @@ import { useFilesContext } from "./FileContext";
 import { MemoComponent } from "../components/MemoComponent";
 import { Filter, LogFile, LogLine } from "../domain/types";
 
-export type LogFilesContextType = {
+export type LogLinesContextType = {
   logFiles: LogFile[];
   lines: LogLine[];
   updateLogFile: (file: LogFile) => void;
@@ -48,7 +48,7 @@ export const DateFilterContextProvider = ({ children }: any) => {
   );
 };
 
-export const LogFilesContext = React.createContext<LogFilesContextType>({
+export const LogLinesContext = React.createContext<LogLinesContextType>({
   logFiles: [],
   lines: [],
   updateLogFile: () => {},
@@ -64,7 +64,7 @@ export const LogFilesContext = React.createContext<LogFilesContextType>({
   updateFilter: () => {},
 });
 
-export const LogFilesContextProvider = ({ children }: any) => {
+export const LogLinesContextProvider = ({ children }: any) => {
   const [logsAreInSync, setLogsAreInSync] = useState(true);
   const [filters, setFilters] = useState<Filter[]>([]);
   const [lines, setLines] = React.useState<LogLine[]>([]);
@@ -202,14 +202,14 @@ export const LogFilesContextProvider = ({ children }: any) => {
     ]
   );
   return (
-    <LogFilesContext.Provider value={data}>
+    <LogLinesContext.Provider value={data}>
       <MemoComponent>{children}</MemoComponent>
-    </LogFilesContext.Provider>
+    </LogLinesContext.Provider>
   );
 };
 
-export function useLogFilesContext() {
-  return React.useContext(LogFilesContext);
+export function useLogLinesContext() {
+  return React.useContext(LogLinesContext);
 }
 function useProjectContext(): { project: any; setProjectProperty: any } {
   throw new Error("Function not implemented.");

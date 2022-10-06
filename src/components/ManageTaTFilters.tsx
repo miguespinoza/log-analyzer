@@ -15,7 +15,7 @@ import {
 import { Button } from "./Button";
 import { useProjectFileContext } from "../context/ProjectFileContext";
 import { LabeledTextField } from "./LabeledTextField";
-import { useLogFilesContext } from "../context/LogFilesContext";
+import { useLogLinesContext } from "../context/LogLinesContext";
 import { Filter } from "../domain/types";
 
 export default function ManageTaTFilters({
@@ -23,7 +23,7 @@ export default function ManageTaTFilters({
 }: {
   projectName: string;
 }) {
-  const { setFilters, filters } = useLogFilesContext();
+  const { setFilters, filters } = useLogLinesContext();
   const { filtersFile, setFiltersFile } = useProjectFileContext();
 
   const onSaveFilters = () => {

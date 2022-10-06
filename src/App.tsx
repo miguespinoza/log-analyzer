@@ -2,8 +2,8 @@ import "./App.css";
 import LoadFiles from "./components/LoadFiles";
 import {
   DateFilterContextProvider,
-  LogFilesContextProvider,
-} from "./context/LogFilesContext";
+  LogLinesContextProvider,
+} from "./context/LogLinesContext";
 import { LinesRenderer } from "./components/LinesRenderer";
 import { Filters } from "./components/Filters";
 import { KeyboardShortCuts } from "./components/KeyboardShortCuts";
@@ -16,7 +16,7 @@ function App() {
   return (
     <FilesProvider>
       <DateFilterContextProvider>
-        <LogFilesContextProvider>
+        <LogLinesContextProvider>
           <ProjectFileContextProvider>
             <DropFileZone>
               <div className="App">
@@ -28,7 +28,7 @@ function App() {
               </div>
             </DropFileZone>
           </ProjectFileContextProvider>
-        </LogFilesContextProvider>
+        </LogLinesContextProvider>
       </DateFilterContextProvider>
     </FilesProvider>
   );

@@ -7,14 +7,14 @@ import {
   TrashIcon,
 } from "@heroicons/react/24/solid";
 import FilterForm from "./FilterForm";
-import { useLogFilesContext } from "../context/LogFilesContext";
+import { useLogLinesContext } from "../context/LogLinesContext";
 import ReactModal from "react-modal";
 import { useState } from "react";
 import { IconButton } from "./IconButton";
 import { Filter } from "../domain/types";
 
 export function Filters() {
-  const { filters } = useLogFilesContext();
+  const { filters } = useLogLinesContext();
   return (
     <div
       style={{ maxHeight: "calc(15rem - 43px)" }}
@@ -34,7 +34,7 @@ const ActiveFilter = ({ filter }: { filter: Filter }) => {
     enableFilter,
     updateFilterPriority,
     setFilter,
-  } = useLogFilesContext();
+  } = useLogLinesContext();
   const [showModal, setShowModal] = useState(false);
   return (
     <div

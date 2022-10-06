@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "./Button";
 import { LabeledTextField } from "./LabeledTextField";
-import { useLogFilesContext } from "../context/LogFilesContext";
+import { useLogLinesContext } from "../context/LogLinesContext";
 import { v4 as uuid } from "uuid";
 import { Filter } from "../domain/types";
 
@@ -18,7 +18,7 @@ export default function FilterForm({
   onSaved?: () => void;
   copactMode?: boolean;
 }) {
-  const { setFilter: addFilter, updateFilter } = useLogFilesContext();
+  const { setFilter: addFilter, updateFilter } = useLogLinesContext();
   return (
     <div>
       <form

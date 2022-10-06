@@ -7,7 +7,7 @@ import {
   makeHandleHTMLFileInputReactive,
   onLogFilePickerClick,
 } from "../domain/file-handling";
-import { useLogFilesContext } from "../context/LogFilesContext";
+import { useLogLinesContext } from "../context/LogLinesContext";
 import { ExclamationTriangleIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { useFilesContext } from "../context/FileContext";
 import { LabeledTextField } from "./LabeledTextField";
@@ -43,7 +43,7 @@ export function OpenFilesInput() {
 }
 
 export default function LoadFiles() {
-  const { logFiles, updateLogFile } = useLogFilesContext();
+  const { logFiles, updateLogFile } = useLogLinesContext();
   const { removeLogFile } = useFilesContext();
 
   return (

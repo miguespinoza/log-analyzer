@@ -1,12 +1,12 @@
 import { useHotkeys } from "react-hotkeys-hook";
 import { getFileColor } from "../domain/file-handling";
-import { useLogFilesContext } from "../context/LogFilesContext";
+import { useLogLinesContext } from "../context/LogLinesContext";
 import { v4 as uuid } from "uuid";
 import { useProjectFileContext } from "../context/ProjectFileContext";
 
 export function KeyboardShortCuts() {
   const { updateProject, project } = useProjectFileContext();
-  const context = useLogFilesContext();
+  const context = useLogLinesContext();
 
   useHotkeys(
     "ctrl+alt+h",

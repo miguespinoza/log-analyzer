@@ -1,4 +1,4 @@
-import { useLogFilesContext } from "../context/LogFilesContext";
+import { useLogLinesContext } from "../context/LogLinesContext";
 import { Virtuoso } from "react-virtuoso";
 import useResizeObserver from "use-resize-observer";
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
@@ -7,7 +7,7 @@ import { FilterFormModal } from "./Filters";
 import { LogLine } from "../domain/types";
 
 export function LinesRenderer() {
-  const { lines } = useLogFilesContext();
+  const { lines } = useLogLinesContext();
   const listRef = useRef<any>();
   const linesLengthRef = useRef<number>();
   const [isNewFilterModalOpen, setIsNewFilterModalOpen] = useState(false);
