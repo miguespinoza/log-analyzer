@@ -2,6 +2,7 @@ import { ChangeEvent, ChangeEventHandler } from "react";
 import { parseLogFile } from "./log-lines-domain";
 import { map, ReplaySubject } from "rxjs";
 import { LogFile } from "./types";
+import { v4 as uuidv4 } from "uuid";
 interface TextFile {
   name: string;
   content: string;
@@ -148,20 +149,24 @@ export const makeDragFileInputHandler: (
 
 export function preProcessLogFile(file: TextFilev2): LogFile {
   const color = getFileColor();
-  const { lines, linesWithoutDateCount } = parseLogFile(
+  const fileId = uuidv4();
+  const { lines, linesWithoutDateCount, sorted } = parseLogFile(
+    fileId,
     file.content,
     file.name,
     color
   );
   return {
-    name: file.name,
-    text: file.content,
+    color,
     fileHandle: file.fileHandle,
+    id: fileId,
+    isVisible: true,
     lines,
     linesWithoutDateCount,
-    color,
+    name: file.name,
+    sorted,
+    text: file.content,
     timezone: 0,
-    isVisible: true,
   };
 }
 

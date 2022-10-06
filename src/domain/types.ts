@@ -2,7 +2,9 @@ export type LogFile = {
   name: string;
   color: string;
   fileHandle?: FileSystemFileHandle;
+  id: string;
   text: string;
+  sorted: "asc" | "desc" | null;
   lines: LogLine[];
   timezone: number;
   linesWithoutDateCount: number;
@@ -22,6 +24,7 @@ export type Filter = {
 
 export interface LogLine {
   id: string;
+  fileId: string;
   date: Date | null;
   count: number;
   hash: string;

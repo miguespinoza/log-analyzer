@@ -11,11 +11,17 @@ import { Filter } from "./types";
 
 test("should parse log line", () => {
   const logLine = "2022-09-26T15:49:53.444Z Inf	CID[main] log line";
-  const { lines: parsedLogLine } = parseLogLines([logLine], "test", "white");
+  const { lines: parsedLogLine } = parseLogLines(
+    [logLine],
+    "test",
+    "white",
+    "fileID"
+  );
   expect(parsedLogLine).toEqual([
     {
       date: new Date("2022-09-26T15:49:53.444Z"),
       fileName: "test",
+      fileId: "fileID",
       hash: "6fc3aa43-1bf1-5a3d-b439-bee6dd7f6707",
       id: expect.any(String),
       text: "2022-09-26T15:49:53.444Z Inf	CID[main] log line",
@@ -26,6 +32,7 @@ test("should parse log line", () => {
 });
 test("should parse log file", () => {
   const { lines: aLines, linesWithoutDateCount } = parseLogFile(
+    "id",
     TMPTestLogs,
     "a",
     "white"
@@ -36,7 +43,7 @@ test("should parse log file", () => {
 });
 
 test("should search lines with filters", () => {
-  const { lines: aLines } = parseLogFile(TMPTestLogs, "a", "white");
+  const { lines: aLines } = parseLogFile("id", TMPTestLogs, "a", "white");
   expect(aLines.length).toEqual(9);
   const filter: Filter = {
     id: "test",
@@ -51,7 +58,7 @@ test("should search lines with filters", () => {
 });
 
 test("should search lines with filters and hide all the lines that are not metched by a filter", () => {
-  const { lines: aLines } = parseLogFile(TMPTestLogs, "a", "white");
+  const { lines: aLines } = parseLogFile("id", TMPTestLogs, "a", "white");
   expect(aLines.length).toEqual(9);
   const filter: Filter = {
     id: "test",
@@ -82,6 +89,7 @@ test("should parse log file", () => {
   `;
 
   const { lines: aLines, linesWithoutDateCount } = parseLogFile(
+    "id",
     fileA,
     "a",
     "white"
@@ -93,6 +101,7 @@ test("should parse log file", () => {
 
 test("should parse teams desktop client logs.txt", () => {
   const { lines: aLines, linesWithoutDateCount } = parseLogFile(
+    "id",
     desktopClientLogs,
     "a",
     "white"
@@ -104,6 +113,7 @@ test("should parse teams desktop client logs.txt", () => {
 
 test("should parse logs witout dates", () => {
   const { lines: aLines, linesWithoutDateCount } = parseLogFile(
+    "id",
     NoDatesLogs,
     "a",
     "white"
@@ -114,6 +124,7 @@ test("should parse logs witout dates", () => {
 
 test("should parse UWP etl file", () => {
   const { lines: aLines, linesWithoutDateCount } = parseLogFile(
+    "id",
     etlTestLogs,
     "a",
     "white"
@@ -132,8 +143,8 @@ Wed Sep 28 2022 13:00:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- ...lo
 Wed Sep 28 2022 13:00:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- ...log 5
 Wed Sep 28 2022 13:00:57 GMT-0700 (Pacific Daylight Time) <912> -- info -- ...log
 Wed Sep 28 2022 13:01:27 GMT-0700 (Pacific Daylight Time) <912> -- info -- ...log`;
-  const { lines } = parseLogFile(desktopClientLogs, "a", "white");
-  const sorted = sortLines("date", lines);
+  const file = parseLogFile("id", desktopClientLogs, "a", "white");
+  const sorted = sortLines("date", file.lines, [file]);
   expect(sorted.map((l) => l.count)).toEqual([9, 8, 7, 6, 5, 4, 3, 2, 1]);
 });
 
@@ -161,18 +172,81 @@ const TMPTestLogsDateSorting = `2022-09-26T15:50:18.624Z Inf	CDL: ...log
 2022-09-26T15:51:00.311Z Inf	...log
 `;
 
-const tmplogsDateSorting2 = `2022-09-26T15:50:34.452Z Inf	CDL: ...log
-2022-09-26T15:50:34.452Z Inf	CDL: ...log
-2022-09-26T15:50:34.453Z Inf	CDL: ...log
-2022-09-26T15:50:34.455Z Inf	CDL: target
-2022-09-26T15:50:34.455Z Inf	CDL: 1
-2022-09-26T15:50:34.455Z Inf	CDL: 2
-2022-09-26T15:50:34.455Z Inf	CDL: 3
-2022-09-26T15:50:34.460Z Inf	CDL: ...log
-2022-09-26T15:50:34.463Z Inf	...log
-2022-09-26T15:50:34.463Z Inf	...log`;
+const tmplogsDateSorting2 = `2022-09-26T15:50:34.452Z Inf	CDL: ...1
+2022-09-26T15:50:34.452Z Inf	CDL: ...2
+2022-09-26T15:50:34.453Z Inf	CDL: ...3
+2022-09-26T15:50:34.455Z Inf	CDL: 4
+2022-09-26T15:50:34.455Z Inf	CDL: 5 target
+2022-09-26T15:50:34.455Z Inf	CDL: 6
+2022-09-26T15:50:34.455Z Inf	CDL: 7
+2022-09-26T15:50:34.460Z Inf	CDL: 8
+2022-09-26T15:50:34.463Z Inf	...9
+2022-09-26T15:50:34.463Z Inf	...10`;
 
-test("test date sorting", () => {
+test("test date sorting with one file that is sorted asc", () => {
+  const tmplogsDateSorting2Asc = `
+2022-09-26T15:50:34.463Z Inf	...10
+2022-09-26T15:50:34.463Z Inf	...9
+2022-09-26T15:50:34.460Z Inf	CDL: 8
+2022-09-26T15:50:34.455Z Inf	CDL: 7
+2022-09-26T15:50:34.455Z Inf	CDL: 6
+2022-09-26T15:50:34.455Z Inf	CDL: 5 target
+2022-09-26T15:50:34.455Z Inf	CDL: 4
+2022-09-26T15:50:34.453Z Inf	CDL: ...3
+2022-09-26T15:50:34.452Z Inf	CDL: ...2
+2022-09-26T15:50:34.452Z Inf	CDL: ...1`;
+  const file2 = preProcessLogFile({
+    fileHandle: {} as any,
+    content: tmplogsDateSorting2Asc,
+    name: "two",
+  });
+
+  const merged = dedupeLogLines([file2], true);
+  const sorted = sortLines("date", merged, [file2]);
+  const linesDates = sorted.map((l) => l.text);
+  expect(linesDates.map((d) => d)).toMatchInlineSnapshot(`
+    [
+      "2022-09-26T15:50:34.463Z Inf	...10",
+      "2022-09-26T15:50:34.463Z Inf	...9",
+      "2022-09-26T15:50:34.460Z Inf	CDL: 8",
+      "2022-09-26T15:50:34.455Z Inf	CDL: 7",
+      "2022-09-26T15:50:34.455Z Inf	CDL: 6",
+      "2022-09-26T15:50:34.455Z Inf	CDL: 5 target",
+      "2022-09-26T15:50:34.455Z Inf	CDL: 4",
+      "2022-09-26T15:50:34.453Z Inf	CDL: ...3",
+      "2022-09-26T15:50:34.452Z Inf	CDL: ...2",
+      "2022-09-26T15:50:34.452Z Inf	CDL: ...1",
+    ]
+  `);
+});
+
+test("test date sorting with one file that is sorted desc", () => {
+  const file2 = preProcessLogFile({
+    fileHandle: {} as any,
+    content: tmplogsDateSorting2,
+    name: "two",
+  });
+
+  const merged = dedupeLogLines([file2], true);
+  const sorted = sortLines("date", merged, [file2]);
+  const linesDates = sorted.map((l) => l.text);
+  expect(linesDates.map((d) => d)).toMatchInlineSnapshot(`
+    [
+      "2022-09-26T15:50:34.463Z Inf	...10",
+      "2022-09-26T15:50:34.463Z Inf	...9",
+      "2022-09-26T15:50:34.460Z Inf	CDL: 8",
+      "2022-09-26T15:50:34.455Z Inf	CDL: 7",
+      "2022-09-26T15:50:34.455Z Inf	CDL: 6",
+      "2022-09-26T15:50:34.455Z Inf	CDL: 5 target",
+      "2022-09-26T15:50:34.455Z Inf	CDL: 4",
+      "2022-09-26T15:50:34.453Z Inf	CDL: ...3",
+      "2022-09-26T15:50:34.452Z Inf	CDL: ...2",
+      "2022-09-26T15:50:34.452Z Inf	CDL: ...1",
+    ]
+  `);
+});
+
+test("test date sorting with multiple files", () => {
   const file1 = preProcessLogFile({
     fileHandle: {} as any,
     content: TMPTestLogsDateSorting,
@@ -185,20 +259,22 @@ test("test date sorting", () => {
   });
 
   const merged = dedupeLogLines([file1, file2], true);
-  const sorted = sortLines("date", merged);
+  const sorted = sortLines("date", merged, [file1, file2]);
   const linesDates = sorted.map((l) => l.text);
   expect(linesDates.map((d) => d)).toMatchInlineSnapshot(`
     [
       "2022-09-26T15:51:00.311Z Inf	...log
     ",
-      "2022-09-26T15:50:34.463Z Inf	...log",
-      "2022-09-26T15:50:34.460Z Inf	CDL: ...log",
-      "2022-09-26T15:50:34.455Z Inf	CDL: 3",
-      "2022-09-26T15:50:34.455Z Inf	CDL: 2",
-      "2022-09-26T15:50:34.455Z Inf	CDL: 1",
-      "2022-09-26T15:50:34.455Z Inf	CDL: target",
-      "2022-09-26T15:50:34.453Z Inf	CDL: ...log",
-      "2022-09-26T15:50:34.452Z Inf	CDL: ...log",
+      "2022-09-26T15:50:34.463Z Inf	...10",
+      "2022-09-26T15:50:34.463Z Inf	...9",
+      "2022-09-26T15:50:34.460Z Inf	CDL: 8",
+      "2022-09-26T15:50:34.455Z Inf	CDL: 7",
+      "2022-09-26T15:50:34.455Z Inf	CDL: 6",
+      "2022-09-26T15:50:34.455Z Inf	CDL: 5 target",
+      "2022-09-26T15:50:34.455Z Inf	CDL: 4",
+      "2022-09-26T15:50:34.453Z Inf	CDL: ...3",
+      "2022-09-26T15:50:34.452Z Inf	CDL: ...2",
+      "2022-09-26T15:50:34.452Z Inf	CDL: ...1",
       "2022-09-26T15:50:18.653Z Inf	...log",
       "2022-09-26T15:50:18.637Z Inf	CDL: ...log",
       "2022-09-26T15:50:18.636Z Inf	CDL: ...log",

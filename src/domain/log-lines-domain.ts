@@ -55,8 +55,13 @@ const MY_NAMESPACE = "1b671a64-40d5-491e-99b0-da01ff1f3341";
 export function parseLogLines(
   lines: string[],
   fileName: string,
-  color: string
-): { lines: LogLine[]; linesWithoutDateCount: number } {
+  color: string,
+  fileId: string
+): {
+  lines: LogLine[];
+  linesWithoutDateCount: number;
+  sorted: "asc" | "desc" | null;
+} {
   const logLines: LogLine[] = [];
   let count = 0;
   let linesWithoutDateCount = 0;
@@ -66,6 +71,7 @@ export function parseLogLines(
     if (date) {
       logLines.push({
         id: uuidv4(),
+        fileId,
         hash: uuidHash(line, MY_NAMESPACE),
         date,
         count,
@@ -77,6 +83,7 @@ export function parseLogLines(
       linesWithoutDateCount++;
       logLines.push({
         id: uuidv4(),
+        fileId,
         hash: uuidHash(line, MY_NAMESPACE),
         date: null,
         count,
@@ -86,15 +93,37 @@ export function parseLogLines(
       });
     }
   }
-  return { lines: logLines, linesWithoutDateCount };
+  return {
+    lines: logLines,
+    linesWithoutDateCount,
+    sorted: areLinesSortedAscOrDesc(logLines),
+  };
 }
 
 export function parseLogFile(
+  fileId: string,
   text: string,
   fileName: string,
   color: string
-): { lines: LogLine[]; linesWithoutDateCount: number } {
-  return parseLogLines(separateLogLines(text), fileName, color);
+): LogFile {
+  const { lines, linesWithoutDateCount, sorted } = parseLogLines(
+    separateLogLines(text),
+    fileName,
+    color,
+    fileId
+  );
+  return {
+    color,
+    fileHandle: undefined as any,
+    id: fileId,
+    isVisible: true,
+    lines,
+    linesWithoutDateCount,
+    name: fileName,
+    sorted,
+    text,
+    timezone: 0,
+  };
 }
 
 export function dedupeLogLines(
@@ -119,6 +148,31 @@ export function dedupeLogLines(
     }
   }
   return mergedLines;
+}
+type SortedBy = "asc" | "desc" | null;
+function areLinesSortedAscOrDesc(lines: LogLine[]): SortedBy {
+  if (lines.length < 2) {
+    return null;
+  }
+  const firstLineWithDate = lines.find((line) => line.date !== null);
+  let lastLineWithDate = null;
+  for (let i = lines.length - 1; i >= 0; i--) {
+    if (lines[i].date !== null) {
+      lastLineWithDate = lines[i];
+      break;
+    }
+  }
+  if (!firstLineWithDate || !lastLineWithDate) {
+    return null;
+  }
+  if (firstLineWithDate.date && lastLineWithDate.date) {
+    if (firstLineWithDate.date < lastLineWithDate.date) {
+      return "asc";
+    } else {
+      return "desc";
+    }
+  }
+  return null;
 }
 
 export function searchLines(
@@ -174,7 +228,8 @@ function filterMatchesLine(filter: Filter, line: LogLine) {
 
 export function sortLines(
   sortBy: "date" | "file",
-  lines: LogLine[]
+  lines: LogLine[],
+  files: LogFile[]
 ): LogLine[] {
   if (sortBy === "date") {
     const dateLogLines = lines.filter((l) => l.date != null);
@@ -185,7 +240,14 @@ export function sortLines(
         } ommited due to sorting by date`
       );
     }
-    return sortObjectsByDate<LogLine>(dateLogLines, true);
+    const fileSortedBy: (id: string) => SortedBy = (id) => {
+      const file = files.find((l) => l.id === id);
+      if (file) {
+        return file.sorted;
+      }
+      return null;
+    };
+    return sortLogLineByDate(dateLogLines, true, fileSortedBy);
   } else if (sortBy === "file") {
     return lines.sort((a, b) => {
       if (a.fileName !== b.fileName) {
@@ -200,10 +262,12 @@ export function sortLines(
 }
 
 // sort objects by date
-export function sortObjectsByDate<
-  T extends { date: Date | null; count: number }
->(objects: T[], descending: boolean): T[] {
-  return objects.sort((a, b) => {
+export function sortLogLineByDate(
+  lines: LogLine[],
+  descending: boolean,
+  fileSortedBy: (fileId: string) => SortedBy
+): LogLine[] {
+  return lines.sort((a, b) => {
     if (a.date == null) {
       return -1;
     }
@@ -211,10 +275,25 @@ export function sortObjectsByDate<
       return 1;
     }
     if (b.date.getTime() === a.date.getTime()) {
+      if (a.fileId !== b.fileId) {
+        // if lines come from different files, preserve original sort order
+        return 0;
+      }
+      // if lines come from the same file, sort by file order
+      // if file is sorted, adapt the sort order to the one we are sorting by so that the sort is consistent with the file sort
+      const fileSorted = fileSortedBy(a.fileId);
       if (descending) {
-        return b.count - a.count;
+        if (fileSorted === "asc") {
+          return b.count - a.count;
+        } else {
+          return a.count - b.count;
+        }
       } else {
-        return a.count - b.count;
+        if (fileSorted === "asc") {
+          return a.count - b.count;
+        } else {
+          return b.count - a.count;
+        }
       }
     }
     if (descending) {
