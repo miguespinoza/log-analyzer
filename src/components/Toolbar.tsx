@@ -40,34 +40,30 @@ export function Toolbar() {
           </label>
         </div>
         <div>
-          <input
-            id="Sort By Date"
-            type="radio"
-            name="sort"
-            value="date"
-            className="p-1"
-            onClick={(e) => {
-              setProjectProperty({ sortBy: (e.target as any).value });
+          <label htmlFor="sortBy">Sort By:</label>
+          <select
+            id="sortBy"
+            onChange={(e) => {
+              setProjectProperty({ sortBy: e.target.value as any });
             }}
-          ></input>
-          <label htmlFor="Sort By Date" className="p-1">
-            Sort By Date
-          </label>
+          >
+            <option value="date">Date</option>
+            <option value="file">File</option>
+          </select>
         </div>
         <div>
-          <input
-            id="Sort By File"
-            type="radio"
-            name="sort"
-            value="file"
-            className="p-1"
-            onClick={(e) => {
-              setProjectProperty({ sortBy: (e.target as any).value });
+          <label htmlFor="sortOrder">Sort order:</label>
+          <select
+            id="sortOrder"
+            onChange={(e) => {
+              setProjectProperty({ sortDirection: e.target.value as any });
             }}
-          ></input>
-          <label htmlFor="Sort By File" className="p-1">
-            Sort By File
-          </label>
+          >
+            <option value="desc">Descending</option>
+            <option value="asc">Ascending</option>
+          </select>
+        </div>
+        <div>
           <Button
             look="secondary"
             title="open settings"

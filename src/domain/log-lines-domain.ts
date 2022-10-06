@@ -149,8 +149,8 @@ export function dedupeLogLines(
   }
   return mergedLines;
 }
-type SortedBy = "asc" | "desc" | null;
-function areLinesSortedAscOrDesc(lines: LogLine[]): SortedBy {
+type SortDirection = "asc" | "desc" | null;
+function areLinesSortedAscOrDesc(lines: LogLine[]): SortDirection {
   if (lines.length < 2) {
     return null;
   }
@@ -228,6 +228,7 @@ function filterMatchesLine(filter: Filter, line: LogLine) {
 
 export function sortLines(
   sortBy: "date" | "file",
+  direction: SortDirection,
   lines: LogLine[],
   files: LogFile[]
 ): LogLine[] {
@@ -240,20 +241,24 @@ export function sortLines(
         } ommited due to sorting by date`
       );
     }
-    const fileSortedBy: (id: string) => SortedBy = (id) => {
+    const fileSortedBy: (id: string) => SortDirection = (id) => {
       const file = files.find((l) => l.id === id);
       if (file) {
         return file.sorted;
       }
       return null;
     };
-    return sortLogLineByDate(dateLogLines, true, fileSortedBy);
+    return sortLogLineByDate(dateLogLines, direction === "desc", fileSortedBy);
   } else if (sortBy === "file") {
     return lines.sort((a, b) => {
       if (a.fileName !== b.fileName) {
         return a.fileName.localeCompare(b.fileName);
       } else {
-        return a.count - b.count;
+        if (direction === "asc") {
+          return a.count - b.count;
+        } else {
+          return b.count - a.count;
+        }
       }
     });
   } else {
@@ -265,7 +270,7 @@ export function sortLines(
 export function sortLogLineByDate(
   lines: LogLine[],
   descending: boolean,
-  fileSortedBy: (fileId: string) => SortedBy
+  fileSortedBy: (fileId: string) => SortDirection
 ): LogLine[] {
   return lines.sort((a, b) => {
     if (a.date == null) {

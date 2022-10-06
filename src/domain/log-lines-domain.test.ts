@@ -144,7 +144,7 @@ Wed Sep 28 2022 13:00:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- ...lo
 Wed Sep 28 2022 13:00:57 GMT-0700 (Pacific Daylight Time) <912> -- info -- ...log
 Wed Sep 28 2022 13:01:27 GMT-0700 (Pacific Daylight Time) <912> -- info -- ...log`;
   const file = parseLogFile("id", desktopClientLogs, "a", "white");
-  const sorted = sortLines("date", file.lines, [file]);
+  const sorted = sortLines("date", "desc", file.lines, [file]);
   expect(sorted.map((l) => l.count)).toEqual([9, 8, 7, 6, 5, 4, 3, 2, 1]);
 });
 
@@ -202,7 +202,7 @@ test("test date sorting with one file that is sorted asc", () => {
   });
 
   const merged = dedupeLogLines([file2], true);
-  const sorted = sortLines("date", merged, [file2]);
+  const sorted = sortLines("date", "desc", merged, [file2]);
   const linesDates = sorted.map((l) => l.text);
   expect(linesDates.map((d) => d)).toMatchInlineSnapshot(`
     [
@@ -228,7 +228,7 @@ test("test date sorting with one file that is sorted desc", () => {
   });
 
   const merged = dedupeLogLines([file2], true);
-  const sorted = sortLines("date", merged, [file2]);
+  const sorted = sortLines("date", "desc", merged, [file2]);
   const linesDates = sorted.map((l) => l.text);
   expect(linesDates.map((d) => d)).toMatchInlineSnapshot(`
     [
@@ -259,7 +259,7 @@ test("test date sorting with multiple files", () => {
   });
 
   const merged = dedupeLogLines([file1, file2], true);
-  const sorted = sortLines("date", merged, [file1, file2]);
+  const sorted = sortLines("date", "desc", merged, [file1, file2]);
   const linesDates = sorted.map((l) => l.text);
   expect(linesDates.map((d) => d)).toMatchInlineSnapshot(`
     [
