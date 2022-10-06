@@ -1,13 +1,15 @@
-import React, { useState } from "react";
+import React from "react";
 import { withModal } from "./withModal";
 import { LabeledTextField } from "./LabeledTextField";
 import { Button } from "./Button";
 import { Helmet } from "react-helmet";
 import ManageTaTFilters from "./ManageTaTFilters";
+import { useProjectFileContext } from "./ProjectFileContext";
 const appShortName = "RLA";
 
 export default function AppSettings() {
-  const [projectName, setProjectName] = useState("");
+  const { project, setProject } = useProjectFileContext();
+
   return (
     <div>
       <span>AppSettings</span>
@@ -18,7 +20,7 @@ export default function AppSettings() {
           const data = new FormData(form);
           const projectName = data.get("projectName") as string | undefined;
           if (projectName != null) {
-            setProjectName(projectName);
+            setProject({ ...project, name: projectName });
           }
           form.reset();
         }}
@@ -26,7 +28,7 @@ export default function AppSettings() {
         <div className="p-2 border">
           <LabeledTextField
             label="Project Name"
-            inputProps={{ name: "projectName", defaultValue: projectName }}
+            inputProps={{ name: "projectName", defaultValue: project.name }}
           />
           <LabeledTextField
             label="Create Quick Filter Shortcut"
@@ -48,12 +50,12 @@ export default function AppSettings() {
         </div>
         <div className="p-2 border">
           <ManageTaTFilters
-            projectName={projectName === "" ? "filters" : projectName}
+            projectName={project.name === "" ? "filters" : project.name}
           />
         </div>
       </form>
       <Helmet>
-        <title>{`${projectName} : ${appShortName}`}</title>
+        <title>{`${project.name} : ${appShortName}`}</title>
       </Helmet>
     </div>
   );

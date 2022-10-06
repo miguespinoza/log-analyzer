@@ -2,6 +2,7 @@ import React from "react";
 import { fileLoading$ } from "../domain/file-handling";
 import { LogFile } from "./LogFilesContext";
 import { concatMap, Subscription } from "rxjs";
+import { MemoComponent } from "./MemoComponent";
 
 export type LogFilesContextType = {
   logFiles: LogFile[];
@@ -88,7 +89,7 @@ export class FilesProvider extends React.Component<
           removeLogFile: this.removeLogFile.bind(this),
         }}
       >
-        {this.props.children}
+        <MemoComponent>{this.props.children}</MemoComponent>
       </LogFilesContext.Provider>
     );
   }

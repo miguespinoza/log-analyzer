@@ -2,19 +2,63 @@ import { ChangeEvent, ChangeEventHandler } from "react";
 import { LogFile } from "../components/LogFilesContext";
 import { parseLogFile } from "./log-lines-domain";
 import { map, ReplaySubject } from "rxjs";
-type TextFile = {
+interface TextFile {
   name: string;
   content: string;
-};
+}
 
-export const fileLoadingSubject = new ReplaySubject<TextFile>(100, 10000);
+interface TextFilev2 extends TextFile {
+  fileHandle: FileSystemFileHandle;
+}
+
+async function getSaveFileHandle(options?: any) {
+  const handle = await (window as any).showSaveFilePicker(options);
+  return handle;
+}
+
+export async function saveFileAs(sugestedName: string, contents: string) {
+  const handle = await getSaveFileHandle({
+    suggestedName: sugestedName,
+  });
+  await saveFile(handle, contents);
+}
+
+export async function saveFile(handle: FileSystemFileHandle, contents: string) {
+  try {
+    const writable = await (handle as any).createWritable();
+    await writable.write(contents).then(console.log);
+    await writable.close();
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+export function downloadFile(
+  name: string,
+  contents: string,
+  type: string = "text/plain"
+) {
+  const blob = new Blob([contents], { type: "text/xml" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = name;
+  link.click();
+}
+
+export const fileLoadingSubject = new ReplaySubject<TextFilev2>(100, 10000);
 export const fileLoading$ = fileLoadingSubject
   .asObservable()
   .pipe(map(preProcessLogFile));
 
-
 export function makeHandleHTMLFileInputReactive() {
-  return makeHTMLFileInputHandler((file) => fileLoadingSubject.next(file));
+  return makeHTMLFileInputHandler((file) =>
+    fileLoadingSubject.next(adaptFileToFilev2(file))
+  );
+}
+
+function adaptFileToFilev2(file: TextFile): TextFilev2 {
+  return { ...file, fileHandle: undefined as any };
 }
 
 export const makeHTMLFileInputHandler: (
@@ -37,8 +81,42 @@ export const makeHTMLFileInputHandler: (
   };
 };
 
+export function isFileSystemAPIAvailable(): boolean {
+  return "showOpenFilePicker" in window;
+}
+
+export async function onLogFilePickerClick() {
+  showOpenFilePicker({
+    multiple: true,
+  }).then(async (handles: FileSystemFileHandle[]) => {
+    window.localStorage.setItem("test", handles.toString());
+    const files = await Promise.all(handles.map(handleFileSystemHandle));
+    files.forEach((f) => {
+      fileLoadingSubject.next(f);
+    });
+  });
+}
+
+export async function handleFileSystemHandle(
+  fileHandle: FileSystemFileHandle
+): Promise<TextFilev2> {
+  const fileObj = await fileHandle.getFile();
+  const contents = await fileObj.text();
+  return {
+    fileHandle,
+    name: fileHandle.name,
+    content: contents,
+  };
+}
+
 export function makeDragLogFileImportReactive() {
-  return makeDragFileInputHandler((file) => fileLoadingSubject.next(file));
+  return makeDragFileInputHandler((file) =>
+    fileLoadingSubject.next(adaptFileToFilev2(file))
+  );
+}
+
+export function showOpenFilePicker(options?: any) {
+  return (window as any).showOpenFilePicker(options);
 }
 
 export const makeDragFileInputHandler: (
@@ -68,7 +146,7 @@ export const makeDragFileInputHandler: (
   };
 };
 
-export function preProcessLogFile(file: TextFile): LogFile {
+export function preProcessLogFile(file: TextFilev2): LogFile {
   const color = getFileColor();
   const { lines, linesWithoutDateCount } = parseLogFile(
     file.content,
@@ -78,6 +156,7 @@ export function preProcessLogFile(file: TextFile): LogFile {
   return {
     name: file.name,
     text: file.content,
+    fileHandle: file.fileHandle,
     lines,
     linesWithoutDateCount,
     color,

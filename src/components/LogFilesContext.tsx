@@ -6,6 +6,7 @@ import {
   sortLines,
 } from "../domain/log-lines-domain";
 import { useFilesContext } from "./FileContext";
+import { MemoComponent } from "./MemoComponent";
 
 export type LogFilesContextType = {
   logFiles: LogFile[];
@@ -68,6 +69,7 @@ export type Filter = {
 export type LogFile = {
   name: string;
   color: string;
+  fileHandle?: FileSystemFileHandle;
   text: string;
   lines: LogLine[];
   timezone: number;
@@ -97,8 +99,6 @@ export const LogFilesContext = React.createContext<LogFilesContextType>({
   setShowOGDate: () => {},
   updateFilter: () => {},
 });
-
-const MemoComponent = React.memo(({ children }: any) => children);
 
 export const LogFilesContextProvider = ({ children }: any) => {
   const { start, end } = React.useContext(DateFilterContext);

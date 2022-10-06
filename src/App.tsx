@@ -10,21 +10,24 @@ import { KeyboardShortCuts } from "./components/KeyboardShortCuts";
 import { FilesProvider } from "./components/FileContext";
 import { Toolbar } from "./components/Toolbar";
 import DropFileZone from "./components/DropFileZone";
+import ProjectFileContextProvider from "./components/ProjectFileContext";
 
 function App() {
   return (
     <FilesProvider>
       <DateFilterContextProvider>
         <LogFilesContextProvider>
-          <DropFileZone>
-            <div className="App">
-              <LoadFiles />
-              <Filters />
-              <Toolbar />
-              <LinesRenderer></LinesRenderer>
-              <KeyboardShortCuts />
-            </div>
-          </DropFileZone>
+          <ProjectFileContextProvider>
+            <DropFileZone>
+              <div className="App">
+                <LoadFiles />
+                <Filters />
+                <Toolbar />
+                <LinesRenderer></LinesRenderer>
+                <KeyboardShortCuts />
+              </div>
+            </DropFileZone>
+          </ProjectFileContextProvider>
         </LogFilesContextProvider>
       </DateFilterContextProvider>
     </FilesProvider>

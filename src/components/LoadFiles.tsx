@@ -1,11 +1,17 @@
 // Component that has a file input and returns the text of the file
 
 import React from "react";
-import { makeHandleHTMLFileInputReactive } from "../domain/file-handling";
+import {
+  fileLoadingSubject,
+  handleFileSystemHandle,
+  makeHandleHTMLFileInputReactive,
+  onLogFilePickerClick,
+} from "../domain/file-handling";
 import { useLogFilesContext } from "./LogFilesContext";
 import { ExclamationTriangleIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { useFilesContext } from "./FileContext";
 import { LabeledTextField } from "./LabeledTextField";
+import { Button } from "./Button";
 const fileNameLength = 60;
 const getFileName = (name: string) => {
   if (name.length > fileNameLength) {
@@ -14,7 +20,15 @@ const getFileName = (name: string) => {
   return name;
 };
 
+// file picker that uses the file system access aPI https://web.dev/file-system-access/
+export function OpenFilesV2() {
+  return <Button onClick={onLogFilePickerClick}>Open Files</Button>;
+}
+
 export function OpenFilesInput() {
+  if ("showOpenFilePicker" in window) {
+    return <OpenFilesV2 />;
+  }
   const handler = makeHandleHTMLFileInputReactive();
   return (
     <LabeledTextField
