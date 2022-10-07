@@ -61,4 +61,4 @@ export default function AppSettings() {
   );
 }
 
-export const AppSettingsModal = withModal(<AppSettings />);
+export const AppSettingsModal = withModal(AppSettings);

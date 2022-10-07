@@ -89,8 +89,8 @@ const ActiveFilter = ({ filter }: { filter: Filter }) => {
         ></IconButton>
       </div>
       <span className="text-left w-full min-w-[16rem]">{filter.filter}</span>
-      <span className="text-left ">hits: {filter.hitCount}</span>
-      <span className="text-left ">note: {filter.description}</span>
+      <span className="text-left noWrap">hits: {filter.hitCount}</span>
+      <span className="text-left noWrap">note: {filter.description}</span>
       <IconButton
         icon={<TrashIcon className="h-4 w-4" />}
         onClick={() => {

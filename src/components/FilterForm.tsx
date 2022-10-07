@@ -89,7 +89,6 @@ export default function FilterForm({
                 type: "text",
                 name: "description",
                 defaultValue: edditingFilter?.description ?? "",
-                style: { padding: 0 },
               }}
               label="Description"
             />

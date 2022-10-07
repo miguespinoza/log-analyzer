@@ -1,13 +1,16 @@
 import ReactModal from "react-modal";
 
-export const withModal =
-  (children: React.ReactNode) =>
-  ({
+
+
+export function withModal<T>(Component: React.FunctionComponent<T>) {
+  return ({
     showModal,
     setShowModal,
+    forwardProps,
   }: {
     showModal: boolean;
     setShowModal: (show: boolean) => void;
+    forwardProps: T;
   }) => {
     return (
       <ReactModal
@@ -25,7 +28,8 @@ export const withModal =
         }}
         shouldCloseOnOverlayClick={true}
       >
-        {children}
+        <Component {...(forwardProps as any)} />
       </ReactModal>
     );
   };
+}

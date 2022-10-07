@@ -1,17 +1,21 @@
 // Component that has a file input and returns the text of the file
 
-import React from "react";
+import React, { useState } from "react";
 import {
-  fileLoadingSubject,
-  handleFileSystemHandle,
   makeHandleHTMLFileInputReactive,
   onLogFilePickerClick,
 } from "../domain/file-handling";
 import { useLogLinesContext } from "../context/LogLinesContext";
-import { ExclamationTriangleIcon, XMarkIcon } from "@heroicons/react/24/solid";
+import {
+  ExclamationTriangleIcon,
+  PencilIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/solid";
 import { useFilesContext } from "../context/FileContext";
 import { LabeledTextField } from "./LabeledTextField";
 import { Button } from "./Button";
+import { withModal } from "./withModal";
+import { LogFile } from "../domain/types";
 const fileNameLength = 60;
 const getFileName = (name: string) => {
   if (name.length > fileNameLength) {
@@ -45,9 +49,19 @@ export function OpenFilesInput() {
 export default function LoadFiles() {
   const { logFiles, updateLogFile } = useLogLinesContext();
   const { removeLogFile } = useFilesContext();
+  const [selectedFile, setSelectedFile] = useState<LogFile | null>(null);
 
   return (
     <div className="files border">
+      {selectedFile != null && (
+        <FileEditModal
+          showModal={!!selectedFile}
+          setShowModal={() => setSelectedFile(null)}
+          forwardProps={{
+            file: selectedFile,
+          }}
+        />
+      )}
       <div
         style={{ maxHeight: "calc(15rem - 43px)" }}
         className="overflow-auto"
@@ -89,6 +103,13 @@ export default function LoadFiles() {
                     <ExclamationTriangleIcon className="h-6 w-6 text-yellow-500" />
                   </span>
                 )}
+                <button
+                  className="hover:bg-slate-400 p-1 rounded"
+                  title="edit filter"
+                  onClick={() => setSelectedFile(file)}
+                >
+                  <PencilIcon className="h-4 w-4" />
+                </button>
               </span>
               <span
                 className="noWrap align-text-top w-full px-2"
@@ -110,3 +131,34 @@ export default function LoadFiles() {
     </div>
   );
 }
+
+const FileForm: React.FC<{ file: LogFile }> = ({ file }) => {
+  const { updateLogFile } = useLogLinesContext();
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target as HTMLFormElement);
+        const color = formData.get("color") as string;
+        if (color != null && color !== file.color) {
+          updateLogFile({ ...file, color });
+        }
+      }}
+    >
+      <div className="flex gap-1">
+        <LabeledTextField
+          label="Color"
+          inputProps={{
+            type: "color",
+            name: "color",
+            style: { padding: 0 },
+            defaultValue: file.color,
+          }}
+        />
+      </div>
+      <Button type="submit">Save</Button>
+    </form>
+  );
+};
+
+const FileEditModal = withModal(FileForm);
