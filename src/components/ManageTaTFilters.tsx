@@ -40,6 +40,16 @@ export default function ManageTaTFilters({
     }
   };
 
+  const onSaveAsFilters = () => {
+    const xml = adaptFiltersToXML(filters);
+    if (isFileSystemAPIAvailable()) {
+      console.log("trying to save file", filtersFile);
+      saveFileAs(`${projectName}.tat`, xml);
+    } else {
+      downloadFile(`${projectName}.tat`, xml, "text/xml");
+    }
+  };
+
   return (
     <div>
       <span>{filtersFile?.name}</span>
@@ -52,8 +62,13 @@ export default function ManageTaTFilters({
             }
           }}
         />
-        <Button onClick={onSaveFilters}>
-          {isFileSystemAPIAvailable() ? "Save Filters" : "Download filters"}
+        {isFileSystemAPIAvailable() && filtersFile == null && (
+          <Button onClick={onSaveFilters}>
+            {isFileSystemAPIAvailable() ? "Save Filters" : "Download filters"}
+          </Button>
+        )}
+        <Button onClick={onSaveAsFilters}>
+          {isFileSystemAPIAvailable() ? "Save As Filters" : "Download filters"}
         </Button>
       </div>
     </div>
