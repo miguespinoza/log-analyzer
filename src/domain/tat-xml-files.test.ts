@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 import { Filter } from "./types";
-import { adaptFiltersToXML, extractFiltersFromXML } from "./tat-xml-files";
+import { adaptProjectToXML, extractFiltersFromXML } from "./tat-xml-files";
 
 test("extractFiltersFromXML", () => {
   const xml = `
@@ -100,7 +100,7 @@ test("adaptFiltersToXML", () => {
       type: "matches_text",
     },
   ];
-  const xml = adaptFiltersToXML(filters);
+  const xml = adaptProjectToXML(filters);
   expect(xml).toMatchInlineSnapshot(`
     "<?xml version=\\"1.0\\" encoding=\\"utf-8\\" standalone=\\"yes\\"?>
       <TextAnalysisTool.NET version=\\"2020-12-17\\" showOnlyFilteredLines=\\"False\\">

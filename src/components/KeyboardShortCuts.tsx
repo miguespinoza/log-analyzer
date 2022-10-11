@@ -1,12 +1,11 @@
 import { useHotkeys } from "react-hotkeys-hook";
 import { getFileColor } from "../domain/file-handling";
-import { useLogLinesContext } from "../context/LogLinesContext";
 import { v4 as uuid } from "uuid";
 import { useProjectFileContext } from "../context/ProjectFileContext";
 
 export function KeyboardShortCuts() {
   const { updateProject, project } = useProjectFileContext();
-  const context = useLogLinesContext();
+  const { setFilter } = useProjectFileContext();
 
   useHotkeys(
     "ctrl+alt+h",
@@ -22,7 +21,7 @@ export function KeyboardShortCuts() {
       try {
         const selection = window.getSelection()?.toString();
         if (selection != null && selection.length > 0) {
-          context.setFilter({
+          setFilter({
             filter: selection,
             color: getFileColor(),
             hitCount: 0,
@@ -33,7 +32,7 @@ export function KeyboardShortCuts() {
         console.error(e);
       }
     },
-    [context.setFilter]
+    [setFilter]
   );
   return null;
 }

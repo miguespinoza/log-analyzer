@@ -65,7 +65,7 @@ export function makeHandleHTMLFileInputReactive() {
   );
 }
 
-function adaptFileToFilev2(file: TextFile): TextFilev2 {
+export function adaptFileToFilev2(file: TextFile): TextFilev2 {
   return { ...file, fileHandle: undefined as any };
 }
 
@@ -118,9 +118,13 @@ export async function handleFileSystemHandle(
 }
 
 export function makeDragLogFileImportReactive() {
-  return makeDragFileInputHandler((file) =>
-    fileLoadingSubject.next(adaptFileToFilev2(file))
-  );
+  return makeDragFileInputHandler((file) => {
+    if (file.name.endsWith(".tat")) {
+      return projectFileLoadingSubject.next(adaptFileToFilev2(file));
+    } else {
+      return fileLoadingSubject.next(adaptFileToFilev2(file));
+    }
+  });
 }
 
 export function showOpenFilePicker(options?: any) {

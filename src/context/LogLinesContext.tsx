@@ -14,6 +14,7 @@ export type LogLinesContextType = {
   lines: LogLine[];
   updateLogFile: (file: LogFile) => void;
   mergeLogFiles: () => void;
+  apliedFilters: Filter[];
   logsAreInSync: boolean;
 };
 
@@ -47,14 +48,14 @@ export const LogLinesContext = React.createContext<LogLinesContextType>({
   updateLogFile: () => {},
   logsAreInSync: true,
   mergeLogFiles: () => {},
+  apliedFilters: [],
 });
 
 export const LogLinesContextProvider = ({ children }: any) => {
   const [logsAreInSync, setLogsAreInSync] = useState(true);
-  const [filters, setFilters] = useState<Filter[]>([]);
   const [lines, setLines] = React.useState<LogLine[]>([]);
   const { logFiles, updateLogFile } = useFilesContext();
-  const { project } = useProjectFileContext();
+  const { project, filters } = useProjectFileContext();
   const { hideUnfiltered, showOGDate, sortBy } = project;
 
   const mergeLogFiles = React.useCallback(() => {
@@ -69,78 +70,6 @@ export const LogLinesContextProvider = ({ children }: any) => {
   useEffect(() => {
     mergeLogFiles();
   }, [mergeLogFiles]);
-
-  const setFilter = React.useCallback(
-    (filter: Filter) => {
-      const index = filters.findIndex((f) => f.id === filter.id);
-      if (index !== -1) {
-        filters[index] = filter;
-        setFilters([...filters]);
-      } else {
-        setFilters([...filters, filter]);
-      }
-    },
-    [setFilters, filters]
-  );
-  const setFiltersCb = React.useCallback(
-    (newFilters: Filter[]) => {
-      setFilters([...filters, ...newFilters]);
-    },
-    [setFilters, filters]
-  );
-
-  const removeFilter = React.useCallback(
-    (filterId: string) => {
-      setFilters(filters.filter((f) => f.id !== filterId));
-    },
-    [setFilters, filters]
-  );
-
-  const disableFilter = React.useCallback(
-    (filterString: string) => {
-      const filter = filters.find((f) => f.filter === filterString);
-      if (filter) {
-        filter.isDisabled = true;
-        setFilters([...filters]);
-      }
-    },
-    [setFilters, filters]
-  );
-
-  const updateFilter = React.useCallback(
-    (filter: Filter) => {
-      const index = filters.findIndex((f) => f.id === filter.id);
-      if (index !== -1) {
-        // replace the filter at index with the new filter
-        filters[index] = filter;
-        setFilters([...filters]);
-      }
-    },
-    [setFilters, filters]
-  );
-
-  const updateFilterPriority = React.useCallback(
-    (filter: Filter, delta: number) => {
-      const index = filters.findIndex((f) => f.id === filter.id);
-      if (index !== -1) {
-        const filter = filters[index];
-        filters.splice(index, 1); // delete from current space
-        filters.splice(index + delta, 0, filter); // insert at new space
-        setFilters([...filters]); // save
-      }
-    },
-    [filters, setFilters]
-  );
-  const enableFilter = React.useCallback(
-    (filterString: string) => {
-      const filter = filters.find((f) => f.filter === filterString);
-      if (filter) {
-        filter.isDisabled = false;
-        setFilters([...filters]);
-      }
-    },
-    [setFilters, filters]
-  );
 
   const filteredLines = useMemo(() => {
     const filtersResult = searchLines(lines, hideUnfiltered, filters);
@@ -159,12 +88,12 @@ export const LogLinesContextProvider = ({ children }: any) => {
     );
   }, [filteredLines, sortBy, logFiles, project.sortDirection]);
 
-  const data = useMemo(
+  const data = useMemo<LogLinesContextType>(
     () => ({
       logFiles,
       lines: sortedLines,
       mergeLogFiles,
-      filters: filteredLines.filters,
+      apliedFilters: filteredLines.filters,
       updateLogFile,
       logsAreInSync,
     }),
@@ -173,15 +102,8 @@ export const LogLinesContextProvider = ({ children }: any) => {
       sortedLines,
       mergeLogFiles,
       filteredLines.filters,
-      setFilter,
-      removeFilter,
-      disableFilter,
-      enableFilter,
-      updateFilterPriority,
       updateLogFile,
       logsAreInSync,
-      updateFilter,
-      setFiltersCb,
     ]
   );
   return (

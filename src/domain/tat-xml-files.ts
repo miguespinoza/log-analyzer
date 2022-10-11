@@ -47,13 +47,25 @@ function extractProjectFromXMLProject(xml: string): ProjectType {
   };
 }
 
-export function adaptFiltersToXML(filters: Filter[]): string {
+export function adaptProjectToXML(
+  filters: Filter[],
+  project?: ProjectType
+): string {
   const tatFilters = filters.map((filter) => adaptRLAFilterToTATFilter(filter));
   const filterStrings = tatFilters.map((filter) => {
     return `<filter enabled="${filter.enabled}" excluding="${filter.excluding}" description="${filter.description}" backColor="${filter.backColor}" type="${filter.type}" case_sensitive="${filter.case_sensitive}" regex="${filter.regex}" text="${filter.text}" />`;
   });
+  const projectString =
+    project != null
+      ? `<project name="${project?.name}" sortBy="${
+          project?.sortBy
+        }" sortDirection="${project?.sortDirection}" showOGDate="${
+          project?.showOGDate ? "y" : "n"
+        }" hideUnfiltered="${project?.hideUnfiltered ? "y" : "n"}" />`
+      : "";
   const xml = `<?xml version="1.0" encoding="utf-8" standalone="yes"?>
   <TextAnalysisTool.NET version="2020-12-17" showOnlyFilteredLines="False">
+    ${projectString}
     <filters>
       ${filterStrings.join("\r\n")}
     </filters>
