@@ -31,6 +31,12 @@ export default defineConfig({
               "text/*": [".txt"],
             },
           },
+          {
+            action: "/",
+            accept: {
+              "text/*": [".tat"],
+            },
+          },
         ],
       },
     }),
