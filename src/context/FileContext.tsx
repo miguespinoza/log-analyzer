@@ -1,11 +1,16 @@
 import React from "react";
-import { fileLoading$ } from "../domain/file-handling";
+import {
+  fileLoading$,
+  projectFileLoading$,
+  TextFilev2,
+} from "../domain/file-handling";
 import { concatMap, Subscription } from "rxjs";
 import { MemoComponent } from "../components/MemoComponent";
 import { LogFile } from "../domain/types";
 
 export type LogFilesContextType = {
   logFiles: LogFile[];
+  projectFile?: TextFilev2;
   updateLogFile: (file: LogFile) => void;
   removeLogFile: (file: LogFile) => void;
 };
@@ -21,15 +26,18 @@ export class FilesProvider extends React.Component<
   { children: React.ReactNode },
   {
     logFiles: LogFile[];
+    projectFile?: TextFilev2;
   }
 > {
   subscription: Subscription | null;
+  projectFilesSubscription: Subscription | null;
   constructor(props: any) {
     super(props);
     this.state = {
       logFiles: [],
     };
     this.subscription = null;
+    this.projectFilesSubscription = null;
   }
 
   componentDidMount(): void {
@@ -46,10 +54,25 @@ export class FilesProvider extends React.Component<
         })
       )
       .subscribe();
+
+    this.projectFilesSubscription = projectFileLoading$
+      .pipe(
+        concatMap(async (file) => {
+          const promise = new Promise((resolve) => {
+            this.setState({ projectFile: file }, () => {
+              resolve(file);
+            });
+          });
+
+          return promise;
+        })
+      )
+      .subscribe();
   }
 
   componentWillUnmount(): void {
     this.subscription?.unsubscribe();
+    this.projectFilesSubscription?.unsubscribe();
   }
 
   updateLogFiles(file: LogFile) {
@@ -85,6 +108,7 @@ export class FilesProvider extends React.Component<
       <LogFilesContext.Provider
         value={{
           logFiles: this.state.logFiles,
+          projectFile: this.state.projectFile,
           updateLogFile: this.updateLogFiles.bind(this),
           removeLogFile: this.removeLogFile.bind(this),
         }}

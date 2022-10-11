@@ -1,7 +1,21 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { MemoComponent } from "../components/MemoComponent";
+import {
+  adaptProjectToXML,
+  extractFiltersFromXML,
+  extractProjectFromXML,
+} from "../domain/tat-xml-files";
+import { Filter } from "../domain/types";
+import { useFilesContext } from "./FileContext";
+import {
+  downloadFile,
+  isFileSystemAPIAvailable,
+  saveFile,
+  saveFileAs,
+  TextFilev2,
+} from "../domain/file-handling";
 
-type ProjectType = {
+export type ProjectType = {
   name: string;
   sortBy: "date" | "file";
   sortDirection: "asc" | "desc";
@@ -15,6 +29,19 @@ type ProjectFileContextType = {
   project: ProjectType;
   setProject: (project: ProjectType) => void;
   updateProject: (value: Partial<ProjectType>) => void;
+  // project file
+  saveProjectFile: () => void;
+  saveProjectFileAs: () => void;
+  openProjectFile: (file: TextFilev2) => void;
+  // filters
+  filters: Filter[];
+  setFilter: (filter: Filter) => void;
+  setFilters: (filters: Filter[]) => void;
+  removeFilter: (filter: string) => void;
+  disableFilter: (filter: string) => void;
+  enableFilter: (filter: string) => void;
+  updateFilter: (filter: Filter) => void;
+  updateFilterPriority: (filter: Filter, delta: number) => void;
 };
 
 const ProjectFileContext = React.createContext<ProjectFileContextType>({
@@ -22,13 +49,24 @@ const ProjectFileContext = React.createContext<ProjectFileContextType>({
   project: getDefaultProject(),
   setProject: () => {},
   updateProject: () => {},
+  saveProjectFile: () => {},
+  saveProjectFileAs: () => {},
+  openProjectFile: () => {},
+  filters: [],
+  setFilter: () => {},
+  setFilters: () => {},
+  removeFilter: () => {},
+  disableFilter: () => {},
+  enableFilter: () => {},
+  updateFilterPriority: () => {},
+  updateFilter: () => {},
 });
 
 export const useProjectFileContext = () => React.useContext(ProjectFileContext);
 
-function getDefaultProject(): ProjectType {
+export function getDefaultProject(name: string = ""): ProjectType {
   return {
-    name: "",
+    name,
     sortBy: "date",
     sortDirection: "desc",
     showOGDate: false,
@@ -41,8 +79,68 @@ export default function ProjectFileContextProvider({
 }: {
   children: React.ReactNode;
 }) {
+  const { projectFile } = useFilesContext();
   const [filtersFile, setFiltersFile] = useState<FileSystemFileHandle>();
   const [project, setProject] = useState(getDefaultProject());
+  const {
+    filters,
+    setFilter,
+    setFilters,
+    removeFilter,
+    disableFilter,
+    enableFilter,
+    updateFilter,
+    updateFilterPriority,
+  } = useFilterControls();
+
+  const saveProjectFile = useCallback(() => {
+    const xml = adaptProjectToXML(filters, project);
+    if (isFileSystemAPIAvailable()) {
+      if (filtersFile) {
+        saveFile(filtersFile, xml);
+      } else {
+        saveFileAs(`${project.name}.tat`, xml);
+      }
+    } else {
+      downloadFile(`${project.name}.tat`, xml, "text/xml");
+    }
+  }, [filters, filtersFile, project]);
+
+  const saveProjectFileAs = useCallback(() => {
+    const xml = adaptProjectToXML(filters, project);
+    if (isFileSystemAPIAvailable()) {
+      saveFileAs(`${project.name}.tat`, xml);
+    } else {
+      downloadFile(`${project.name}.tat`, xml, "text/xml");
+    }
+  }, [filters, project]);
+
+  const openProjectFile = useCallback(
+    (xmlFile: TextFilev2) => {
+      setFiltersFile(xmlFile.fileHandle);
+      try {
+        const project = extractProjectFromXML(xmlFile?.content);
+        setProject(project);
+      } catch (e) {
+        const project = getDefaultProject(xmlFile?.name);
+        setProject(project);
+        console.error(e);
+      }
+      try {
+        const filters = extractFiltersFromXML(xmlFile?.content);
+        setFilters(filters.filters);
+      } catch (e) {
+        console.error(e);
+      }
+    },
+    [setFilters]
+  );
+
+  useEffect(() => {
+    if (projectFile) {
+      openProjectFile(projectFile);
+    }
+  }, [projectFile, openProjectFile]);
 
   const updateProject = useCallback(
     (value: Partial<ProjectType>) => {
@@ -58,8 +156,35 @@ export default function ProjectFileContextProvider({
       project,
       setProject,
       updateProject,
+      setFilter,
+      setFilters,
+      removeFilter,
+      disableFilter,
+      enableFilter,
+      updateFilter,
+      updateFilterPriority,
+      filters,
+      // project file
+      openProjectFile,
+      saveProjectFile,
+      saveProjectFileAs,
     }),
-    [filtersFile, setFiltersFile, project, setProject, updateProject]
+    [
+      filtersFile,
+      project,
+      updateProject,
+      setFilter,
+      setFilters,
+      removeFilter,
+      disableFilter,
+      enableFilter,
+      updateFilter,
+      updateFilterPriority,
+      filters,
+      saveProjectFile,
+      saveProjectFileAs,
+      openProjectFile,
+    ]
   );
   return (
     <ProjectFileContext.Provider value={value}>
@@ -67,3 +192,89 @@ export default function ProjectFileContextProvider({
     </ProjectFileContext.Provider>
   );
 }
+
+const useFilterControls = () => {
+  const [filters, setFilters] = useState<Filter[]>([]);
+
+  const setFilter = useCallback(
+    (filter: Filter) => {
+      const index = filters.findIndex((f) => f.id === filter.id);
+      if (index !== -1) {
+        filters[index] = filter;
+        setFilters([...filters]);
+      } else {
+        setFilters([...filters, filter]);
+      }
+    },
+    [setFilters, filters]
+  );
+  const setFiltersCb = useCallback(
+    (newFilters: Filter[]) => {
+      setFilters([...filters, ...newFilters]);
+    },
+    [setFilters, filters]
+  );
+
+  const removeFilter = useCallback(
+    (filterId: string) => {
+      setFilters(filters.filter((f) => f.id !== filterId));
+    },
+    [setFilters, filters]
+  );
+
+  const disableFilter = useCallback(
+    (filterString: string) => {
+      const filter = filters.find((f) => f.filter === filterString);
+      if (filter) {
+        filter.isDisabled = true;
+        setFilters([...filters]);
+      }
+    },
+    [setFilters, filters]
+  );
+
+  const updateFilter = useCallback(
+    (filter: Filter) => {
+      const index = filters.findIndex((f) => f.id === filter.id);
+      if (index !== -1) {
+        // replace the filter at index with the new filter
+        filters[index] = filter;
+        setFilters([...filters]);
+      }
+    },
+    [setFilters, filters]
+  );
+
+  const updateFilterPriority = useCallback(
+    (filter: Filter, delta: number) => {
+      const index = filters.findIndex((f) => f.id === filter.id);
+      if (index !== -1) {
+        const filter = filters[index];
+        filters.splice(index, 1); // delete from current space
+        filters.splice(index + delta, 0, filter); // insert at new space
+        setFilters([...filters]); // save
+      }
+    },
+    [filters, setFilters]
+  );
+  const enableFilter = useCallback(
+    (filterString: string) => {
+      const filter = filters.find((f) => f.filter === filterString);
+      if (filter) {
+        filter.isDisabled = false;
+        setFilters([...filters]);
+      }
+    },
+    [setFilters, filters]
+  );
+  return {
+    filters,
+    setFilter,
+    setFilters: setFiltersCb,
+    removeFilter,
+    disableFilter,
+    enableFilter,
+    updateFilter,
+    updateFilterPriority,
+  };
+};

@@ -2,8 +2,6 @@
 
 import React from "react";
 import {
-  fileLoadingSubject,
-  handleFileSystemHandle,
   makeHandleHTMLFileInputReactive,
   onLogFilePickerClick,
 } from "../domain/file-handling";

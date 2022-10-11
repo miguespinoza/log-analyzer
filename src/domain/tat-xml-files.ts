@@ -1,4 +1,5 @@
 import { v4 } from "uuid";
+import { ProjectType } from "../context/ProjectFileContext";
 import { Filter } from "./types";
 
 /*
@@ -26,13 +27,45 @@ export function extractFiltersFromXML(xml: string): {
   return { filters, errors: [] };
 }
 
-export function adaptFiltersToXML(filters: Filter[]): string {
+export function extractProjectFromXML(xml: string): ProjectType {
+  const regex = /<project.*?\/>/g;
+  const match = regex.exec(xml);
+  if (match && match[0]) {
+    return extractProjectFromXMLProject(match[0]);
+  } else {
+    throw new Error("Could not find project in xml");
+  }
+}
+
+function extractProjectFromXMLProject(xml: string): ProjectType {
+  return {
+    name: getXMLPropery(xml, "name"),
+    sortBy: getXMLPropery(xml, "sortBy") as "file" | "date",
+    sortDirection: getXMLPropery(xml, "sortDirection") as "asc" | "desc",
+    showOGDate: getXMLPropery(xml, "showOGDate") === "y",
+    hideUnfiltered: getXMLPropery(xml, "hideUnfiltered") === "y",
+  };
+}
+
+export function adaptProjectToXML(
+  filters: Filter[],
+  project?: ProjectType
+): string {
   const tatFilters = filters.map((filter) => adaptRLAFilterToTATFilter(filter));
   const filterStrings = tatFilters.map((filter) => {
     return `<filter enabled="${filter.enabled}" excluding="${filter.excluding}" description="${filter.description}" backColor="${filter.backColor}" type="${filter.type}" case_sensitive="${filter.case_sensitive}" regex="${filter.regex}" text="${filter.text}" />`;
   });
+  const projectString =
+    project != null
+      ? `<project name="${project?.name}" sortBy="${
+          project?.sortBy
+        }" sortDirection="${project?.sortDirection}" showOGDate="${
+          project?.showOGDate ? "y" : "n"
+        }" hideUnfiltered="${project?.hideUnfiltered ? "y" : "n"}" />`
+      : "";
   const xml = `<?xml version="1.0" encoding="utf-8" standalone="yes"?>
   <TextAnalysisTool.NET version="2020-12-17" showOnlyFilteredLines="False">
+    ${projectString}
     <filters>
       ${filterStrings.join("\r\n")}
     </filters>

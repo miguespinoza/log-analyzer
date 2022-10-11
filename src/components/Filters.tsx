@@ -12,9 +12,10 @@ import ReactModal from "react-modal";
 import { useState } from "react";
 import { IconButton } from "./IconButton";
 import { Filter } from "../domain/types";
+import { useProjectFileContext } from "../context/ProjectFileContext";
 
 export function Filters() {
-  const { filters } = useLogLinesContext();
+  const { apliedFilters: filters } = useLogLinesContext();
   return (
     <div
       style={{ maxHeight: "calc(15rem - 43px)" }}
@@ -34,7 +35,7 @@ const ActiveFilter = ({ filter }: { filter: Filter }) => {
     enableFilter,
     updateFilterPriority,
     setFilter,
-  } = useLogLinesContext();
+  } = useProjectFileContext();
   const [showModal, setShowModal] = useState(false);
   return (
     <div
@@ -89,8 +90,8 @@ const ActiveFilter = ({ filter }: { filter: Filter }) => {
         ></IconButton>
       </div>
       <span className="text-left w-full min-w-[16rem]">{filter.filter}</span>
-      <span className="text-left ">hits: {filter.hitCount}</span>
-      <span className="text-left ">note: {filter.description}</span>
+      <span className="text-left noWrap">hits: {filter.hitCount}</span>
+      <span className="text-left noWrap">note: {filter.description}</span>
       <IconButton
         icon={<TrashIcon className="h-4 w-4" />}
         onClick={() => {

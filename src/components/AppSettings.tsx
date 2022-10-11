@@ -49,9 +49,7 @@ export default function AppSettings() {
           <Button type="submit">Save</Button>
         </div>
         <div className="p-2 border">
-          <ManageTaTFilters
-            projectName={project.name === "" ? "filters" : project.name}
-          />
+          <ManageTaTFilters />
         </div>
       </form>
       <Helmet>

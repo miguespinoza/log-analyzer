@@ -1,70 +1,43 @@
 import React, { useCallback } from "react";
 import {
-  downloadFile,
+  adaptFileToFilev2,
   handleFileSystemHandle,
   isFileSystemAPIAvailable,
   makeHTMLFileInputHandler,
-  saveFile,
-  saveFileAs,
   showOpenFilePicker,
+  TextFilev2,
 } from "../domain/file-handling";
-import {
-  adaptFiltersToXML,
-  extractFiltersFromXML,
-} from "../domain/tat-xml-files";
 import { Button } from "./Button";
 import { useProjectFileContext } from "../context/ProjectFileContext";
 import { LabeledTextField } from "./LabeledTextField";
-import { useLogLinesContext } from "../context/LogLinesContext";
-import { Filter } from "../domain/types";
 
-export default function ManageTaTFilters({
-  projectName,
-}: {
-  projectName: string;
-}) {
-  const { setFilters, filters } = useLogLinesContext();
-  const { filtersFile, setFiltersFile } = useProjectFileContext();
-
-  const onSaveFilters = () => {
-    const xml = adaptFiltersToXML(filters);
-    if (isFileSystemAPIAvailable()) {
-      console.log("trying to save file", filtersFile);
-      if (filtersFile) {
-        saveFile(filtersFile, xml);
-      } else {
-        saveFileAs(`${projectName}.tat`, xml);
-      }
-    } else {
-      downloadFile(`${projectName}.tat`, xml, "text/xml");
-    }
-  };
+export default function ManageTaTFilters() {
+  const { filtersFile, saveProjectFile, saveProjectFileAs, openProjectFile } =
+    useProjectFileContext();
 
   return (
     <div>
       <span>{filtersFile?.name}</span>
       <div className="flex justify-between">
         <OpenFiltersFile
-          onLoad={(filters, handle) => {
-            setFilters(filters);
-            if (handle) {
-              setFiltersFile(handle);
-            }
+          onLoad={(file) => {
+            openProjectFile(file);
           }}
         />
-        <Button onClick={onSaveFilters}>
-          {isFileSystemAPIAvailable() ? "Save Filters" : "Download filters"}
+        {isFileSystemAPIAvailable() && (
+          <Button onClick={saveProjectFile}>
+            {isFileSystemAPIAvailable() ? "Save Filters" : "Download filters"}
+          </Button>
+        )}
+        <Button onClick={saveProjectFileAs}>
+          {isFileSystemAPIAvailable() ? "Save As Filters" : "Download filters"}
         </Button>
       </div>
     </div>
   );
 }
 
-function OpenFiltersFile({
-  onLoad,
-}: {
-  onLoad: (filters: Filter[], handle?: FileSystemFileHandle) => void;
-}) {
+function OpenFiltersFile({ onLoad }: { onLoad: (file: TextFilev2) => void }) {
   const ref = React.useRef<HTMLInputElement>(null);
 
   if (isFileSystemAPIAvailable()) {
@@ -72,13 +45,7 @@ function OpenFiltersFile({
   }
 
   const handle = makeHTMLFileInputHandler((xmlFile) => {
-    const { filters, errors } = extractFiltersFromXML(xmlFile.content);
-    if (errors.length > 0) {
-      console.error(errors);
-    } else {
-      onLoad(filters);
-      ref.current?.value && (ref.current.value = "");
-    }
+    onLoad(adaptFileToFilev2(xmlFile));
   });
   return (
     <LabeledTextField
@@ -92,21 +59,17 @@ function OpenFiltersFile({
   );
 }
 
-function OpenFiltersFileV2({
-  onLoad,
-}: {
-  onLoad: (filters: Filter[], handle?: FileSystemFileHandle) => void;
-}) {
+function OpenFiltersFileV2({ onLoad }: { onLoad: (file: TextFilev2) => void }) {
   const onClick = useCallback(() => {
     showOpenFilePicker().then(async (handles: FileSystemFileHandle[]) => {
       const files = await Promise.all(handles.map(handleFileSystemHandle));
       const file = files[0];
       if (file) {
-        const { filters } = extractFiltersFromXML(file.content);
-        onLoad(filters, file.fileHandle);
+        onLoad(file);
       }
     });
   }, [onLoad]);
 
   return <Button onClick={onClick}>Load Filters</Button>;
 }
+

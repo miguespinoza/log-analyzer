@@ -1,4 +1,4 @@
-import { fileLoadingSubject } from "./file-handling";
+import { fileLoadingSubject, projectFileLoadingSubject } from "./file-handling";
 
 if ("launchQueue" in window) {
   console.log("File handling API is supported!");
@@ -18,19 +18,39 @@ if ("launchQueue" in window) {
 
 async function handleFileFromFileHandlingAPI(fileHandle) {
   console.log(`Opening ${fileHandle.name}`);
+  // get file name extension
+  const fileExtension = fileHandle.name.split(".").pop();
 
   const blob = await fileHandle.getFile();
   blob.handle = fileHandle;
 
   const contents = await blob.text();
-
-  await addFile(contents, fileHandle.name);
+  const fileProcessor = getFileProcessor(fileExtension);
+  await fileProcessor(contents, fileHandle.name, fileHandle);
 }
 
-function addFile(contents, name) {
+function getFileProcessor(fileExtension) {
+  switch (fileExtension) {
+    case "tat":
+      return addProjectFile;
+    default:
+      return addLogFile;
+  }
+}
+
+function addProjectFile(contents, name) {
   const file = {
     name: name,
     content: contents,
   };
   fileLoadingSubject.next(file);
+}
+
+function addLogFile(contents, name, handle) {
+  const file = {
+    name: name,
+    content: contents,
+    fileHandle: handle,
+  };
+  projectFileLoadingSubject.next(file);
 }

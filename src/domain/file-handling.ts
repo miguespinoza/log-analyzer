@@ -8,7 +8,7 @@ interface TextFile {
   content: string;
 }
 
-interface TextFilev2 extends TextFile {
+export interface TextFilev2 extends TextFile {
   fileHandle: FileSystemFileHandle;
 }
 
@@ -47,6 +47,13 @@ export function downloadFile(
   link.click();
 }
 
+
+export const projectFileLoadingSubject = new ReplaySubject<TextFilev2>(
+  100,
+  10000
+);
+export const projectFileLoading$ = projectFileLoadingSubject.asObservable();
+
 export const fileLoadingSubject = new ReplaySubject<TextFilev2>(100, 10000);
 export const fileLoading$ = fileLoadingSubject
   .asObservable()
@@ -58,7 +65,7 @@ export function makeHandleHTMLFileInputReactive() {
   );
 }
 
-function adaptFileToFilev2(file: TextFile): TextFilev2 {
+export function adaptFileToFilev2(file: TextFile): TextFilev2 {
   return { ...file, fileHandle: undefined as any };
 }
 
@@ -111,9 +118,13 @@ export async function handleFileSystemHandle(
 }
 
 export function makeDragLogFileImportReactive() {
-  return makeDragFileInputHandler((file) =>
-    fileLoadingSubject.next(adaptFileToFilev2(file))
-  );
+  return makeDragFileInputHandler((file) => {
+    if (file.name.endsWith(".tat")) {
+      return projectFileLoadingSubject.next(adaptFileToFilev2(file));
+    } else {
+      return fileLoadingSubject.next(adaptFileToFilev2(file));
+    }
+  });
 }
 
 export function showOpenFilePicker(options?: any) {
