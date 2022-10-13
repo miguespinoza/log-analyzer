@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { MemoComponent } from "../components/MemoComponent";
 import {
   adaptProjectToXML,
@@ -136,9 +136,11 @@ export default function ProjectFileContextProvider({
     [setFilters]
   );
 
+  const projectWasOpenedFromFile = useRef(false);
   useEffect(() => {
-    if (projectFile) {
+    if (projectFile && projectWasOpenedFromFile.current === false) {
       openProjectFile(projectFile);
+      projectWasOpenedFromFile.current = true;
     }
   }, [projectFile, openProjectFile]);
 
