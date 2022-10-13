@@ -30,10 +30,13 @@ async function handleFileFromFileHandlingAPI(fileHandle) {
 }
 
 function getFileProcessor(fileExtension) {
+  console.log("getFileProcessor", fileExtension);
   switch (fileExtension) {
-    case "tat":
+    case ".tat":
+      console.log("getFileProcessor addProjectFile");
       return addProjectFile;
     default:
+      console.log("getFileProcessor addProjectFile");
       return addLogFile;
   }
 }
