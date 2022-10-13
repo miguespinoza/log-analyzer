@@ -50,7 +50,7 @@ function OpenFiltersFile({ onLoad }: { onLoad: (file: TextFilev2) => void }) {
   return (
     <LabeledTextField
       ref={ref}
-      label="Load tat Filters"
+      label="Open tat Filters"
       inputProps={{
         type: "file",
         onChange: handle,
