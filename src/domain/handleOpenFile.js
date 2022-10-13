@@ -36,7 +36,7 @@ function getFileProcessor(fileExtension) {
       console.log("getFileProcessor addProjectFile");
       return addProjectFile;
     default:
-      console.log("getFileProcessor addProjectFile");
+      console.log("getFileProcessor addLogFile");
       return addLogFile;
   }
 }
@@ -46,7 +46,7 @@ function addProjectFile(contents, name) {
     name: name,
     content: contents,
   };
-  fileLoadingSubject.next(file);
+  projectFileLoadingSubject.next(file);
 }
 
 function addLogFile(contents, name, handle) {
@@ -55,5 +55,5 @@ function addLogFile(contents, name, handle) {
     content: contents,
     fileHandle: handle,
   };
-  projectFileLoadingSubject.next(file);
+  fileLoadingSubject.next(file);
 }
