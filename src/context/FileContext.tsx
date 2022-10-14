@@ -1,12 +1,14 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   fileLoading$,
+  isFileSystemAPIAvailable,
   projectFileLoading$,
   TextFilev2,
 } from "../domain/file-handling";
 import { concatMap, Subscription } from "rxjs";
 import { MemoComponent } from "../components/MemoComponent";
 import { LogFile } from "../domain/types";
+import { toast, ToastOptions } from "react-toastify";
 
 export type LogFilesContextType = {
   logFiles: LogFile[];
@@ -117,4 +119,103 @@ export class FilesProvider extends React.Component<
       </LogFilesContext.Provider>
     );
   }
+}
+
+const FiveDaysInMiliSec = 5 * 24 * 60 * 60 * 1000;
+
+function isPWAInstalled() {
+  return window.matchMedia("(display-mode: standalone)").matches;
+}
+
+export function ShowToastToPromptPWAInstall() {
+  useUserActionPromtToast({
+    id: "pwa-install-toast",
+    coolOffTimeMS: FiveDaysInMiliSec,
+    type: "warn",
+    message: (
+      <span>
+        Install this app to your home screen for a better experience
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-400 visited:text-purple-600 hover:underline"
+          href="https://learn.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/ux#installing-a-pwa"
+        >
+          Learn more
+        </a>
+      </span>
+    ),
+    condition: () => !isPWAInstalled(),
+    options: {
+      closeOnClick: false,
+    },
+  });
+
+  useUserActionPromtToast({
+    id: "pwa-file-system-toast",
+    coolOffTimeMS: FiveDaysInMiliSec,
+    type: "warn",
+    message: (
+      <span>
+        Enable the file system access API for a native file experience
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-400 visited:text-purple-600 hover:underline"
+          href="https://learn.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/how-to/handle-files#enable-the-file-handling-api"
+        >
+          Learn more
+        </a>
+      </span>
+    ),
+    condition: () => !isFileSystemAPIAvailable(),
+    options: {
+      closeOnClick: false,
+    },
+  });
+
+  return null;
+}
+
+function useUserActionPromtToast({
+  id,
+  coolOffTimeMS,
+  type,
+  message,
+  options,
+  condition = () => true,
+}: {
+  id: string;
+  coolOffTimeMS: number;
+  type: "info" | "warn" | "error" | "success";
+  message: any;
+  condition?: () => boolean;
+  options?: ToastOptions;
+}) {
+  const lasTimeToastWasShown = localStorage.getItem(id);
+  const wasTriggered = useRef(false);
+
+  useEffect(() => {
+    const lasTimeToastWasShownDate =
+      lasTimeToastWasShown == null ? null : new Date(lasTimeToastWasShown);
+
+    const isTimeToShowPWAToast =
+      lasTimeToastWasShownDate == null ||
+      lasTimeToastWasShownDate.getTime() < new Date().getTime() - coolOffTimeMS;
+    if (wasTriggered.current === false && isTimeToShowPWAToast && condition()) {
+      toast[type](message, options);
+      wasTriggered.current = true;
+      localStorage.setItem(id, new Date().toString());
+    }
+  }, [
+    coolOffTimeMS,
+    id,
+    lasTimeToastWasShown,
+    message,
+    options,
+    type,
+    condition,
+  ]);
+
+  return null;
 }

@@ -82,7 +82,7 @@ export default function LoadFiles() {
                 />
                 {file.linesWithoutDateCount > 0 && (
                   <span
-                    title={`${file.linesWithoutDateCount} lines without date`}
+                    title={`${file.linesWithoutDateCount} lines without date, to see them switch to sort by file`}
                   >
                     <ExclamationTriangleIcon className="h-6 w-6 text-yellow-500" />
                   </span>

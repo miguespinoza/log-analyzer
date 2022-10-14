@@ -44,7 +44,6 @@ export function LinesRenderer() {
       if (focusedLine && listRef.current) {
         const lineIndex = focusedLineIndex;
         if (lineIndex !== -1) {
-          console.log("scrolling to", lineIndex);
           setTimeout(() => {
             listRef.current.scrollToIndex({
               index: lineIndex,

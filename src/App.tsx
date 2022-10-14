@@ -7,30 +7,43 @@ import {
 import { LinesRenderer } from "./components/LinesRenderer";
 import { Filters } from "./components/Filters";
 import { KeyboardShortCuts } from "./components/KeyboardShortCuts";
-import { FilesProvider } from "./context/FileContext";
+import {
+  FilesProvider,
+  ShowToastToPromptPWAInstall,
+} from "./context/FileContext";
 import { Toolbar } from "./components/Toolbar";
 import DropFileZone from "./components/DropFileZone";
 import ProjectFileContextProvider from "./context/ProjectFileContext";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   return (
-    <FilesProvider>
-      <ProjectFileContextProvider>
-        <DateFilterContextProvider>
-          <LogLinesContextProvider>
-            <DropFileZone>
-              <div className="App">
-                <LoadFiles />
-                <Filters />
-                <Toolbar />
-                <LinesRenderer></LinesRenderer>
-                <KeyboardShortCuts />
-              </div>
-            </DropFileZone>
-          </LogLinesContextProvider>
-        </DateFilterContextProvider>
-      </ProjectFileContextProvider>
-    </FilesProvider>
+    <>
+      <ToastContainer
+        hideProgressBar
+        autoClose={3000}
+        theme="dark"
+      ></ToastContainer>
+      <FilesProvider>
+        <ProjectFileContextProvider>
+          <DateFilterContextProvider>
+            <LogLinesContextProvider>
+              <DropFileZone>
+                <div className="App">
+                  <ShowToastToPromptPWAInstall />
+                  <LoadFiles />
+                  <Filters />
+                  <Toolbar />
+                  <LinesRenderer></LinesRenderer>
+                  <KeyboardShortCuts />
+                </div>
+              </DropFileZone>
+            </LogLinesContextProvider>
+          </DateFilterContextProvider>
+        </ProjectFileContextProvider>
+      </FilesProvider>
+    </>
   );
 }
 

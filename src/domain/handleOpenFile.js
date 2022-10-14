@@ -33,10 +33,8 @@ function getFileProcessor(fileExtension) {
   console.log("getFileProcessor", fileExtension);
   switch (fileExtension) {
     case "tat":
-      console.log("getFileProcessor addProjectFile");
       return addProjectFile;
     default:
-      console.log("getFileProcessor addLogFile");
       return addLogFile;
   }
 }
