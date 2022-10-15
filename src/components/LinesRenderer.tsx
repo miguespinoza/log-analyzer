@@ -84,7 +84,9 @@ export function LinesRenderer() {
         itemContent={LineRenderer}
       ></Virtuoso>
       <FilterFormModal
-        hint={focusedLine?.text}
+        forwardProps={{
+          hint: focusedLine?.text,
+        }}
         showModal={isNewFilterModalOpen}
         setShowModal={setIsNewFilterModalOpen}
       ></FilterFormModal>
