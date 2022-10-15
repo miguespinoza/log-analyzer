@@ -45,7 +45,7 @@ export default function LoadFiles() {
   const { removeLogFile } = useFilesContext();
 
   return (
-    <div className="files border">
+    <div className="files border-l dark:border-cyan-800">
       <div
         style={{ maxHeight: "calc(15rem - 43px)" }}
         className="overflow-auto"

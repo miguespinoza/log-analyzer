@@ -1,17 +1,19 @@
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { withModal } from "./withModal";
-import { LabeledTextField } from "./LabeledTextField";
+import { LabeledSelectField, LabeledTextField } from "./LabeledTextField";
 import { Button } from "./Button";
 import { Helmet } from "react-helmet";
 import ManageTaTFilters from "./ManageTaTFilters";
 import { useProjectFileContext } from "../context/ProjectFileContext";
+import { useThemeActions } from "./useThemeActions";
 const appShortName = "RLA";
 
 export default function AppSettings() {
   const { project, setProject } = useProjectFileContext();
+  const { getTheme, setTheme } = useThemeActions();
 
   return (
-    <div>
+    <div data-tid="settings" className="dark:bg-[#011627] p-2">
       <span>AppSettings</span>
       <form
         onSubmit={(e) => {
@@ -19,13 +21,18 @@ export default function AppSettings() {
           const form = e.target as HTMLFormElement;
           const data = new FormData(form);
           const projectName = data.get("projectName") as string | undefined;
+          const theme = data.get("theme") as string | undefined;
+          if (theme != null && theme !== getTheme()) {
+            setTheme(theme as "light" | "dark");
+          }
+
           if (projectName != null) {
             setProject({ ...project, name: projectName });
           }
           form.reset();
         }}
       >
-        <div className="p-2 border">
+        <div className="p-2 border dark:border-cyan-800">
           <LabeledTextField
             label="Project Name"
             inputProps={{ name: "projectName", defaultValue: project.name }}
@@ -46,9 +53,17 @@ export default function AppSettings() {
               disabled: true,
             }}
           />
+          <LabeledSelectField
+            label="Theme"
+            selectProps={{ name: "theme", defaultValue: getTheme() }}
+            options={[
+              { value: "light", renderer: "Light" },
+              { value: "dark", renderer: "Dark" },
+            ]}
+          />
           <Button type="submit">Save</Button>
         </div>
-        <div className="p-2 border">
+        <div className="p-2 border dark:border-cyan-800">
           <ManageTaTFilters />
         </div>
       </form>
@@ -59,4 +74,4 @@ export default function AppSettings() {
   );
 }
 
-export const AppSettingsModal = withModal(<AppSettings />);
+export const AppSettingsModal = withModal(AppSettings);

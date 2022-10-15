@@ -76,7 +76,7 @@ export function LinesRenderer() {
   };
 
   return (
-    <div data-tid="measurer" className="w-full logs border" ref={ref}>
+    <div data-tid="measurer" className="w-full logs" ref={ref}>
       <Virtuoso
         ref={listRef as any}
         style={{ height: `${height}px`, width: `${width}px` }}
@@ -106,7 +106,7 @@ function LogLineRenderer({
   onClick?: (line: LogLine) => void;
   onDoubleClick?: (line: LogLine) => void;
 }) {
-  const color = line.matchedFilters?.color ?? "white";
+  const color = line.matchedFilters?.color ?? undefined;
   const date =
     line.date == null || isNaN(line.date?.getTime() ?? NaN)
       ? null
@@ -129,7 +129,9 @@ function LogLineRenderer({
       >
         {line.count}
       </span>
-      {date != null && <span className="noWrap bg-stone-300">{date}</span>}
+      {date != null && (
+        <span className="noWrap bg-stone-300 dark:bg-cyan-900">{date}</span>
+      )}
       <span
         style={{
           backgroundColor: focusedLine?.hash === line.hash ? calmBlue : color,

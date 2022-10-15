@@ -13,7 +13,10 @@ export function Toolbar() {
   const [showSettingsModal, setShowSettingsModal] = useState(false);
 
   return (
-    <div data-tid="toolbar" className="toolbar flex justify-between w-full">
+    <div
+      data-tid="toolbar"
+      className="toolbar flex justify-between w-full border dark:border-cyan-800"
+    >
       <div className="flex gap-2">
         <Button
           title="ctl+alt+h"
@@ -42,6 +45,7 @@ export function Toolbar() {
         <div>
           <label htmlFor="sortBy">Sort By:</label>
           <select
+            className="rounded border dark:bg-gray-700 bg-gray-200 px-1 py-1 leading-tight text-gray-700 dark:text-white dark:focus:bg-gray-900 focus:bg-white focus:outline-none"
             id="sortBy"
             onChange={(e) => {
               setProjectProperty({ sortBy: e.target.value as any });
@@ -54,6 +58,7 @@ export function Toolbar() {
         <div>
           <label htmlFor="sortOrder">Sort order:</label>
           <select
+            className="rounded border dark:bg-gray-700 bg-gray-200 px-1 py-1 leading-tight text-gray-700 dark:text-white dark:focus:bg-gray-900 focus:bg-white focus:outline-none"
             id="sortOrder"
             onChange={(e) => {
               setProjectProperty({ sortDirection: e.target.value as any });

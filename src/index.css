@@ -1,3 +1,6 @@
 .noWrap{
     white-space: pre;
 }
+.dark * {
+    color: #ffffff
+}

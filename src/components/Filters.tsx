@@ -13,6 +13,7 @@ import { useState } from "react";
 import { IconButton } from "./IconButton";
 import { Filter } from "../domain/types";
 import { useProjectFileContext } from "../context/ProjectFileContext";
+import { withModal } from "./withModal";
 
 export function Filters() {
   const { apliedFilters: filters } = useLogLinesContext();
@@ -101,45 +102,10 @@ const ActiveFilter = ({ filter }: { filter: Filter }) => {
       <FilterFormModal
         setShowModal={setShowModal}
         showModal={showModal}
-        filter={filter}
+        forwardProps={{ filter }}
       />
     </div>
   );
 };
 
-export function FilterFormModal({
-  showModal,
-  setShowModal,
-  filter,
-  hint,
-}: {
-  filter?: Filter;
-  hint?: string;
-  showModal: boolean;
-  setShowModal: (show: boolean) => void;
-}) {
-  return (
-    <ReactModal
-      isOpen={showModal}
-      onRequestClose={() => setShowModal(false)}
-      style={{
-        content: {
-          top: "50%",
-          left: "50%",
-          right: "auto",
-          bottom: "auto",
-          marginRight: "-50%",
-          transform: "translate(-50%, -50%)",
-        },
-      }}
-      shouldCloseOnOverlayClick={true}
-    >
-      <FilterForm
-        filter={filter}
-        hint={hint}
-        onSaved={() => setShowModal(false)}
-        copactMode={false}
-      />
-    </ReactModal>
-  );
-}
+export const FilterFormModal = withModal(FilterForm);

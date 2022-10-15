@@ -1,31 +1,28 @@
+import clsx from "clsx";
 import ReactModal from "react-modal";
+import { useThemeActions } from "./useThemeActions";
 
-export const withModal =
-  (children: React.ReactNode) =>
-  ({
-    showModal,
-    setShowModal,
-  }: {
+export function withModal<PropTypes>(Component: React.FC<PropTypes>) {
+  const WithModal: React.FC<{
     showModal: boolean;
     setShowModal: (show: boolean) => void;
-  }) => {
+    forwardProps?: PropTypes;
+  }> = (props) => {
+    const { getTheme } = useThemeActions();
     return (
       <ReactModal
-        isOpen={showModal}
-        onRequestClose={() => setShowModal(false)}
-        style={{
-          content: {
-            top: "50%",
-            left: "50%",
-            right: "auto",
-            bottom: "auto",
-            marginRight: "-50%",
-            transform: "translate(-50%, -50%)",
-          },
-        }}
+        isOpen={props.showModal}
+        onRequestClose={() => props.setShowModal(false)}
+        className={clsx(
+          " bg-white dark:bg-gray-800 Modal  border rounded",
+          getTheme() === "dark" ? "dark" : ""
+        )}
+        overlayClassName="Overlay "
         shouldCloseOnOverlayClick={true}
       >
-        {children}
+        <Component {...(props.forwardProps as any)} />
       </ReactModal>
     );
   };
+  return WithModal;
+}

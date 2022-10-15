@@ -20,7 +20,7 @@ export default function FilterForm({
 }) {
   const { setFilter: addFilter, updateFilter } = useProjectFileContext();
   return (
-    <div>
+    <div className="dark:bg-[#011627] p-2">
       <form
         onSubmit={(e) => {
           e.preventDefault();

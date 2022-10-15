@@ -30,7 +30,10 @@ function App() {
           <DateFilterContextProvider>
             <LogLinesContextProvider>
               <DropFileZone>
-                <div className="App">
+                <div
+                  id="App"
+                  className="App min-h-screen bg-white dark:bg-[#011627]"
+                >
                   <ShowToastToPromptPWAInstall />
                   <LoadFiles />
                   <Filters />

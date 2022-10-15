@@ -19,7 +19,7 @@ export const Button: React.FC<ButtonProps> = ({
       //whileHover={{ scale: 1.01 }}
       disabled={isDisabled}
       className={clsx(
-        "rounded border-4 font-semibold",
+        "rounded border-4 font-semibold ",
         {
           "border-teal-500 bg-teal-500 px-2 py-1 text-sm text-white hover:border-teal-700 hover:bg-teal-700":
             look === "primary",
@@ -27,7 +27,7 @@ export const Button: React.FC<ButtonProps> = ({
             look === "destructive",
           "border-yellow-500 bg-yellow-500 px-2 py-1 text-sm text-white hover:border-yellow-700 hover:bg-yellow-700":
             look === "warning",
-          "border-cyan-100 bg-cyan-100 px-2 py-1 text-sm  text-gray-700 hover:border-cyan-300 hover:bg-cyan-300":
+          "border-cyan-100 bg-cyan-100 dark:bg-cyan-700 dark:border-cyan-700 px-2 py-1 text-sm  text-gray-700 hover:border-cyan-300 dark:hover:border-cyan-900 hover:bg-cyan-300":
             look === "secondary",
           "border-gray-500 bg-gray-500 px-2 py-1 text-sm text-white hover:border-gray-700 hover:bg-gray-700":
             props.disabled,
