@@ -25,31 +25,29 @@ export const LabeledSelectField = forwardRef<
   const id = useMemo(() => uuid(), []);
   return (
     <div {...containerProps} className="flex gap-1">
-      <div className="">
-        <label
-          htmlFor={id}
-          {...labelProps}
-          className="text-sm font-semibold tracking-wide text-gray-700 dark:text-white"
-        >
-          {label}:
-        </label>
-        <select
-          id={id}
-          {...selectProps}
-          ref={ref}
-          className={clsx(
-            selectProps.disabled && "bg-gray-200 dark:bg-gray-400",
-            "rounded border  dark:border-cyan-800 px-2 py-2 leading-tight ",
-            "dark:bg-gray-700 bg-gray-200 text-gray-700 dark:text-white dark:focus:bg-gray-900 focus:bg-white focus:outline-none"
-          )}
-        >
-          {options.map(({ value, renderer }) => (
-            <option key="value" value={value}>
-              {renderer}
-            </option>
-          ))}
-        </select>
-      </div>
+      <label
+        htmlFor={id}
+        {...labelProps}
+        className="text-sm font-semibold tracking-wide text-gray-700 dark:text-white"
+      >
+        {label}:
+      </label>
+      <select
+        id={id}
+        {...selectProps}
+        ref={ref}
+        className={clsx(
+          selectProps.disabled && "bg-gray-200 dark:bg-gray-400",
+          "rounded border  dark:border-cyan-800 px-2 py-2 leading-tight ",
+          "dark:bg-gray-700 bg-gray-200 text-gray-700 dark:text-white dark:focus:bg-gray-900 focus:bg-white focus:outline-none"
+        )}
+      >
+        {options.map(({ value, renderer }) => (
+          <option key="value" value={value}>
+            {renderer}
+          </option>
+        ))}
+      </select>
     </div>
   );
 });
@@ -61,26 +59,24 @@ export const LabeledTextField = forwardRef<
   const id = useMemo(() => uuid(), []);
   return (
     <div {...containerProps} className="flex gap-1">
-      <div className="">
-        <label
-          htmlFor={id}
-          {...labelProps}
-          className="text-sm font-semibold tracking-wide text-gray-700 dark:text-white"
-        >
-          {label}:
-        </label>
-        <input
-          id={id}
-          {...inputProps}
-          ref={ref}
-          className={clsx(
-            inputProps.disabled && "bg-gray-200 dark:bg-gray-400",
-            "rounded border  dark:border-cyan-800 p-2 leading-tight ",
-            "dark:bg-gray-700 bg-gray-200 text-gray-700 dark:text-white dark:focus:bg-gray-900 focus:bg-white focus:outline-none",
-            inputProps.className
-          )}
-        />
-      </div>
+      <label
+        htmlFor={id}
+        {...labelProps}
+        className="text-sm font-semibold tracking-wide text-gray-700 dark:text-white"
+      >
+        {label}:
+      </label>
+      <input
+        id={id}
+        {...inputProps}
+        ref={ref}
+        className={clsx(
+          inputProps.disabled && "bg-gray-200 dark:bg-gray-400",
+          "rounded border  dark:border-cyan-800 p-2 leading-tight ",
+          "dark:bg-gray-700 bg-gray-200 text-gray-700 dark:text-white dark:focus:bg-gray-900 focus:bg-white focus:outline-none",
+          inputProps.className
+        )}
+      />
     </div>
   );
 });
