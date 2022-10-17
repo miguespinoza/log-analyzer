@@ -3,6 +3,8 @@ import { parseLogFile } from "./log-lines-domain";
 import { map, ReplaySubject } from "rxjs";
 import { LogFile } from "./types";
 import { v4 as uuidv4 } from "uuid";
+import randomColor from "randomcolor";
+import { getCurrentTheme } from "../components/useThemeActions";
 interface TextFile {
   name: string;
   content: string;
@@ -46,7 +48,6 @@ export function downloadFile(
   link.download = name;
   link.click();
 }
-
 
 export const projectFileLoadingSubject = new ReplaySubject<TextFilev2>(
   100,
@@ -182,27 +183,8 @@ export function preProcessLogFile(file: TextFilev2): LogFile {
 }
 
 export function getFileColor() {
-  // array of pastel colors
-  const colors = [
-    "#836953",
-    "#b2fba5",
-    "#89cff0",
-    "#fdfd96",
-    "#ff694f",
-    "#ff9899",
-    "#ffb7ce",
-    "#ca9bf7",
-    "#77dd77",
-    "#836953",
-    "#ff0000",
-    "#ff7f00",
-    "#ffff00",
-    "#00ff00",
-    "#0000ff",
-    "#4b0082",
-    "#9400d3",
-  ];
-
-  // get random color
-  return colors[Math.floor(Math.random() * colors.length)];
+  const theme = getCurrentTheme();
+  return randomColor({
+    luminosity: theme === "dark" ? "dark" : "light",
+  });
 }

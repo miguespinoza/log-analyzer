@@ -16,8 +16,10 @@ import DropFileZone from "./components/DropFileZone";
 import ProjectFileContextProvider from "./context/ProjectFileContext";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useApplyTheme } from "./components/useThemeActions";
 
 function App() {
+  useApplyTheme();
   return (
     <>
       <ToastContainer

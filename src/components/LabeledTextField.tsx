@@ -75,8 +75,9 @@ export const LabeledTextField = forwardRef<
           ref={ref}
           className={clsx(
             inputProps.disabled && "bg-gray-200 dark:bg-gray-400",
-            "rounded border  dark:border-cyan-800 px-2 py-2 leading-tight ",
-            "dark:bg-gray-700 bg-gray-200 text-gray-700 dark:text-white dark:focus:bg-gray-900 focus:bg-white focus:outline-none"
+            "rounded border  dark:border-cyan-800 p-2 leading-tight ",
+            "dark:bg-gray-700 bg-gray-200 text-gray-700 dark:text-white dark:focus:bg-gray-900 focus:bg-white focus:outline-none",
+            inputProps.className
           )}
         />
       </div>

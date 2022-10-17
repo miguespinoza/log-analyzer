@@ -62,24 +62,28 @@ export default function LoadFiles() {
                     updateLogFile(newFile);
                   }}
                 />
-                <span>TZ:</span>
-                <input
-                  title="Timezone offset in case the date in the log does not include it"
-                  className="w-[2rem]"
-                  type={"number"}
-                  min={-12}
-                  max={12}
-                  value={file.timezone}
-                  onChange={(e) => {
-                    const newTimezone = parseInt(e.target.value);
-                    if (!isNaN(newTimezone)) {
-                      const newFile = { ...file, timezone: newTimezone };
-                      updateLogFile(newFile);
-                    } else {
-                      console.error("cannot parse int", e.target.value);
-                    }
+                <LabeledTextField
+                  label="TZ"
+                  inputProps={{
+                    title:
+                      "Timezone offset in case the date in the log does not include it",
+                    type: "number",
+                    value: file.timezone,
+                    onChange: (e) => {
+                      const newTimezone = parseInt(e.target.value);
+                      if (!isNaN(newTimezone)) {
+                        const newFile = { ...file, timezone: newTimezone };
+                        updateLogFile(newFile);
+                      } else {
+                        console.error("cannot parse int", e.target.value);
+                      }
+                    },
+                    min: -12,
+                    max: 12,
+                    className: "p-0 w-[2rem]",
                   }}
                 />
+
                 {file.linesWithoutDateCount > 0 && (
                   <span
                     title={`${file.linesWithoutDateCount} lines without date, to see them switch to sort by file`}

@@ -5,7 +5,7 @@ export function useThemeActions(): {
   setTheme: (theme: "dark" | "light") => void;
 } {
   const setTheme = useCallback((theme: "dark" | "light") => {
-    const storedTheme = localStorage.getItem("theme");
+    const storedTheme = getCurrentTheme();
     if (storedTheme !== theme) {
       localStorage.setItem("theme", theme);
       if (theme === "dark")
@@ -15,10 +15,23 @@ export function useThemeActions(): {
   }, []);
 
   const getTheme = useCallback(() => {
-    const storedTheme = localStorage.getItem("theme");
+    const storedTheme = getCurrentTheme();
     if (storedTheme === "dark") return "dark";
     else return "light";
   }, []);
 
   return { getTheme, setTheme };
+}
+
+export function getCurrentTheme(): "dark" | "light" {
+  const storedTheme = localStorage.getItem("theme");
+  if (storedTheme === "dark") return "dark";
+  else return "light";
+}
+
+export function useApplyTheme() {
+  const { getTheme } = useThemeActions();
+  const theme = getTheme();
+  if (theme === "dark") document.getElementById("root")?.classList.add("dark");
+  else document.getElementById("root")?.classList.remove("dark");
 }
