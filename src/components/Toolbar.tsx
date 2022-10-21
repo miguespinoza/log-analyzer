@@ -15,9 +15,9 @@ export function Toolbar() {
   return (
     <div
       data-tid="toolbar"
-      className="toolbar flex justify-between w-full border dark:border-cyan-800"
+      className="toolbar flex justify-between w-full border dark:border-cyan-800 items-center"
     >
-      <div className="flex gap-2">
+      <div className="flex gap-2 items-center">
         <Button
           title="ctl+alt+h"
           onClick={() =>
