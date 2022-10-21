@@ -24,7 +24,7 @@ export default function ManageTaTFilters() {
             openProjectFile(file);
           }}
         />
-        {isFileSystemAPIAvailable() && (
+        {isFileSystemAPIAvailable() && filtersFile != null && (
           <Button onClick={saveProjectFile}>
             {isFileSystemAPIAvailable() ? "Save Filters" : "Download filters"}
           </Button>

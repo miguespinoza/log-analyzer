@@ -42,13 +42,15 @@ export default function AppSettings() {
           form.reset();
         }}
       >
-        <div className="p-2 border dark:border-cyan-800">
+        <div className="p-2 border dark:border-cyan-800 flex flex-col gap-1">
           <LabeledTextField
             label="Project Name"
+            containerProps={{ className: "w-full flex justify-between" }}
             inputProps={{ name: "projectName", defaultValue: project.name }}
           />
           <LabeledTextField
             label="Create Quick Filter Shortcut"
+            containerProps={{ className: "w-full flex justify-between" }}
             inputProps={{
               name: "createFilterSC",
               defaultValue: "ctrl+alt+f",
@@ -57,6 +59,7 @@ export default function AppSettings() {
           />
           <LabeledTextField
             label="Show/hide Shortcut"
+            containerProps={{ className: "w-full flex justify-between" }}
             inputProps={{
               name: "createFilterSC",
               defaultValue: "ctrl+alt+h",
@@ -65,6 +68,7 @@ export default function AppSettings() {
           />
           <LabeledSelectField
             label="Theme"
+            containerProps={{ className: "w-full flex justify-between" }}
             selectProps={{ name: "theme", defaultValue: getTheme() }}
             options={[
               { value: "light", renderer: "Light" },
@@ -73,6 +77,7 @@ export default function AppSettings() {
           />
           <LabeledSelectField
             label="Display timezone"
+            containerProps={{ className: "w-full flex justify-between" }}
             selectProps={{
               title:
                 "Use this setting to change the timezone the log lines will be rendered with",
@@ -84,7 +89,7 @@ export default function AppSettings() {
               renderer: tz.name,
             }))}
           />
-          <Button type="submit">Save</Button>
+          <Button type="submit">Apply Settings</Button>
         </div>
         <div className="p-2 border dark:border-cyan-800">
           <ManageTaTFilters />
