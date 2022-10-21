@@ -17,6 +17,7 @@ import ProjectFileContextProvider from "./context/ProjectFileContext";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useApplyTheme } from "./components/useThemeActions";
+import StatusBar from "./components/StatusBar";
 
 function App() {
   useApplyTheme();
@@ -41,6 +42,7 @@ function App() {
                   <Filters />
                   <Toolbar />
                   <LinesRenderer></LinesRenderer>
+                  <StatusBar />
                   <KeyboardShortCuts />
                 </div>
               </DropFileZone>

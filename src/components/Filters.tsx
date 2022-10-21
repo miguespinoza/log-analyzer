@@ -8,7 +8,6 @@ import {
 } from "@heroicons/react/24/solid";
 import FilterForm from "./FilterForm";
 import { useLogLinesContext } from "../context/LogLinesContext";
-import ReactModal from "react-modal";
 import { useState } from "react";
 import { IconButton } from "./IconButton";
 import { Filter } from "../domain/types";
@@ -18,10 +17,7 @@ import { withModal } from "./withModal";
 export function Filters() {
   const { apliedFilters: filters } = useLogLinesContext();
   return (
-    <div
-      style={{ maxHeight: "calc(15rem - 43px)" }}
-      className="filters flex flex-col overflow-auto w-full"
-    >
+    <div className="filters flex flex-col overflow-auto w-full">
       {filters.map((filter) => (
         <ActiveFilter filter={filter} key={filter.id} />
       ))}

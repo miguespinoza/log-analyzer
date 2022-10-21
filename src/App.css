@@ -7,9 +7,10 @@
   display: grid;
   grid-template-areas: "logs logs"
   "toolbar toolbar"
-  "filters files";
+  "filters files"
+  "status status";
   grid-template-columns: 2fr 1fr;
-  grid-template-rows: calc(100vh - 15rem) fit-content(3rem) 1fr;
+  grid-template-rows: calc(100vh - 18rem) 3rem 13rem 2rem;;
 }
 
 /* Language: css */
@@ -25,6 +26,10 @@
 
 .toolbar{
   grid-area: toolbar;
+}
+
+.statusBar{
+  grid-area: status;
 }
 
 .filters 
