@@ -4,6 +4,7 @@ import { LabeledTextField } from "./LabeledTextField";
 import { v4 as uuid } from "uuid";
 import { Filter } from "../domain/types";
 import { useProjectFileContext } from "../context/ProjectFileContext";
+import clsx from "clsx";
 
 const softgreen = "#b3e5fc";
 
@@ -12,15 +13,17 @@ export default function FilterForm({
   hint,
   onSaved,
   copactMode = true,
+  isModal = false,
 }: {
   filter?: Filter;
   hint?: string;
   onSaved?: () => void;
   copactMode?: boolean;
+  isModal?: boolean;
 }) {
   const { setFilter: addFilter, updateFilter } = useProjectFileContext();
   return (
-    <div className="dark:bg-[#011627] p-2">
+    <div className={clsx(isModal && "dark:bg-[#011627] p-2 rounded ")}>
       <form
         onSubmit={(e) => {
           e.preventDefault();

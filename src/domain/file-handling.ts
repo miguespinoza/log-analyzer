@@ -8,6 +8,7 @@ import { getCurrentTheme } from "../components/useThemeActions";
 interface TextFile {
   name: string;
   content: string;
+  isClosedByDefault?: boolean;
 }
 
 export interface TextFilev2 extends TextFile {
@@ -94,11 +95,31 @@ export function isFileSystemAPIAvailable(): boolean {
   return "showOpenFilePicker" in window;
 }
 
+export async function openLogFolderPicker() {
+  if ("showDirectoryPicker" in window) {
+    const dirHandle = await (window as any).showDirectoryPicker();
+    for await (const entry of dirHandle.values()) {
+      if (entry.kind === "file") {
+        const fileHandle = entry as FileSystemFileHandle;
+        const file = await fileHandle.getFile();
+        const text = await file.text();
+        fileLoadingSubject.next({
+          name: file.name,
+          content: text,
+          fileHandle,
+          isClosedByDefault: true,
+        });
+      }
+    }
+  } else {
+    throw new Error("Browser not supported: showDirectoryPicker");
+  }
+}
+
 export async function onLogFilePickerClick() {
   showOpenFilePicker({
     multiple: true,
   }).then(async (handles: FileSystemFileHandle[]) => {
-    window.localStorage.setItem("test", handles.toString());
     const files = await Promise.all(handles.map(handleFileSystemHandle));
     files.forEach((f) => {
       fileLoadingSubject.next(f);
@@ -172,7 +193,7 @@ export function preProcessLogFile(file: TextFilev2): LogFile {
     color,
     fileHandle: file.fileHandle,
     id: fileId,
-    isVisible: true,
+    isVisible: file.isClosedByDefault ? false : true,
     lines,
     linesWithoutDateCount,
     name: file.name,

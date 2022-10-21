@@ -4,6 +4,7 @@ import React from "react";
 import {
   makeHandleHTMLFileInputReactive,
   onLogFilePickerClick,
+  openLogFolderPicker,
 } from "../domain/file-handling";
 import { useLogLinesContext } from "../context/LogLinesContext";
 import { ExclamationTriangleIcon, XMarkIcon } from "@heroicons/react/24/solid";
@@ -20,7 +21,14 @@ const getFileName = (name: string) => {
 
 // file picker that uses the file system access aPI https://web.dev/file-system-access/
 export function OpenFilesV2() {
-  return <Button onClick={onLogFilePickerClick}>Open Files</Button>;
+  return (
+    <div className="flex gap-1 items-center">
+      <Button look="secondary" onClick={openLogFolderPicker}>
+        Open Log Folder
+      </Button>
+      <Button onClick={onLogFilePickerClick}>Open Files</Button>
+    </div>
+  );
 }
 
 export function OpenFilesInput() {

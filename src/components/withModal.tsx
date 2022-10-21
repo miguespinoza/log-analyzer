@@ -14,7 +14,7 @@ export function withModal<PropTypes>(Component: React.FC<PropTypes>) {
         isOpen={props.showModal}
         onRequestClose={() => props.setShowModal(false)}
         className={clsx(
-          " bg-white dark:bg-gray-800 Modal  border rounded",
+          "bg-white dark:bg-gray-800 Modal  border rounded dark:border-cyan-800",
           getTheme() === "dark" ? "dark" : ""
         )}
         overlayClassName="Overlay "

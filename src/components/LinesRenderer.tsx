@@ -89,6 +89,7 @@ export function LinesRenderer() {
       <FilterFormModal
         forwardProps={{
           hint: focusedLine?.text,
+          isModal: true,
         }}
         showModal={isNewFilterModalOpen}
         setShowModal={setIsNewFilterModalOpen}
