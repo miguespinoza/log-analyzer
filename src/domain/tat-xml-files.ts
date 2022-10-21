@@ -44,6 +44,9 @@ function extractProjectFromXMLProject(xml: string): ProjectType {
     sortDirection: getXMLPropery(xml, "sortDirection") as "asc" | "desc",
     showOGDate: getXMLPropery(xml, "showOGDate") === "y",
     hideUnfiltered: getXMLPropery(xml, "hideUnfiltered") === "y",
+    displayTimezone: isNaN(Number(getXMLPropery(xml, "displayTimezone")))
+      ? 0
+      : Number(getXMLPropery(xml, "displayTimezone")),
   };
 }
 
@@ -61,7 +64,8 @@ export function adaptProjectToXML(
           project?.sortBy
         }" sortDirection="${project?.sortDirection}" showOGDate="${
           project?.showOGDate ? "y" : "n"
-        }" hideUnfiltered="${project?.hideUnfiltered ? "y" : "n"}" />`
+        }" hideUnfiltered="${project?.hideUnfiltered ? "y" : "n"}"
+         displayTimezone="${project?.displayTimezone}" />`
       : "";
   const xml = `<?xml version="1.0" encoding="utf-8" standalone="yes"?>
   <TextAnalysisTool.NET version="2020-12-17" showOnlyFilteredLines="False">

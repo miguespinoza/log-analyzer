@@ -66,7 +66,7 @@ export default function LoadFiles() {
                   label="TZ"
                   inputProps={{
                     title:
-                      "Timezone offset in case the date in the log does not include it",
+                      "Timezone offset only in case the date in the log does not include it",
                     type: "number",
                     value: file.timezone,
                     onChange: (e) => {

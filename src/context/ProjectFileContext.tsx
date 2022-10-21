@@ -20,6 +20,7 @@ export type ProjectType = {
   sortBy: "date" | "file";
   sortDirection: "asc" | "desc";
   showOGDate: boolean;
+  displayTimezone: number;
   hideUnfiltered: boolean;
 };
 
@@ -70,6 +71,7 @@ export function getDefaultProject(name: string = ""): ProjectType {
     sortBy: "date",
     sortDirection: "desc",
     showOGDate: false,
+    displayTimezone: 0,
     hideUnfiltered: false,
   };
 }
@@ -146,10 +148,13 @@ export default function ProjectFileContextProvider({
 
   const updateProject = useCallback(
     (value: Partial<ProjectType>) => {
+      console.log(value);
       setProject((project) => ({ ...project, ...value }));
     },
     [setProject]
   );
+
+  console.log(project);
 
   const value = React.useMemo(
     () => ({

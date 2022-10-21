@@ -24,7 +24,7 @@ export const LabeledSelectField = forwardRef<
 >(({ options, containerProps, labelProps, selectProps, label }, ref) => {
   const id = useMemo(() => uuid(), []);
   return (
-    <div {...containerProps} className="flex gap-1">
+    <div {...containerProps} className="flex gap-1 items-center">
       <label
         htmlFor={id}
         {...labelProps}
@@ -43,7 +43,11 @@ export const LabeledSelectField = forwardRef<
         )}
       >
         {options.map(({ value, renderer }) => (
-          <option key="value" value={value}>
+          <option
+            key={value}
+            value={value}
+            selected={selectProps.defaultValue === value}
+          >
             {renderer}
           </option>
         ))}
@@ -58,7 +62,7 @@ export const LabeledTextField = forwardRef<
 >(({ containerProps, labelProps, inputProps, label }, ref) => {
   const id = useMemo(() => uuid(), []);
   return (
-    <div {...containerProps} className="flex gap-1">
+    <div {...containerProps} className="flex gap-1 items-center">
       <label
         htmlFor={id}
         {...labelProps}

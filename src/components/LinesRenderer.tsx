@@ -5,6 +5,8 @@ import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { FilterFormModal } from "./Filters";
 import { LogLine } from "../domain/types";
+import { useProjectFileContext } from "../context/ProjectFileContext";
+import { getDateStringAtTz } from "../domain/timezone";
 
 export function LinesRenderer() {
   const { lines } = useLogLinesContext();
@@ -13,7 +15,7 @@ export function LinesRenderer() {
   const [isNewFilterModalOpen, setIsNewFilterModalOpen] = useState(false);
   const { ref, width = 1, height = 1 } = useResizeObserver<HTMLDivElement>();
   const [focusedLine, setFocusedLine] = useState<LogLine | null>(null);
-
+  const { project } = useProjectFileContext();
   const focusedLineIndex = useMemo(
     () => lines.findIndex((l) => l.id === focusedLine?.id),
     [focusedLine, lines]
@@ -68,6 +70,7 @@ export function LinesRenderer() {
         focusedLine={focusedLine}
         line={line}
         onClick={setFocusedLine}
+        displayTimezoneOffset={project.displayTimezone}
         onDoubleClick={() => {
           setIsNewFilterModalOpen(true);
         }}
@@ -102,17 +105,19 @@ function LogLineRenderer({
   onClick,
   focusedLine,
   onDoubleClick,
+  displayTimezoneOffset,
 }: {
   line: LogLine;
   focusedLine: LogLine | null;
   onClick?: (line: LogLine) => void;
   onDoubleClick?: (line: LogLine) => void;
+  displayTimezoneOffset: number;
 }) {
   const color = line.matchedFilters?.color ?? undefined;
   const date =
     line.date == null || isNaN(line.date?.getTime() ?? NaN)
       ? null
-      : line.date.toISOString();
+      : getDateStringAtTz(line.date, displayTimezoneOffset);
   return (
     <div
       className="flex gap-1"
@@ -132,7 +137,9 @@ function LogLineRenderer({
         {line.count}
       </span>
       {date != null && (
-        <span className="noWrap bg-stone-300 dark:bg-cyan-900">{date}</span>
+        <span className="noWrap bg-stone-300 dark:bg-cyan-900 pl-1 pr-1">
+          {date}
+        </span>
       )}
       <span
         style={{

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React from "react";
 import { withModal } from "./withModal";
 import { LabeledSelectField, LabeledTextField } from "./LabeledTextField";
 import { Button } from "./Button";
@@ -6,10 +6,12 @@ import { Helmet } from "react-helmet";
 import ManageTaTFilters from "./ManageTaTFilters";
 import { useProjectFileContext } from "../context/ProjectFileContext";
 import { useThemeActions } from "./useThemeActions";
+import { timezones } from "../domain/timezone";
+import { toast } from "react-toastify";
 const appShortName = "RLA";
 
 export default function AppSettings() {
-  const { project, setProject } = useProjectFileContext();
+  const { project, updateProject } = useProjectFileContext();
   const { getTheme, setTheme } = useThemeActions();
 
   return (
@@ -21,13 +23,21 @@ export default function AppSettings() {
           const form = e.target as HTMLFormElement;
           const data = new FormData(form);
           const projectName = data.get("projectName") as string | undefined;
+          const displayTimezone = data.get("displayTimezone") as
+            | string
+            | undefined;
           const theme = data.get("theme") as string | undefined;
           if (theme != null && theme !== getTheme()) {
             setTheme(theme as "light" | "dark");
           }
 
-          if (projectName != null) {
-            setProject({ ...project, name: projectName });
+          if (projectName != null && displayTimezone != null) {
+            updateProject({
+              name: projectName,
+              displayTimezone: Number(displayTimezone),
+            });
+          } else {
+            toast.error("Invalid form data");
           }
           form.reset();
         }}
@@ -60,6 +70,19 @@ export default function AppSettings() {
               { value: "light", renderer: "Light" },
               { value: "dark", renderer: "Dark" },
             ]}
+          />
+          <LabeledSelectField
+            label="Display timezone"
+            selectProps={{
+              title:
+                "Use this setting to change the timezone the log lines will be rendered with",
+              name: "displayTimezone",
+              defaultValue: project.displayTimezone.toString(),
+            }}
+            options={timezones.map((tz) => ({
+              value: tz.offset.toString(),
+              renderer: tz.name,
+            }))}
           />
           <Button type="submit">Save</Button>
         </div>
