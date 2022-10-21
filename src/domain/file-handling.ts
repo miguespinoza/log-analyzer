@@ -95,11 +95,16 @@ export function isFileSystemAPIAvailable(): boolean {
   return "showOpenFilePicker" in window;
 }
 
+function isSupportedFileExtension(name: string) {
+  const fileExtension = name.split(".").pop() ?? "";
+  return ["log", "txt"].includes(fileExtension);
+}
+
 export async function openLogFolderPicker() {
   if ("showDirectoryPicker" in window) {
     const dirHandle = await (window as any).showDirectoryPicker();
     for await (const entry of dirHandle.values()) {
-      if (entry.kind === "file") {
+      if (entry.kind === "file" && isSupportedFileExtension(entry.name)) {
         const fileHandle = entry as FileSystemFileHandle;
         const file = await fileHandle.getFile();
         const text = await file.text();
