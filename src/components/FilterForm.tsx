@@ -63,6 +63,7 @@ export default function FilterForm({
             label="Filter"
             inputProps={{
               name: "filter",
+              autoFocus: isModal,
               defaultValue: edditingFilter?.filter ?? hint,
             }}
           />
@@ -79,7 +80,6 @@ export default function FilterForm({
             <Button
               type="submit"
               title="for quick filter, select text and ctrl+alt+f"
-              hidden={copactMode}
             >
               save
             </Button>

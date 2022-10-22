@@ -98,7 +98,7 @@ const ActiveFilter = ({ filter }: { filter: Filter }) => {
       <FilterFormModal
         setShowModal={setShowModal}
         showModal={showModal}
-        forwardProps={{ filter, isModal: true }}
+        forwardProps={{ filter, isModal: true, copactMode: false }}
       />
     </div>
   );
