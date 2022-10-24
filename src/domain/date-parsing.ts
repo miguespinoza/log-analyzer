@@ -14,11 +14,12 @@ const TeamsDesktopDateRegex =
   /^([A-Z][a-z]{2} [A-Z][a-z]{2} \d{2} \d{4} \d{2}:\d{2}:\d{2} GMT(\+|-)\d{4})/;
 
 export function removeOriginalDate(line: string) {
-  return line
-    .replace(WebdateRegex, "")
-    .replace(DesktopdateRegex, "")
-    .replace(EtldateRegex, "")
-    .replace(ThirddateRegex, "");
+  for (const parser of dateParsers) {
+    if (parser.regex.test(line)) {
+      return line.replace(parser.regex, "");
+    }
+  }
+  return line;
 }
 
 type DateParser = {

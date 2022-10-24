@@ -84,6 +84,7 @@ export function parseLogLines({
         count,
         fileName,
         text: line,
+        textWithoutDate: removeOriginalDate(line),
         fileColor: color,
       });
     } else {
@@ -96,6 +97,7 @@ export function parseLogLines({
         count,
         fileName,
         text: line,
+        textWithoutDate: removeOriginalDate(line),
         fileColor: color,
       });
     }
@@ -160,14 +162,8 @@ export function dedupeLogLines(
     }
     for (const line of file.lines ?? []) {
       if (!existingLinesHashes.has(line.hash)) {
-        const newLine = { ...line };
-        const updatedDate = getLineDate(newLine.text, file.timezone);
-        newLine.date = updatedDate;
-        if (!showOGDate) {
-          newLine.text = removeOriginalDate(line.text);
-        }
-        mergedLines.push(newLine);
-        existingLinesHashes.add(newLine.hash);
+        mergedLines.push(line);
+        existingLinesHashes.add(line.hash);
       }
     }
   }

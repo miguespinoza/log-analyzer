@@ -1,6 +1,7 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   dedupeLogLines,
+  processFileLogLines,
   searchLines,
   sortLines,
 } from "../domain/log-lines-domain";
@@ -13,6 +14,7 @@ export type LogLinesContextType = {
   logFiles: LogFile[];
   lines: LogLine[];
   updateLogFile: (file: LogFile) => void;
+  updateFileTimezone: (file: LogFile, timezone: number) => void;
   mergeLogFiles: () => void;
   apliedFilters: Filter[];
   logsAreInSync: boolean;
@@ -48,6 +50,7 @@ export const LogLinesContext = React.createContext<LogLinesContextType>({
   updateLogFile: () => {},
   logsAreInSync: true,
   mergeLogFiles: () => {},
+  updateFileTimezone: () => {},
   apliedFilters: [],
 });
 
@@ -79,6 +82,15 @@ export const LogLinesContextProvider = ({ children }: any) => {
     };
   }, [lines, filters, hideUnfiltered]);
 
+  const updateFileTimezone = useCallback(
+    (file: LogFile, newTimezone: number) => {
+      const newFile = { ...file, timezone: newTimezone };
+      const processedFile = processFileLogLines(newFile);
+      updateLogFile(processedFile);
+    },
+    [updateLogFile]
+  );
+
   const sortedLines = useMemo(() => {
     return sortLines(
       sortBy,
@@ -96,6 +108,7 @@ export const LogLinesContextProvider = ({ children }: any) => {
       apliedFilters: filteredLines.filters,
       updateLogFile,
       logsAreInSync,
+      updateFileTimezone,
     }),
     [
       logFiles,
@@ -104,6 +117,7 @@ export const LogLinesContextProvider = ({ children }: any) => {
       filteredLines.filters,
       updateLogFile,
       logsAreInSync,
+      updateFileTimezone,
     ]
   );
   return (

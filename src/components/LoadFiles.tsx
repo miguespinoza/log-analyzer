@@ -49,7 +49,7 @@ export function OpenFilesInput() {
 }
 
 export default function LoadFiles() {
-  const { logFiles, updateLogFile } = useLogLinesContext();
+  const { logFiles, updateLogFile, updateFileTimezone } = useLogLinesContext();
   const { removeLogFile } = useFilesContext();
 
   return (
@@ -76,8 +76,7 @@ export default function LoadFiles() {
                   onChange: (e) => {
                     const newTimezone = parseInt(e.target.value);
                     if (!isNaN(newTimezone)) {
-                      const newFile = { ...file, timezone: newTimezone };
-                      updateLogFile(newFile);
+                      updateFileTimezone(file, newTimezone);
                     } else {
                       console.error("cannot parse int", e.target.value);
                     }

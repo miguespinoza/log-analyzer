@@ -71,6 +71,7 @@ export function LinesRenderer() {
         line={line}
         onClick={setFocusedLine}
         displayTimezoneOffset={project.displayTimezone}
+        showOGDate={project.showOGDate}
         onDoubleClick={() => {
           setIsNewFilterModalOpen(true);
         }}
@@ -107,12 +108,14 @@ function LogLineRenderer({
   focusedLine,
   onDoubleClick,
   displayTimezoneOffset,
+  showOGDate,
 }: {
   line: LogLine;
   focusedLine: LogLine | null;
   onClick?: (line: LogLine) => void;
   onDoubleClick?: (line: LogLine) => void;
   displayTimezoneOffset: number;
+  showOGDate?: boolean;
 }) {
   const color = line.matchedFilters?.color ?? undefined;
   const date =
@@ -148,7 +151,7 @@ function LogLineRenderer({
         }}
         className="noWrap align-text-top "
       >
-        {line.text}
+        {showOGDate ? line.text : line.textWithoutDate}
       </span>
     </div>
   );

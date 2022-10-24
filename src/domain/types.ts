@@ -30,6 +30,7 @@ export interface LogLine {
   hash: string;
   fileName: string;
   text: string;
+  textWithoutDate: string;
   matchedFilters?: Omit<Filter, "hitCount">;
   isVisible?: boolean;
   fileColor: string;
