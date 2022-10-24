@@ -1,8 +1,6 @@
 import { ChangeEvent, ChangeEventHandler } from "react";
-import { parseLogFile } from "./log-lines-domain";
+import { makeLogFile } from "./log-lines-domain";
 import { map, ReplaySubject } from "rxjs";
-import { LogFile } from "./types";
-import { v4 as uuidv4 } from "uuid";
 import randomColor from "randomcolor";
 import { getCurrentTheme } from "../components/useThemeActions";
 interface TextFile {
@@ -57,9 +55,9 @@ export const projectFileLoadingSubject = new ReplaySubject<TextFilev2>(
 export const projectFileLoading$ = projectFileLoadingSubject.asObservable();
 
 export const fileLoadingSubject = new ReplaySubject<TextFilev2>(100, 10000);
-export const fileLoading$ = fileLoadingSubject
+export const logFileLoading$ = fileLoadingSubject
   .asObservable()
-  .pipe(map(preProcessLogFile));
+  .pipe(map(makeLogFile));
 
 export function makeHandleHTMLFileInputReactive() {
   return makeHTMLFileInputHandler((file) =>
@@ -184,29 +182,6 @@ export const makeDragFileInputHandler: (
     }
   };
 };
-
-export function preProcessLogFile(file: TextFilev2): LogFile {
-  const color = getFileColor();
-  const fileId = uuidv4();
-  const { lines, linesWithoutDateCount, sorted } = parseLogFile(
-    fileId,
-    file.content,
-    file.name,
-    color
-  );
-  return {
-    color,
-    fileHandle: file.fileHandle,
-    id: fileId,
-    isVisible: file.isClosedByDefault ? false : true,
-    lines,
-    linesWithoutDateCount,
-    name: file.name,
-    sorted,
-    text: file.content,
-    timezone: 0,
-  };
-}
 
 export function getFileColor() {
   const theme = getCurrentTheme();

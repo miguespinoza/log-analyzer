@@ -1,9 +1,10 @@
 import { expect, test } from "vitest";
-import { preProcessLogFile } from "./file-handling";
+import { TextFilev2 } from "./file-handling";
 import {
   dedupeLogLines,
-  parseLogFile,
+  makeLogFile,
   parseLogLines,
+  processFileLogLines,
   searchLines,
   sortLines,
 } from "./log-lines-domain";
@@ -11,12 +12,12 @@ import { Filter } from "./types";
 
 test("should parse log line", () => {
   const logLine = "2022-09-26T15:49:53.444Z Inf	CID[main] log line";
-  const { lines: parsedLogLine } = parseLogLines(
-    [logLine],
-    "test",
-    "white",
-    "fileID"
-  );
+  const { lines: parsedLogLine } = parseLogLines({
+    text: logLine,
+    fileName: "test",
+    color: "white",
+    fileId: "fileID",
+  });
   expect(parsedLogLine).toEqual([
     {
       date: new Date("2022-09-26T15:49:53.444Z"),
@@ -31,19 +32,24 @@ test("should parse log line", () => {
   ]);
 });
 test("should parse log file", () => {
-  const { lines: aLines, linesWithoutDateCount } = parseLogFile(
-    "id",
-    TMPTestLogs,
-    "a",
-    "white"
-  );
+  const { lines: aLines, linesWithoutDateCount } = parseLogLines({
+    fileId: "id",
+    text: TMPTestLogs,
+    fileName: "a",
+    color: "white",
+  });
   expect(linesWithoutDateCount).toEqual(0);
 
   expect(aLines.length).toEqual(9);
 });
 
 test("should search lines with filters", () => {
-  const { lines: aLines } = parseLogFile("id", TMPTestLogs, "a", "white");
+  const { lines: aLines } = parseLogLines({
+    fileId: "id",
+    text: TMPTestLogs,
+    fileName: "a",
+    color: "white",
+  });
   expect(aLines.length).toEqual(9);
   const filter: Filter = {
     id: "test",
@@ -58,7 +64,12 @@ test("should search lines with filters", () => {
 });
 
 test("should search lines with filters and hide all the lines that are not metched by a filter", () => {
-  const { lines: aLines } = parseLogFile("id", TMPTestLogs, "a", "white");
+  const { lines: aLines } = parseLogLines({
+    fileId: "id",
+    text: TMPTestLogs,
+    fileName: "a",
+    color: "white",
+  });
   expect(aLines.length).toEqual(9);
   const filter: Filter = {
     id: "test",
@@ -88,47 +99,49 @@ test("should parse log file", () => {
 9/12/2022 11:15:07 PM,INFO,[9152][160] ... log line
   `;
 
-  const { lines: aLines, linesWithoutDateCount } = parseLogFile(
-    "id",
-    fileA,
-    "a",
-    "white"
-  );
+  const { lines: aLines, linesWithoutDateCount } = parseLogLines({
+    fileId: "id",
+    text: fileA,
+    fileName: "a",
+    color: "white",
+  });
   expect(linesWithoutDateCount).toEqual(0);
 
   expect(aLines.length).toEqual(13);
 });
 
 test("should parse teams desktop client logs.txt", () => {
-  const { lines: aLines, linesWithoutDateCount } = parseLogFile(
-    "id",
-    desktopClientLogs,
-    "a",
-    "white"
-  );
+  const { lines: aLines, linesWithoutDateCount } = parseLogLines({
+    fileId: "id",
+    text: desktopClientLogs,
+    fileName: "a",
+    color: "white",
+  });
   expect(linesWithoutDateCount).toEqual(0);
 
   expect(aLines.length).toEqual(9);
 });
 
 test("should parse logs witout dates", () => {
-  const { lines: aLines, linesWithoutDateCount } = parseLogFile(
-    "id",
-    NoDatesLogs,
-    "a",
-    "white"
-  );
+  const { lines: aLines, linesWithoutDateCount } = parseLogLines({
+    fileId: "id",
+    text: NoDatesLogs,
+    fileName: "a",
+    color: "white",
+  });
+
   expect(aLines.length).toEqual(8);
   expect(linesWithoutDateCount).toEqual(8);
 });
 
 test("should parse UWP etl file", () => {
-  const { lines: aLines, linesWithoutDateCount } = parseLogFile(
-    "id",
-    etlTestLogs,
-    "a",
-    "white"
-  );
+  const { lines: aLines, linesWithoutDateCount } = parseLogLines({
+    fileId: "id",
+    text: etlTestLogs,
+    fileName: "a",
+    color: "white",
+  });
+
   expect(aLines.length).toEqual(12);
   expect(linesWithoutDateCount).toEqual(0);
 });
@@ -143,8 +156,12 @@ Wed Sep 28 2022 13:00:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- ...lo
 Wed Sep 28 2022 13:00:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- ...log 5
 Wed Sep 28 2022 13:00:57 GMT-0700 (Pacific Daylight Time) <912> -- info -- ...log
 Wed Sep 28 2022 13:01:27 GMT-0700 (Pacific Daylight Time) <912> -- info -- ...log`;
-  const file = parseLogFile("id", desktopClientLogs, "a", "white");
-  const sorted = sortLines("date", "desc", file.lines, [file]);
+  const file = makeLogFile({
+    name: "a",
+    content: desktopClientLogs,
+  } as TextFilev2);
+  const completeFile = processFileLogLines(file);
+  const sorted = sortLines("date", "desc", completeFile.lines, [completeFile]);
   expect(sorted.map((l) => l.count)).toEqual([9, 8, 7, 6, 5, 4, 3, 2, 1]);
 });
 
@@ -195,7 +212,7 @@ test("test date sorting with one file that is sorted asc", () => {
 2022-09-26T15:50:34.453Z Inf	CDL: ...3
 2022-09-26T15:50:34.452Z Inf	CDL: ...2
 2022-09-26T15:50:34.452Z Inf	CDL: ...1`;
-  const file2 = preProcessLogFile({
+  const file2 = makeLogFile({
     fileHandle: {} as any,
     content: tmplogsDateSorting2Asc,
     name: "two",
@@ -221,7 +238,7 @@ test("test date sorting with one file that is sorted asc", () => {
 });
 
 test("test date sorting with one file that is sorted desc", () => {
-  const file2 = preProcessLogFile({
+  const file2 = makeLogFile({
     fileHandle: {} as any,
     content: tmplogsDateSorting2,
     name: "two",
@@ -247,12 +264,12 @@ test("test date sorting with one file that is sorted desc", () => {
 });
 
 test("test date sorting with multiple files", () => {
-  const file1 = preProcessLogFile({
+  const file1 = makeLogFile({
     fileHandle: {} as any,
     content: TMPTestLogsDateSorting,
     name: "one",
   });
-  const file2 = preProcessLogFile({
+  const file2 = makeLogFile({
     fileHandle: {} as any,
     content: tmplogsDateSorting2,
     name: "two",

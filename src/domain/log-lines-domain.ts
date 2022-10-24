@@ -2,6 +2,7 @@ import { v4 as uuidv4, v5 as uuidHash } from "uuid";
 import { Filter, LogFile } from "./types";
 import { LogLine } from "./types";
 import { extractLineDate, removeOriginalDate } from "./date-parsing";
+import { getFileColor, TextFilev2 } from "./file-handling";
 
 // line starts with date 2022-09-26T15:49:53.444Z
 function isNewLogLine(line: string) {
@@ -52,16 +53,22 @@ function separateLogLines(text: string): string[] {
 
 const MY_NAMESPACE = "1b671a64-40d5-491e-99b0-da01ff1f3341";
 
-export function parseLogLines(
-  lines: string[],
-  fileName: string,
-  color: string,
-  fileId: string
-): {
+export function parseLogLines({
+  text,
+  fileId,
+  fileName,
+  color,
+}: {
+  text: string;
+  fileName: string;
+  color: string;
+  fileId: string;
+}): {
   lines: LogLine[];
   linesWithoutDateCount: number;
   sorted: "asc" | "desc" | null;
 } {
+  const lines = separateLogLines(text);
   const logLines: LogLine[] = [];
   let count = 0;
   let linesWithoutDateCount = 0;
@@ -100,29 +107,43 @@ export function parseLogLines(
   };
 }
 
-export function parseLogFile(
-  fileId: string,
-  text: string,
-  fileName: string,
-  color: string
-): LogFile {
-  const { lines, linesWithoutDateCount, sorted } = parseLogLines(
-    separateLogLines(text),
-    fileName,
-    color,
-    fileId
-  );
+export function makeLogFile(file: TextFilev2): LogFile {
+  const color = getFileColor();
+  const fileId = uuidv4();
+
   return {
     color,
-    fileHandle: undefined as any,
+    fileHandle: file.fileHandle,
     id: fileId,
-    isVisible: true,
+    isVisible: file.isClosedByDefault ? false : true,
+    name: file.name,
+    text: file.content,
+    timezone: 0,
+  };
+}
+
+/**
+ * Will extract and process log lines from text, will mutate the param object for performance
+ * @param file
+ */
+export function processFileLogLines(file: LogFile): Required<LogFile> {
+  console.time(`processing file ${file.name}`);
+  const { lines, linesWithoutDateCount, sorted } = parseLogLines({
+    text: file.text,
+    fileId: file.id,
+    fileName: file.name,
+    color: file.color,
+  });
+  console.timeEnd(`processing file ${file.name}`);
+  file.lines = lines;
+  file.linesWithoutDateCount = linesWithoutDateCount;
+  file.sorted = sorted;
+  return {
+    ...file,
+    fileHandle: file.fileHandle as FileSystemFileHandle,
     lines,
     linesWithoutDateCount,
-    name: fileName,
     sorted,
-    text,
-    timezone: 0,
   };
 }
 
@@ -133,8 +154,11 @@ export function dedupeLogLines(
   // identify duplicates by date and text and remove them, return merged array
   const existingLinesHashes = new Set();
   const mergedLines = [];
-  for (const file of logFiles) {
-    for (const line of file.lines) {
+  for (let file of logFiles) {
+    if (file.lines == null) {
+      file = processFileLogLines(file);
+    }
+    for (const line of file.lines ?? []) {
       if (!existingLinesHashes.has(line.hash)) {
         const newLine = { ...line };
         const updatedDate = getLineDate(newLine.text, file.timezone);
@@ -244,7 +268,7 @@ export function sortLines(
     const fileSortedBy: (id: string) => SortDirection = (id) => {
       const file = files.find((l) => l.id === id);
       if (file) {
-        return file.sorted;
+        return file.sorted ?? null;
       }
       return null;
     };

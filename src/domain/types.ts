@@ -1,14 +1,14 @@
 export type LogFile = {
   name: string;
   color: string;
-  fileHandle?: FileSystemFileHandle;
   id: string;
   text: string;
-  sorted: "asc" | "desc" | null;
-  lines: LogLine[];
   timezone: number;
-  linesWithoutDateCount: number;
   isVisible: boolean;
+  linesWithoutDateCount?: number;
+  fileHandle?: FileSystemFileHandle;
+  sorted?: "asc" | "desc" | null;
+  lines?: LogLine[];
 };
 
 export type Filter = {

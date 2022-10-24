@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import {
-  fileLoading$,
+  logFileLoading$,
   isFileSystemAPIAvailable,
   projectFileLoading$,
   TextFilev2,
@@ -43,7 +43,7 @@ export class FilesProvider extends React.Component<
   }
 
   componentDidMount(): void {
-    this.subscription = fileLoading$
+    this.subscription = logFileLoading$
       .pipe(
         concatMap(async (file) => {
           const promise = new Promise((resolve) => {
