@@ -17,7 +17,6 @@ export type LogLinesContextType = {
   updateFileTimezone: (file: LogFile, timezone: number) => void;
   mergeLogFiles: () => void;
   apliedFilters: Filter[];
-  logsAreInSync: boolean;
 };
 
 export type DateFilterContextType = {
@@ -48,27 +47,21 @@ export const LogLinesContext = React.createContext<LogLinesContextType>({
   logFiles: [],
   lines: [],
   updateLogFile: () => {},
-  logsAreInSync: true,
   mergeLogFiles: () => {},
   updateFileTimezone: () => {},
   apliedFilters: [],
 });
 
 export const LogLinesContextProvider = ({ children }: any) => {
-  const [logsAreInSync, setLogsAreInSync] = useState(true);
   const [lines, setLines] = React.useState<LogLine[]>([]);
   const { logFiles, updateLogFile } = useFilesContext();
   const { project, filters } = useProjectFileContext();
-  const { hideUnfiltered, showOGDate, sortBy } = project;
+  const { hideUnfiltered, sortBy } = project;
 
   const mergeLogFiles = React.useCallback(() => {
-    const mergedLines = dedupeLogLines(
-      logFiles.filter((f) => f.isVisible),
-      showOGDate
-    );
+    const mergedLines = dedupeLogLines(logFiles.filter((f) => f.isVisible));
     setLines(mergedLines);
-    setLogsAreInSync(true);
-  }, [logFiles, showOGDate]);
+  }, [logFiles]);
 
   useEffect(() => {
     mergeLogFiles();
@@ -107,7 +100,6 @@ export const LogLinesContextProvider = ({ children }: any) => {
       mergeLogFiles,
       apliedFilters: filteredLines.filters,
       updateLogFile,
-      logsAreInSync,
       updateFileTimezone,
     }),
     [
@@ -116,7 +108,6 @@ export const LogLinesContextProvider = ({ children }: any) => {
       mergeLogFiles,
       filteredLines.filters,
       updateLogFile,
-      logsAreInSync,
       updateFileTimezone,
     ]
   );

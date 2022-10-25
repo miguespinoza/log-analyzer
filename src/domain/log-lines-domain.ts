@@ -151,7 +151,6 @@ export function processFileLogLines(file: LogFile): Required<LogFile> {
 
 export function dedupeLogLines(
   logFiles: LogFile[],
-  showOGDate: boolean
 ): LogLine[] {
   // identify duplicates by date and text and remove them, return merged array
   const existingLinesHashes = new Set();
