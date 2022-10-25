@@ -218,7 +218,7 @@ test("test date sorting with one file that is sorted asc", () => {
     name: "two",
   });
 
-  const merged = dedupeLogLines([file2], true);
+  const merged = dedupeLogLines([file2]);
   const sorted = sortLines("date", "desc", merged, [file2]);
   const linesDates = sorted.map((l) => l.text);
   expect(linesDates.map((d) => d)).toMatchInlineSnapshot(`
@@ -244,7 +244,7 @@ test("test date sorting with one file that is sorted desc", () => {
     name: "two",
   });
 
-  const merged = dedupeLogLines([file2], true);
+  const merged = dedupeLogLines([file2]);
   const sorted = sortLines("date", "desc", merged, [file2]);
   const linesDates = sorted.map((l) => l.text);
   expect(linesDates.map((d) => d)).toMatchInlineSnapshot(`
@@ -275,7 +275,7 @@ test("test date sorting with multiple files", () => {
     name: "two",
   });
 
-  const merged = dedupeLogLines([file1, file2], true);
+  const merged = dedupeLogLines([file1, file2]);
   const sorted = sortLines("date", "desc", merged, [file1, file2]);
   const linesDates = sorted.map((l) => l.text);
   expect(linesDates.map((d) => d)).toMatchInlineSnapshot(`

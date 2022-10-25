@@ -15,7 +15,6 @@ export type LogLinesContextType = {
   lines: LogLine[];
   updateLogFile: (file: LogFile) => void;
   updateFileTimezone: (file: LogFile, timezone: number) => void;
-  mergeLogFiles: () => void;
   apliedFilters: Filter[];
 };
 
@@ -47,7 +46,6 @@ export const LogLinesContext = React.createContext<LogLinesContextType>({
   logFiles: [],
   lines: [],
   updateLogFile: () => {},
-  mergeLogFiles: () => {},
   updateFileTimezone: () => {},
   apliedFilters: [],
 });
@@ -58,14 +56,10 @@ export const LogLinesContextProvider = ({ children }: any) => {
   const { project, filters } = useProjectFileContext();
   const { hideUnfiltered, sortBy } = project;
 
-  const mergeLogFiles = React.useCallback(() => {
+  React.useEffect(() => {
     const mergedLines = dedupeLogLines(logFiles.filter((f) => f.isVisible));
     setLines(mergedLines);
   }, [logFiles]);
-
-  useEffect(() => {
-    mergeLogFiles();
-  }, [mergeLogFiles]);
 
   const filteredLines = useMemo(() => {
     const filtersResult = searchLines(lines, hideUnfiltered, filters);
@@ -97,7 +91,6 @@ export const LogLinesContextProvider = ({ children }: any) => {
     () => ({
       logFiles,
       lines: sortedLines,
-      mergeLogFiles,
       apliedFilters: filteredLines.filters,
       updateLogFile,
       updateFileTimezone,
@@ -105,7 +98,6 @@ export const LogLinesContextProvider = ({ children }: any) => {
     [
       logFiles,
       sortedLines,
-      mergeLogFiles,
       filteredLines.filters,
       updateLogFile,
       updateFileTimezone,
