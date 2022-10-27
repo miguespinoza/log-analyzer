@@ -5,6 +5,7 @@ import { v4 as uuid } from "uuid";
 import { Filter } from "../domain/types";
 import { useProjectFileContext } from "../context/ProjectFileContext";
 import clsx from "clsx";
+import { getFileColor } from "../domain/file-handling";
 
 const softgreen = "#b3e5fc";
 
@@ -71,7 +72,7 @@ export default function FilterForm({
             inputProps={{
               type: "color",
               name: "color",
-              defaultValue: edditingFilter?.color ?? softgreen,
+              defaultValue: edditingFilter?.color ?? getFileColor(),
               style: { padding: 0 },
             }}
             label="Color"
