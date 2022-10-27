@@ -1,7 +1,7 @@
 import { useLogLinesContext } from "../context/LogLinesContext";
 import { Virtuoso } from "react-virtuoso";
 import useResizeObserver from "use-resize-observer";
-import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { FilterFormModal } from "./Filters";
 import { LogLine } from "../domain/types";
@@ -63,21 +63,24 @@ export function LinesRenderer() {
     linesLengthRef.current = lines.length;
   }, [lines]);
 
-  const LineRenderer = (index: number) => {
-    const line = lines[index];
-    return (
-      <LogLineRenderer
-        focusedLine={focusedLine}
-        line={line}
-        onClick={setFocusedLine}
-        displayTimezoneOffset={project.displayTimezone}
-        showOGDate={project.showOGDate}
-        onDoubleClick={() => {
-          setIsNewFilterModalOpen(true);
-        }}
-      />
-    );
-  };
+  const LineRenderer = useCallback(
+    (index: number) => {
+      const line = lines[index];
+      return (
+        <LogLineRenderer
+          focusedLine={focusedLine}
+          line={line}
+          onClick={setFocusedLine}
+          displayTimezoneOffset={project.displayTimezone}
+          showOGDate={project.showOGDate}
+          onDoubleClick={() => {
+            setIsNewFilterModalOpen(true);
+          }}
+        />
+      );
+    },
+    [focusedLine, lines, project.displayTimezone, project.showOGDate]
+  );
 
   return (
     <div data-tid="measurer" className="w-full logs" ref={ref}>
@@ -108,14 +111,12 @@ function LogLineRenderer({
   focusedLine,
   onDoubleClick,
   displayTimezoneOffset,
-  showOGDate,
 }: {
   line: LogLine;
   focusedLine: LogLine | null;
   onClick?: (line: LogLine) => void;
   onDoubleClick?: (line: LogLine) => void;
   displayTimezoneOffset: number;
-  showOGDate?: boolean;
 }) {
   const color = line.matchedFilters?.color ?? undefined;
   const date =
@@ -151,7 +152,7 @@ function LogLineRenderer({
         }}
         className="noWrap align-text-top "
       >
-        {showOGDate ? line.text : line.textWithoutDate}
+        {line.text}
       </span>
     </div>
   );
