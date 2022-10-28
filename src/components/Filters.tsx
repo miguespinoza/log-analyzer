@@ -1,6 +1,7 @@
 import {
   ArrowDownIcon,
   ArrowUpIcon,
+  Bars2Icon,
   EyeIcon,
   EyeSlashIcon,
   PencilIcon,
@@ -8,35 +9,61 @@ import {
 } from "@heroicons/react/24/solid";
 import FilterForm from "./FilterForm";
 import { useLogLinesContext } from "../context/LogLinesContext";
-import { useState } from "react";
+import { PropsWithChildren, useCallback, useState } from "react";
 import { IconButton } from "./IconButton";
 import { Filter } from "../domain/types";
 import { useProjectFileContext } from "../context/ProjectFileContext";
 import { withModal } from "./withModal";
+import {
+  SortableContainer,
+  SortableElement,
+  SortEndHandler,
+} from "react-sortable-hoc";
+
+const Container = SortableContainer<PropsWithChildren>(({ children }: any) => {
+  return <div className="flex flex-col w-full overflow-auto">{children}</div>;
+});
+
+const SortableFilter = SortableElement<{ value: number; filter: Filter }>(
+  ({ value, filter }: any) => {
+    return <ActiveFilter order={value} filter={filter} key={filter.id} />;
+  }
+);
 
 export function Filters() {
   const { apliedFilters: filters } = useLogLinesContext();
+  const { updateFilterPriority } = useProjectFileContext();
+  const onSortEnd = useCallback<SortEndHandler>(
+    (params) => {
+      updateFilterPriority(
+        filters[params.oldIndex],
+        params.newIndex - params.oldIndex
+      );
+    },
+    [updateFilterPriority, filters]
+  );
+
   return (
-    <div className="filters flex flex-col overflow-auto w-full">
-      {filters.map((filter) => (
-        <ActiveFilter filter={filter} key={filter.id} />
+    <Container onSortEnd={onSortEnd}>
+      {filters.map((filter, index) => (
+        <SortableFilter
+          filter={filter}
+          key={filter.id}
+          value={index}
+          index={index}
+        />
       ))}
-    </div>
+    </Container>
   );
 }
 
-const ActiveFilter = ({ filter }: { filter: Filter }) => {
-  const {
-    removeFilter,
-    disableFilter,
-    enableFilter,
-    updateFilterPriority,
-    setFilter,
-  } = useProjectFileContext();
+const ActiveFilter = ({ filter, order }: { filter: Filter; order: number }) => {
+  const { removeFilter, disableFilter, enableFilter, setFilter } =
+    useProjectFileContext();
   const [showModal, setShowModal] = useState(false);
   return (
     <div
-      className="gap-2 flex items-center justify-between"
+      className="gap-2 flex items-center justify-between active:cursor-grabbing"
       title={filter.description}
       style={{ backgroundColor: filter.color }}
     >
@@ -51,20 +78,10 @@ const ActiveFilter = ({ filter }: { filter: Filter }) => {
               : disableFilter(filter.filter);
           }}
         />
-        <button
-          className="hover:bg-slate-400 p-1 rounded"
-          title="decrease priority"
-          onClick={() => updateFilterPriority(filter, -1)}
-        >
-          <ArrowUpIcon className="h-4 w-4" />
-        </button>
-        <button
-          className="hover:bg-slate-400 p-1 rounded"
-          title="increase priority"
-          onClick={() => updateFilterPriority(filter, +1)}
-        >
-          <ArrowDownIcon className="h-4 w-4" />
-        </button>
+        <IconButton
+          className="cursor-grab"
+          icon={<Bars2Icon className="h-4 w-4 cursor-grab " />}
+        />
         <button
           className="hover:bg-slate-400 p-1 rounded"
           title="edit filter"

@@ -148,13 +148,10 @@ export default function ProjectFileContextProvider({
 
   const updateProject = useCallback(
     (value: Partial<ProjectType>) => {
-      console.log(value);
       setProject((project) => ({ ...project, ...value }));
     },
     [setProject]
   );
-
-  console.log(project);
 
   const value = React.useMemo(
     () => ({
