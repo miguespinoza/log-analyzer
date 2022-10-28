@@ -26,6 +26,11 @@ Open multiple files.
 ## missing features
 
 - filter by date
+- scenario searcher
+- filters:
+  - count hits independetly of other filters
+  - navigate to next - previous hit
+- timeline, see a time representation, with hability to highlight some times
 
 ## missing features vs TAT
 
