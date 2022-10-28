@@ -6,7 +6,7 @@ import clsx from "clsx";
 export interface LabeledTextFieldProps {
   containerProps?: PropsWithoutRef<JSX.IntrinsicElements["div"]>;
   inputProps: PropsWithoutRef<JSX.IntrinsicElements["input"]>;
-  label: string;
+  label?: string;
   labelProps?: ComponentPropsWithoutRef<"label">;
 }
 
@@ -69,13 +69,15 @@ export const LabeledTextField = forwardRef<
       {...containerProps}
       className={clsx("flex gap-1 items-center", containerProps?.className)}
     >
-      <label
-        htmlFor={id}
-        {...labelProps}
-        className="text-sm font-semibold tracking-wide text-gray-700 dark:text-white"
-      >
-        {label}:
-      </label>
+      {label != null && (
+        <label
+          htmlFor={id}
+          {...labelProps}
+          className="text-sm font-semibold tracking-wide text-gray-700 dark:text-white"
+        >
+          {label}:
+        </label>
+      )}
       <input
         id={id}
         {...inputProps}

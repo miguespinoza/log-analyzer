@@ -5,12 +5,11 @@
 
 .App {
   display: grid;
-  grid-template-areas: "logs logs"
-  "toolbar toolbar"
-  "filters files"
+  grid-template-areas: "toolbar toolbar"
+  "logs sidebar"
   "status status";
   grid-template-columns: 2fr 1fr;
-  grid-template-rows: calc(100vh - 18rem) 3rem 13rem 2rem;;
+  grid-template-rows: fit-content(3rem) 1fr 2rem;;
 }
 
 /* Language: css */
@@ -32,9 +31,10 @@
   grid-area: status;
 }
 
-.filters 
+.sidebar 
 {
-  grid-area: filters;
+  grid-area: sidebar;
+  max-height: calc(100vh - 5rem);
 }
 
 .logs 
@@ -43,10 +43,7 @@
   max-width: 100vw;
 } 
 
-.files 
-{
-  grid-area: files;
-}
+
 .Overlay {
   position: fixed;
   top: 0;

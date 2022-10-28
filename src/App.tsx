@@ -18,6 +18,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useApplyTheme } from "./components/useThemeActions";
 import StatusBar from "./components/StatusBar";
+import { Search } from "./components/search";
 
 function App() {
   useApplyTheme();
@@ -37,12 +38,15 @@ function App() {
                   id="App"
                   className="App min-h-screen bg-white dark:bg-[#011627]"
                 >
-                  <ShowToastToPromptPWAInstall />
-                  <LoadFiles />
-                  <Filters />
                   <Toolbar />
                   <LinesRenderer></LinesRenderer>
+                  <div className="sidebar flex flex-col border-l">
+                    <Search />
+                    <LoadFiles />
+                    <Filters />
+                  </div>
                   <StatusBar />
+                  <ShowToastToPromptPWAInstall />
                   <KeyboardShortCuts />
                 </div>
               </DropFileZone>

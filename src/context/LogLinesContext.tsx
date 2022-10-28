@@ -13,6 +13,7 @@ import { useProjectFileContext } from "./ProjectFileContext";
 export type LogLinesContextType = {
   logFiles: LogFile[];
   lines: LogLine[];
+  allLines: LogLine[];
   updateLogFile: (file: LogFile) => void;
   updateFileTimezone: (file: LogFile, timezone: number) => void;
   apliedFilters: Filter[];
@@ -45,6 +46,7 @@ export const DateFilterContextProvider = ({ children }: any) => {
 export const LogLinesContext = React.createContext<LogLinesContextType>({
   logFiles: [],
   lines: [],
+  allLines: [],
   updateLogFile: () => {},
   updateFileTimezone: () => {},
   apliedFilters: [],
@@ -91,12 +93,14 @@ export const LogLinesContextProvider = ({ children }: any) => {
     () => ({
       logFiles,
       lines: sortedLines,
+      allLines: lines,
       apliedFilters: filteredLines.filters,
       updateLogFile,
       updateFileTimezone,
     }),
     [
       logFiles,
+      lines,
       sortedLines,
       filteredLines.filters,
       updateLogFile,
