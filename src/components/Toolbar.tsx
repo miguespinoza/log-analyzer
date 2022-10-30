@@ -1,12 +1,12 @@
 import { CogIcon } from "@heroicons/react/24/solid";
-import React, { useState } from "react";
+import React, { forwardRef, useState } from "react";
 import { AppSettingsModal } from "./AppSettings";
 import { Button } from "./Button";
 import FilterForm from "./FilterForm";
 import { OpenFilesInput } from "./LoadFiles";
 import { useProjectFileContext } from "../context/ProjectFileContext";
 
-export function Toolbar() {
+export const Toolbar = forwardRef<HTMLDivElement>((props, ref) => {
   const { project, updateProject: setProjectProperty } =
     useProjectFileContext();
   const { showOGDate, hideUnfiltered } = project;
@@ -14,8 +14,9 @@ export function Toolbar() {
 
   return (
     <div
+      ref={ref}
       data-tid="toolbar"
-      className="toolbar flex justify-between w-full border dark:border-cyan-800 items-center"
+      className=" toolbar flex justify-between w-full border dark:border-cyan-800 items-center"
     >
       <div className="flex gap-2 items-center">
         <Button
@@ -89,4 +90,5 @@ export function Toolbar() {
       <OpenFilesInput />
     </div>
   );
-}
+});
+Toolbar.displayName = "Toolbar";

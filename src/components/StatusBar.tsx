@@ -1,10 +1,10 @@
 import clsx from "clsx";
-import React from "react";
+import React, { forwardRef } from "react";
 import { useLogLinesContext } from "../context/LogLinesContext";
 import { useProjectFileContext } from "../context/ProjectFileContext";
 import { getDateStringAtTz } from "../domain/timezone";
 
-export default function StatusBar() {
+export const StatusBar = forwardRef<HTMLDivElement>((props, ref) => {
   const { project } = useProjectFileContext();
 
   const sortDirection = project.sortDirection;
@@ -17,8 +17,11 @@ export default function StatusBar() {
 
   return (
     <div
+      ref={ref}
+      test-id="statusbar"
       className={clsx(
-        "statusBar w-full p-1 flex justify-between gap-2 ",
+        "sticky bottom-0",
+        "w-full p-1 flex justify-between gap-2 ",
         "bg-gray-300 dark:bg-gray-700"
       )}
     >
@@ -39,4 +42,5 @@ export default function StatusBar() {
       </div>
     </div>
   );
-}
+});
+StatusBar.displayName = "StatusBar";

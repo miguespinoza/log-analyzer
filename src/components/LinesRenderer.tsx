@@ -8,12 +8,17 @@ import { LogLine } from "../domain/types";
 import { useProjectFileContext } from "../context/ProjectFileContext";
 import { getDateStringAtTz } from "../domain/timezone";
 
-export function LinesRenderer() {
+export function LinesRenderer({
+  width,
+  height,
+}: {
+  width: number;
+  height: number;
+}) {
   const { lines } = useLogLinesContext();
   const listRef = useRef<any>();
   const linesLengthRef = useRef<number>();
   const [isNewFilterModalOpen, setIsNewFilterModalOpen] = useState(false);
-  const { ref, width = 1, height = 1 } = useResizeObserver<HTMLDivElement>();
   const [focusedLine, setFocusedLine] = useState<LogLine | null>(null);
   const { project } = useProjectFileContext();
   const focusedLineIndex = useMemo(
@@ -83,7 +88,7 @@ export function LinesRenderer() {
   );
 
   return (
-    <div data-tid="measurer" className="w-full logs" ref={ref}>
+    <>
       <Virtuoso
         ref={listRef as any}
         style={{ height: `${height}px`, width: `${width}px` }}
@@ -98,7 +103,7 @@ export function LinesRenderer() {
         showModal={isNewFilterModalOpen}
         setShowModal={setIsNewFilterModalOpen}
       ></FilterFormModal>
-    </div>
+    </>
   );
 }
 
