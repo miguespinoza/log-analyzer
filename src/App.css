@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 
-.App {
-  grid-template-rows: calc(100vh - 18rem) 3rem 13rem 2rem;;
+body {
+  overflow: hidden;
 }
 
 /* Language: css */
