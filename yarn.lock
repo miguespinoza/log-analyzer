@@ -1199,32 +1199,32 @@
 
 "@react-hook/debounce@^3.0.0":
   version "3.0.0"
-  resolved "https://domoreexp.pkgs.visualstudio.com/_packaging/npm-mirror/npm/registry/@react-hook/debounce/-/debounce-3.0.0.tgz#9eea8b5d81d4cb67cd72dd8657b3ff724afc7cad"
-  integrity sha1-nuqLXYHUy2fNct2GV7P/ckr8fK0=
+  resolved "https://registry.yarnpkg.com/@react-hook/debounce/-/debounce-3.0.0.tgz#9eea8b5d81d4cb67cd72dd8657b3ff724afc7cad"
+  integrity sha512-ir/kPrSfAzY12Gre0sOHkZ2rkEmM4fS5M5zFxCi4BnCeXh2nvx9Ujd+U4IGpKCuPA+EQD0pg1eK2NGLvfWejag==
   dependencies:
     "@react-hook/latest" "^1.0.2"
 
 "@react-hook/event@^1.2.1":
   version "1.2.6"
-  resolved "https://domoreexp.pkgs.visualstudio.com/_packaging/npm-mirror/npm/registry/@react-hook/event/-/event-1.2.6.tgz#52f91578add934acc1203328ca09ab14fc7ee58e"
-  integrity sha1-UvkVeK3ZNKzBIDMoygmrFPx+5Y4=
+  resolved "https://registry.yarnpkg.com/@react-hook/event/-/event-1.2.6.tgz#52f91578add934acc1203328ca09ab14fc7ee58e"
+  integrity sha512-JUL5IluaOdn5w5Afpe/puPa1rj8X6udMlQ9dt4hvMuKmTrBS1Ya6sb4sVgvfe2eU4yDuOfAhik8xhbcCekbg9Q==
 
 "@react-hook/latest@^1.0.2":
   version "1.0.3"
-  resolved "https://domoreexp.pkgs.visualstudio.com/_packaging/npm-mirror/npm/registry/@react-hook/latest/-/latest-1.0.3.tgz#c2d1d0b0af8b69ec6e2b3a2412ba0768ac82db80"
-  integrity sha1-wtHQsK+LaexuKzokEroHaKyC24A=
+  resolved "https://registry.yarnpkg.com/@react-hook/latest/-/latest-1.0.3.tgz#c2d1d0b0af8b69ec6e2b3a2412ba0768ac82db80"
+  integrity sha512-dy6duzl+JnAZcDbNTfmaP3xHiKtbXYOaz3G51MGVljh548Y8MWzTr+PHLOfvpypEVW9zwvl+VyKjbWKEVbV1Rg==
 
 "@react-hook/throttle@^2.2.0":
   version "2.2.0"
-  resolved "https://domoreexp.pkgs.visualstudio.com/_packaging/npm-mirror/npm/registry/@react-hook/throttle/-/throttle-2.2.0.tgz#d0402714a06e1ba0bc1da1fdf5c3c5cd0e08d45a"
-  integrity sha1-0EAnFKBuG6C8HaH99cPFzQ4I1Fo=
+  resolved "https://registry.yarnpkg.com/@react-hook/throttle/-/throttle-2.2.0.tgz#d0402714a06e1ba0bc1da1fdf5c3c5cd0e08d45a"
+  integrity sha512-LJ5eg+yMV8lXtqK3lR+OtOZ2WH/EfWvuiEEu0M3bhR7dZRfTyEJKxH1oK9uyBxiXPtWXiQggWbZirMCXam51tg==
   dependencies:
     "@react-hook/latest" "^1.0.2"
 
 "@react-hook/window-size@^3.1.1":
   version "3.1.1"
-  resolved "https://domoreexp.pkgs.visualstudio.com/_packaging/npm-mirror/npm/registry/@react-hook/window-size/-/window-size-3.1.1.tgz#1a564902cfe212e8c27ffc2e74adcaa18a7d65b3"
-  integrity sha1-GlZJAs/iEujCf/wudK3KoYp9ZbM=
+  resolved "https://registry.yarnpkg.com/@react-hook/window-size/-/window-size-3.1.1.tgz#1a564902cfe212e8c27ffc2e74adcaa18a7d65b3"
+  integrity sha512-yWnVS5LKnOUIrEsI44oz3bIIUYqflamPL27n+k/PC//PsX/YeWBky09oPeAoc9As6jSH16Wgo8plI+ECZaHk3g==
   dependencies:
     "@react-hook/debounce" "^3.0.0"
     "@react-hook/event" "^1.2.1"
@@ -1352,8 +1352,8 @@
 
 "@types/react-resizable@^3.0.3":
   version "3.0.3"
-  resolved "https://domoreexp.pkgs.visualstudio.com/_packaging/npm-mirror/npm/registry/@types/react-resizable/-/react-resizable-3.0.3.tgz#76952da74820fae0dbd9669861514c836d5f1e83"
-  integrity sha1-dpUtp0gg+uDb2WaYYVFMg21fHoM=
+  resolved "https://registry.yarnpkg.com/@types/react-resizable/-/react-resizable-3.0.3.tgz#76952da74820fae0dbd9669861514c836d5f1e83"
+  integrity sha512-W/QsUOZoXBAIBQNhNm95A5ohoaiUA874lWQytO2UP9dOjp5JHO9+a0cwYNabea7sA12ZDJnGVUFZxcNaNksAWA==
   dependencies:
     "@types/react" "*"
 
@@ -3513,8 +3513,8 @@ react-dom@^18.2.0:
 
 react-draggable@^4.0.3:
   version "4.4.5"
-  resolved "https://domoreexp.pkgs.visualstudio.com/_packaging/npm-mirror/npm/registry/react-draggable/-/react-draggable-4.4.5.tgz#9e37fe7ce1a4cf843030f521a0a4cc41886d7e7c"
-  integrity sha1-njf+fOGkz4QwMPUhoKTMQYhtfnw=
+  resolved "https://registry.yarnpkg.com/react-draggable/-/react-draggable-4.4.5.tgz#9e37fe7ce1a4cf843030f521a0a4cc41886d7e7c"
+  integrity sha512-OMHzJdyJbYTZo4uQE393fHcqqPYsEtkjfMgvCHr6rejT+Ezn4OZbNyGH50vv+SunC1RMvwOTSWkEODQLzw1M9g==
   dependencies:
     clsx "^1.1.1"
     prop-types "^15.8.1"
@@ -3568,8 +3568,8 @@ react-refresh@^0.14.0:
 
 react-resizable@^3.0.4:
   version "3.0.4"
-  resolved "https://domoreexp.pkgs.visualstudio.com/_packaging/npm-mirror/npm/registry/react-resizable/-/react-resizable-3.0.4.tgz#aa20108eff28c52c6fddaa49abfbef8abf5e581b"
-  integrity sha1-qiAQjv8oxSxv3apJq/vvir9eWBs=
+  resolved "https://registry.yarnpkg.com/react-resizable/-/react-resizable-3.0.4.tgz#aa20108eff28c52c6fddaa49abfbef8abf5e581b"
+  integrity sha512-StnwmiESiamNzdRHbSSvA65b0ZQJ7eVQpPusrSmcpyGKzC0gojhtO62xxH6YOBmepk9dQTBi9yxidL3W4s3EBA==
   dependencies:
     prop-types "15.x"
     react-draggable "^4.0.3"
