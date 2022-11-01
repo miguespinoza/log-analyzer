@@ -15,8 +15,10 @@
     "@heroicons/react": "^2.0.11",
     "@react-hook/window-size": "^3.1.1",
     "clsx": "^1.2.1",
+    "comlink": "^4.3.1",
     "date-fns": "^2.29.3",
     "lodash": "^4.17.21",
+    "lunr": "^2.3.9",
     "randomcolor": "^0.6.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -32,6 +34,7 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "@types/lunr": "^2.3.4",
     "@types/randomcolor": "^0.5.6",
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",

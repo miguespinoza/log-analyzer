@@ -15,6 +15,7 @@ import { useApplyTheme } from "./components/useThemeActions";
 import { LogViewer } from "./LogViewer";
 import { KeyboardShortCuts } from "./components/KeyboardShortCuts";
 
+
 function App() {
   useApplyTheme();
   return (
