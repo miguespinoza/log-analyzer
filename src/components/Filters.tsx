@@ -1,6 +1,4 @@
 import {
-  ArrowDownIcon,
-  ArrowUpIcon,
   Bars2Icon,
   EyeIcon,
   EyeSlashIcon,

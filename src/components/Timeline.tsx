@@ -1,48 +1,49 @@
-import { BarsArrowDownIcon, BarsArrowUpIcon } from "@heroicons/react/24/solid";
+import { BarsArrowUpIcon } from "@heroicons/react/24/solid";
 import React, { useState } from "react";
 import { useLogLinesContext } from "../context/LogLinesContext";
 import { useProjectFileContext } from "../context/ProjectFileContext";
-import {
-  getRelativeTimePx,
-  getTimelineVisibleWindow,
-  TimelineDomain,
-} from "../domain/timeline";
+import { getRelativeTimePx, TimelineDomain } from "../domain/timeline";
 import { getDateStringAtTz } from "../domain/timezone";
 import { IconButton } from "./IconButton";
-
-const STEPS = 10;
 
 export function Timeline({
   firstLineVisibleIndex,
   lastLineVisibleIndex,
+  height,
+  width,
 }: {
   firstLineVisibleIndex: number;
   lastLineVisibleIndex: number;
+  height: number;
+  width: number;
 }) {
   const { lines, allLines } = useLogLinesContext();
   const { project } = useProjectFileContext();
   const firstDate = allLines[0]?.date;
-  const lastDate = allLines[lines.length - 1]?.date;
+  const lastDate = allLines[allLines.length - 1]?.date;
 
-  const firstLineVisible = lines[firstLineVisibleIndex];
-  const firstLineVisibleDate = firstLineVisible?.date;
-  const lastLineVisible = lines[lastLineVisibleIndex];
-  const lastLineVisibleDate = lastLineVisible?.date;
+  const firstLineVisible = lines[firstLineVisibleIndex]?.date;
+  const lastLineVisible = lines[lastLineVisibleIndex]?.date;
   if (
-    !firstDate ||
-    !lastDate ||
-    !firstLineVisibleDate ||
-    !lastLineVisibleDate
+    firstDate == null ||
+    lastDate == null ||
+    firstLineVisible == null ||
+    lastLineVisible == null
   ) {
     return null;
   }
-  const timeLine = new TimelineDomain(firstDate, lastDate, 705);
-  const visibleWindow = timeLine.getVisibleWindow(
-    firstLineVisibleDate,
-    lastLineVisibleDate
+  console.log(
+    getDateStringAtTz(firstDate, project.displayTimezone),
+    getDateStringAtTz(lastDate, project.displayTimezone)
   );
+  const timeLine = new TimelineDomain(firstDate, lastDate, height);
+  const visibleWindow = timeLine.getVisibleWindow(
+    firstLineVisible,
+    lastLineVisible
+  );
+
   return (
-    <div className="border relative w-[120px]">
+    <div style={{ width: `${width}px` }} className="border relative">
       {timeLine.getIntervals().map(({ date, relativePx }, i) => (
         <DateRenderer
           key={i}
@@ -53,10 +54,11 @@ export function Timeline({
       ))}
       <DateRenderer
         date={lastDate}
-        top={getRelativeTimePx(firstDate, lastDate, lastDate, 705) - 7}
+        top={getRelativeTimePx(firstDate, lastDate, lastDate, height) - 7}
         timezone={project.displayTimezone}
       />
       <div
+        title="visible time window"
         data-testid="timeline-visible-window"
         style={{
           top: visibleWindow.start.relativePx,

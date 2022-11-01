@@ -9,7 +9,6 @@ import { Toolbar } from "./components/Toolbar";
 import useDebouncedCallback from "./domain/useDebouncedCallback";
 import { useWindowSize } from "@react-hook/window-size/throttled";
 import { ResizableBox } from "react-resizable";
-import { Timeline } from "./components/Timeline";
 
 type Size = { width: number; height: number };
 

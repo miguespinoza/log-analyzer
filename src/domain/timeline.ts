@@ -28,8 +28,8 @@ export function getTimelineVisibleWindow(
   lastLineVisibleDate: Date
 ): [number, number] {
   return [
-    getRelativeTimePx(startDate, endDate, firstLineVisibleDate as Date, height),
-    getRelativeTimePx(startDate, endDate, lastLineVisibleDate as Date, height),
+    getRelativeTimePx(startDate, endDate, firstLineVisibleDate, height),
+    getRelativeTimePx(startDate, endDate, lastLineVisibleDate, height),
   ];
 }
 

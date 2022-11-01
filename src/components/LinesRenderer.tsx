@@ -1,6 +1,5 @@
 import { useLogLinesContext } from "../context/LogLinesContext";
 import { Virtuoso } from "react-virtuoso";
-import useResizeObserver from "use-resize-observer";
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { FilterFormModal } from "./Filters";
@@ -8,6 +7,8 @@ import { LogLine } from "../domain/types";
 import { useProjectFileContext } from "../context/ProjectFileContext";
 import { getDateStringAtTz } from "../domain/timezone";
 import { Timeline } from "./Timeline";
+
+const TIMELINE_WIDTH = 120;
 
 export function LinesRenderer({
   width,
@@ -97,10 +98,12 @@ export function LinesRenderer({
       <Timeline
         firstLineVisibleIndex={visibleRange.startIndex}
         lastLineVisibleIndex={visibleRange.endIndex}
+        height={height}
+        width={TIMELINE_WIDTH}
       ></Timeline>
       <Virtuoso
         ref={listRef as any}
-        style={{ height: `${height}px`, width: `${width - 120}px` }}
+        style={{ height: `${height}px`, width: `${width - TIMELINE_WIDTH}px` }}
         totalCount={lines.length}
         itemContent={LineRenderer}
         rangeChanged={setVisibleRange}

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import {
   dedupeLogLines,
   processFileLogLines,
@@ -60,8 +60,8 @@ export const LogLinesContextProvider = ({ children }: any) => {
 
   React.useEffect(() => {
     const mergedLines = dedupeLogLines(logFiles.filter((f) => f.isVisible));
-    setLines(mergedLines);
-  }, [logFiles]);
+    setLines(sortLines(sortBy, project.sortDirection, mergedLines, logFiles));
+  }, [logFiles, sortBy, project.sortDirection]);
 
   const filteredLines = useMemo(() => {
     const filtersResult = searchLines(lines, hideUnfiltered, filters);
@@ -80,6 +80,7 @@ export const LogLinesContextProvider = ({ children }: any) => {
     [updateLogFile]
   );
 
+  // TODO: this second sort can be avoided because we already sort the lines when we merge them, create a test to compare results if same remove this
   const sortedLines = useMemo(() => {
     return sortLines(
       sortBy,
