@@ -13,6 +13,7 @@ import { useProjectFileContext } from "./ProjectFileContext";
 export type LogLinesContextType = {
   logFiles: LogFile[];
   lines: LogLine[];
+  allLines: LogLine[];
   updateLogFile: (file: LogFile) => void;
   updateFileTimezone: (file: LogFile, timezone: number) => void;
   apliedFilters: Filter[];
@@ -48,6 +49,7 @@ export const LogLinesContext = React.createContext<LogLinesContextType>({
   updateLogFile: () => {},
   updateFileTimezone: () => {},
   apliedFilters: [],
+  allLines: [],
 });
 
 export const LogLinesContextProvider = ({ children }: any) => {
@@ -90,6 +92,7 @@ export const LogLinesContextProvider = ({ children }: any) => {
   const data = useMemo<LogLinesContextType>(
     () => ({
       logFiles,
+      allLines: lines,
       lines: sortedLines,
       apliedFilters: filteredLines.filters,
       updateLogFile,
@@ -97,6 +100,7 @@ export const LogLinesContextProvider = ({ children }: any) => {
     }),
     [
       logFiles,
+      lines,
       sortedLines,
       filteredLines.filters,
       updateLogFile,

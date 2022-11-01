@@ -9,6 +9,7 @@ import { Toolbar } from "./components/Toolbar";
 import useDebouncedCallback from "./domain/useDebouncedCallback";
 import { useWindowSize } from "@react-hook/window-size/throttled";
 import { ResizableBox } from "react-resizable";
+import { Timeline } from "./components/Timeline";
 
 type Size = { width: number; height: number };
 
@@ -107,6 +108,7 @@ export function LogViewer() {
         onResizeStop={onResizeDebounced}
         axis="y"
         resizeHandles={["s"]}
+        className="flex"
       >
         <LinesRenderer width={layout.logs.width} height={layout.logs.height} />
       </ResizableBox>

@@ -7,6 +7,7 @@ import { FilterFormModal } from "./Filters";
 import { LogLine } from "../domain/types";
 import { useProjectFileContext } from "../context/ProjectFileContext";
 import { getDateStringAtTz } from "../domain/timezone";
+import { Timeline } from "./Timeline";
 
 export function LinesRenderer({
   width,
@@ -86,14 +87,23 @@ export function LinesRenderer({
     },
     [focusedLine, lines, project.displayTimezone, project.showOGDate]
   );
+  const [visibleRange, setVisibleRange] = useState({
+    startIndex: 0,
+    endIndex: 0,
+  });
 
   return (
-    <>
+    <div className="flex">
+      <Timeline
+        firstLineVisibleIndex={visibleRange.startIndex}
+        lastLineVisibleIndex={visibleRange.endIndex}
+      ></Timeline>
       <Virtuoso
         ref={listRef as any}
-        style={{ height: `${height}px`, width: `${width}px` }}
+        style={{ height: `${height}px`, width: `${width - 120}px` }}
         totalCount={lines.length}
         itemContent={LineRenderer}
+        rangeChanged={setVisibleRange}
       ></Virtuoso>
       <FilterFormModal
         forwardProps={{
@@ -103,7 +113,7 @@ export function LinesRenderer({
         showModal={isNewFilterModalOpen}
         setShowModal={setIsNewFilterModalOpen}
       ></FilterFormModal>
-    </>
+    </div>
   );
 }
 
