@@ -7,7 +7,7 @@ import { getDateStringAtTz } from "../domain/timezone";
 import { LogLine } from "../domain/types";
 import { IconButton } from "./IconButton";
 
-function getValidDateFromEndOfArray(lines: LogLine[]): Date {
+function getValidDateFromEndOfArray(lines: LogLine[]): Date | undefined {
   for (let i = lines.length - 1; i >= 0; i--) {
     const line = lines[i];
     if (line.date && !isNaN(line.date.getTime())) {
@@ -16,7 +16,7 @@ function getValidDateFromEndOfArray(lines: LogLine[]): Date {
   }
 }
 
-function getValidDateFromStart(lines: LogLine[]): Date {
+function getValidDateFromStart(lines: LogLine[]): Date | undefined {
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
     if (line.date && !isNaN(line.date.getTime())) {
@@ -37,34 +37,61 @@ export function Timeline({
   width: number;
 }) {
   const { lines, allLines } = useLogLinesContext();
-  const { project } = useProjectFileContext();
   const firstDate = getValidDateFromStart(allLines);
   const lastDate = getValidDateFromEndOfArray(allLines);
-
   const firstLineVisible = lines[firstLineVisibleIndex]?.date;
   const lastLineVisible = lines[lastLineVisibleIndex]?.date;
   if (
-    firstDate == null ||
-    lastDate == null ||
     firstLineVisible == null ||
-    lastLineVisible == null
+    lastLineVisible == null ||
+    firstDate == null ||
+    lastDate == null
   ) {
     return null;
   }
-  console.log(
-    getDateStringAtTz(firstDate, project.displayTimezone),
-    getDateStringAtTz(lastDate, project.displayTimezone)
+  return (
+    <TimelineInternal
+      firstLineVisible={firstLineVisible}
+      lastLineVisible={lastLineVisible}
+      height={height}
+      width={width}
+      firstDate={firstDate}
+      lastDate={lastDate}
+    />
   );
-  const timeLine = new TimelineDomain(firstDate, lastDate, height);
+}
+
+function TimelineInternal({
+  firstLineVisible,
+  lastLineVisible,
+  height,
+  width,
+  firstDate,
+  lastDate,
+}: {
+  firstLineVisible: Date;
+  lastLineVisible: Date;
+  firstDate: Date;
+  lastDate: Date;
+  height: number;
+  width: number;
+}) {
+  const { lines } = useLogLinesContext();
+  const { project } = useProjectFileContext();
+
+  const timeLine = useMemo(
+    () => new TimelineDomain(firstDate, lastDate, height),
+    [firstDate, lastDate, height]
+  );
+  const { maxCount, intervals: activityIntervals } = useMemo(
+    () => timeLine.getActivityIntervals(lines, 100),
+    [timeLine, lines]
+  );
+
   const visibleWindow = timeLine.getVisibleWindow(
     firstLineVisible,
     lastLineVisible
   );
-
-  const { maxCount, intervals: activityIntervals } =
-    timeLine.getActivityIntervals(lines, 100);
-
-  console.log(activityIntervals.map((i) => i.linesCount));
 
   return (
     <div style={{ width: `${width}px` }} className="border relative">
@@ -78,6 +105,7 @@ export function Timeline({
       ))}
       {activityIntervals.map((interval) => (
         <div
+          title={getDateStringAtTz(interval.start, project.displayTimezone)}
           style={{
             left: 0,
             top: `${interval.relativePx}px`,

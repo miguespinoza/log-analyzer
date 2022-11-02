@@ -8,7 +8,7 @@ import { useProjectFileContext } from "../context/ProjectFileContext";
 import { getDateStringAtTz } from "../domain/timezone";
 import { Timeline } from "./Timeline";
 
-const TIMELINE_WIDTH = 120;
+const TIMELINE_WIDTH = 135;
 
 export function LinesRenderer({
   width,
