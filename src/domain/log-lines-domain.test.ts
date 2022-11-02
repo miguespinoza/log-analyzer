@@ -1,5 +1,6 @@
-import { expect, test } from "vitest";
-import { TextFilev2 } from "./file-handling";
+import { afterAll, beforeAll, expect, test, vi } from "vitest";
+import * as fileHandling from "./file-handling";
+import type { TextFilev2 } from "./file-handling";
 import {
   dedupeLogLines,
   makeLogFile,
@@ -9,6 +10,14 @@ import {
   sortLines,
 } from "./log-lines-domain";
 import { Filter } from "./types";
+
+beforeAll(() => {
+  vi.spyOn(fileHandling, "getFileColor").mockReturnValue("#000000");
+});
+
+afterAll(() => {
+  vi.clearAllMocks();
+});
 
 test("should parse log line", () => {
   const logLine = "2022-09-26T15:49:53.444Z Inf	CID[main] log line";
@@ -26,6 +35,7 @@ test("should parse log line", () => {
       hash: "6fc3aa43-1bf1-5a3d-b439-bee6dd7f6707",
       id: expect.any(String),
       text: "2022-09-26T15:49:53.444Z Inf	CID[main] log line",
+      textWithoutDate: " Inf	CID[main] log line",
       count: 1,
       fileColor: "white",
     },

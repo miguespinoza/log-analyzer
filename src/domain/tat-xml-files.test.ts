@@ -104,6 +104,7 @@ test("adaptFiltersToXML", () => {
   expect(xml).toMatchInlineSnapshot(`
     "<?xml version=\\"1.0\\" encoding=\\"utf-8\\" standalone=\\"yes\\"?>
       <TextAnalysisTool.NET version=\\"2020-12-17\\" showOnlyFilteredLines=\\"False\\">
+        
         <filters>
           <filter enabled=\\"y\\" excluding=\\"y\\" description=\\"\`12\\" backColor=\\"f08080\\" type=\\"matches_text\\" case_sensitive=\\"n\\" regex=\\"n\\" text=\\"filter string\\" />
     <filter enabled=\\"n\\" excluding=\\"n\\" description=\\"asdas \\" backColor=\\"f08080\\" type=\\"matches_text\\" case_sensitive=\\"n\\" regex=\\"n\\" text=\\"filter string\\" />
