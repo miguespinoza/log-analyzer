@@ -53,7 +53,7 @@ export default function LoadFiles() {
   const { removeLogFile } = useFilesContext();
 
   return (
-    <div className="files border-l dark:border-cyan-800 overflow-auto">
+    <div className="files border-l dark:border-cyan-800 overflow-auto basis-1/3">
       {logFiles.map((file) => (
         <div key={file.name} className="overflow-auto w-full">
           <div style={{ backgroundColor: file.color }} className="flex gap-1">

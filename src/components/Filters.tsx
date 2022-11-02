@@ -1,6 +1,4 @@
 import {
-  ArrowDownIcon,
-  ArrowUpIcon,
   Bars2Icon,
   EyeIcon,
   EyeSlashIcon,
@@ -18,10 +16,20 @@ import {
   SortableContainer,
   SortableElement,
   SortEndHandler,
+  SortableHandle,
 } from "react-sortable-hoc";
 
+const DragHandle = SortableHandle(() => (
+  <IconButton
+    className="cursor-grab"
+    icon={<Bars2Icon className="h-4 w-4 cursor-grab " />}
+  />
+));
+
 const Container = SortableContainer<PropsWithChildren>(({ children }: any) => {
-  return <div className="flex flex-col w-full overflow-auto">{children}</div>;
+  return (
+    <div className="flex flex-col basis-2/3 overflow-auto">{children}</div>
+  );
 });
 
 const SortableFilter = SortableElement<{ value: number; filter: Filter }>(
@@ -44,7 +52,7 @@ export function Filters() {
   );
 
   return (
-    <Container onSortEnd={onSortEnd}>
+    <Container onSortEnd={onSortEnd} useDragHandle>
       {filters.map((filter, index) => (
         <SortableFilter
           filter={filter}
@@ -63,7 +71,7 @@ const ActiveFilter = ({ filter, order }: { filter: Filter; order: number }) => {
   const [showModal, setShowModal] = useState(false);
   return (
     <div
-      className="gap-2 flex items-center justify-between active:cursor-grabbing"
+      className=" gap-2 flex items-center justify-between active:cursor-grabbing"
       title={filter.description}
       style={{ backgroundColor: filter.color }}
     >
@@ -78,10 +86,7 @@ const ActiveFilter = ({ filter, order }: { filter: Filter; order: number }) => {
               : disableFilter(filter.filter);
           }}
         />
-        <IconButton
-          className="cursor-grab"
-          icon={<Bars2Icon className="h-4 w-4 cursor-grab " />}
-        />
+        <DragHandle />
         <button
           className="hover:bg-slate-400 p-1 rounded"
           title="edit filter"
@@ -109,6 +114,7 @@ const ActiveFilter = ({ filter, order }: { filter: Filter; order: number }) => {
       <IconButton
         icon={<TrashIcon className="h-4 w-4" />}
         onClick={() => {
+          console.log("remove filter", filter.id);
           removeFilter(filter.id);
         }}
       ></IconButton>
