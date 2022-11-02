@@ -263,6 +263,7 @@ test("test date sorting with one file that is sorted desc", () => {
   `);
 });
 
+// TODO mock localstorage
 test("test date sorting with multiple files", () => {
   const file1 = makeLogFile({
     fileHandle: {} as any,

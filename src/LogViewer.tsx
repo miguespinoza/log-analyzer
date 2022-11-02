@@ -107,6 +107,7 @@ export function LogViewer() {
         onResizeStop={onResizeDebounced}
         axis="y"
         resizeHandles={["s"]}
+        className="flex"
       >
         <LinesRenderer width={layout.logs.width} height={layout.logs.height} />
       </ResizableBox>

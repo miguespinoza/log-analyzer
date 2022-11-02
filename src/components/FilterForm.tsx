@@ -7,7 +7,6 @@ import { useProjectFileContext } from "../context/ProjectFileContext";
 import clsx from "clsx";
 import { getFileColor } from "../domain/file-handling";
 
-const softgreen = "#b3e5fc";
 
 export default function FilterForm({
   filter: edditingFilter,

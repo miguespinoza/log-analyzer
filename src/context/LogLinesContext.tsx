@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import {
   dedupeLogLines,
   processFileLogLines,
@@ -13,6 +13,7 @@ import { useProjectFileContext } from "./ProjectFileContext";
 export type LogLinesContextType = {
   logFiles: LogFile[];
   lines: LogLine[];
+  allLines: LogLine[];
   updateLogFile: (file: LogFile) => void;
   updateFileTimezone: (file: LogFile, timezone: number) => void;
   apliedFilters: Filter[];
@@ -48,6 +49,7 @@ export const LogLinesContext = React.createContext<LogLinesContextType>({
   updateLogFile: () => {},
   updateFileTimezone: () => {},
   apliedFilters: [],
+  allLines: [],
 });
 
 export const LogLinesContextProvider = ({ children }: any) => {
@@ -58,8 +60,8 @@ export const LogLinesContextProvider = ({ children }: any) => {
 
   React.useEffect(() => {
     const mergedLines = dedupeLogLines(logFiles.filter((f) => f.isVisible));
-    setLines(mergedLines);
-  }, [logFiles]);
+    setLines(sortLines(sortBy, project.sortDirection, mergedLines, logFiles));
+  }, [logFiles, sortBy, project.sortDirection]);
 
   const filteredLines = useMemo(() => {
     const filtersResult = searchLines(lines, hideUnfiltered, filters);
@@ -78,6 +80,7 @@ export const LogLinesContextProvider = ({ children }: any) => {
     [updateLogFile]
   );
 
+  // TODO: this second sort can be avoided because we already sort the lines when we merge them, create a test to compare results if same remove this
   const sortedLines = useMemo(() => {
     return sortLines(
       sortBy,
@@ -90,6 +93,7 @@ export const LogLinesContextProvider = ({ children }: any) => {
   const data = useMemo<LogLinesContextType>(
     () => ({
       logFiles,
+      allLines: lines,
       lines: sortedLines,
       apliedFilters: filteredLines.filters,
       updateLogFile,
@@ -97,6 +101,7 @@ export const LogLinesContextProvider = ({ children }: any) => {
     }),
     [
       logFiles,
+      lines,
       sortedLines,
       filteredLines.filters,
       updateLogFile,
