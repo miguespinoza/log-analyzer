@@ -1,10 +1,29 @@
 import { BarsArrowUpIcon } from "@heroicons/react/24/solid";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useLogLinesContext } from "../context/LogLinesContext";
 import { useProjectFileContext } from "../context/ProjectFileContext";
 import { getRelativeTimePx, TimelineDomain } from "../domain/timeline";
 import { getDateStringAtTz } from "../domain/timezone";
+import { LogLine } from "../domain/types";
 import { IconButton } from "./IconButton";
+
+function getValidDateFromEndOfArray(lines: LogLine[]): Date {
+  for (let i = lines.length - 1; i >= 0; i--) {
+    const line = lines[i];
+    if (line.date && !isNaN(line.date.getTime())) {
+      return line.date;
+    }
+  }
+}
+
+function getValidDateFromStart(lines: LogLine[]): Date {
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (line.date && !isNaN(line.date.getTime())) {
+      return line.date;
+    }
+  }
+}
 
 export function Timeline({
   firstLineVisibleIndex,
@@ -19,8 +38,8 @@ export function Timeline({
 }) {
   const { lines, allLines } = useLogLinesContext();
   const { project } = useProjectFileContext();
-  const firstDate = allLines[0]?.date;
-  const lastDate = allLines[allLines.length - 1]?.date;
+  const firstDate = getValidDateFromStart(allLines);
+  const lastDate = getValidDateFromEndOfArray(allLines);
 
   const firstLineVisible = lines[firstLineVisibleIndex]?.date;
   const lastLineVisible = lines[lastLineVisibleIndex]?.date;
@@ -42,6 +61,11 @@ export function Timeline({
     lastLineVisible
   );
 
+  const { maxCount, intervals: activityIntervals } =
+    timeLine.getActivityIntervals(lines, 100);
+
+  console.log(activityIntervals.map((i) => i.linesCount));
+
   return (
     <div style={{ width: `${width}px` }} className="border relative">
       {timeLine.getIntervals().map(({ date, relativePx }, i) => (
@@ -51,6 +75,17 @@ export function Timeline({
           top={relativePx - 7}
           timezone={project.displayTimezone}
         />
+      ))}
+      {activityIntervals.map((interval) => (
+        <div
+          style={{
+            left: 0,
+            top: `${interval.relativePx}px`,
+            height: `${height / activityIntervals.length}px`,
+            width: `${(width * interval.linesCount) / maxCount}px`,
+          }}
+          className="absolute opacity-50 bg-gray-500"
+        ></div>
       ))}
       <DateRenderer
         date={lastDate}

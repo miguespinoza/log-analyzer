@@ -1,3 +1,5 @@
+import { LogLine } from "./types";
+
 export function getRelativeTimePx(
   startDate: Date,
   endDate: Date,
@@ -49,6 +51,12 @@ interface ITimeline {
     height: number;
   };
 }
+type ActivityInterval = {
+  start: Date;
+  end: Date;
+  relativePx: number;
+  linesCount: number;
+};
 
 export class TimelineDomain implements ITimeline {
   private startDate: Date;
@@ -78,6 +86,71 @@ export class TimelineDomain implements ITimeline {
         this.height
       ),
     }));
+  }
+
+  getActivityIntervals(
+    lines: LogLine[],
+    steps: number = 10
+  ): { maxCount: number; intervals: ActivityInterval[] } {
+    const oldestDate =
+      this.startDate.getTime() > this.endDate.getTime()
+        ? this.startDate
+        : this.endDate;
+
+    const earliestDate =
+      this.startDate.getTime() > this.endDate.getTime()
+        ? this.endDate
+        : this.startDate;
+    const totalTime = Math.abs(oldestDate.getTime() - earliestDate.getTime());
+    const stepSizeMs = totalTime / steps;
+    const dateIntervals = Array.from({ length: steps }, (_, i) => {
+      const date = new Date(
+        earliestDate.getTime() +
+          (oldestDate.getTime() - earliestDate.getTime()) * (i / steps)
+      );
+      return date;
+    });
+
+    const activityIntervals = dateIntervals.map((date) => {
+      const relativePx = getRelativeTimePx(
+        this.startDate,
+        this.endDate,
+        date,
+        this.height
+      );
+      const linesCount = 0;
+      return {
+        start: date,
+        end: new Date(date.getTime() + stepSizeMs),
+        relativePx,
+        linesCount,
+      };
+    });
+
+    const rererenceDate = activityIntervals[0].start;
+    const intervalSize = stepSizeMs;
+    let max = 0;
+    lines.forEach((line) => {
+      if (line.date) {
+        const lineTime = line.date.getTime();
+        const relativeTime = Math.max(0, lineTime - rererenceDate.getTime());
+
+        const intervalIndex = Math.max(
+          Math.min(
+            activityIntervals.length - 1,
+            Math.floor(relativeTime / intervalSize)
+          ),
+          0
+        );
+
+        activityIntervals[intervalIndex].linesCount++;
+        if (activityIntervals[intervalIndex].linesCount > max) {
+          max = activityIntervals[intervalIndex].linesCount;
+        }
+      }
+    });
+
+    return { maxCount: max, intervals: activityIntervals };
   }
 
   getVisibleWindow(firstLineVisibleDate: Date, lastLineVisibleDate: Date) {
