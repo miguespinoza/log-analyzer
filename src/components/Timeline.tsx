@@ -1,8 +1,12 @@
 import { BarsArrowUpIcon } from "@heroicons/react/24/solid";
-import React, { useMemo, useState } from "react";
+import React, { useLayoutEffect, useMemo, useState } from "react";
 import { useLogLinesContext } from "../context/LogLinesContext";
 import { useProjectFileContext } from "../context/ProjectFileContext";
-import { getRelativeTimePx, TimelineDomain } from "../domain/timeline";
+import {
+  ActivityInterval,
+  getRelativeTimePx,
+  TimelineDomain,
+} from "../domain/timeline";
 import { getDateStringAtTz } from "../domain/timezone";
 import { LogLine } from "../domain/types";
 import { IconButton } from "./IconButton";
@@ -30,25 +34,32 @@ export function Timeline({
   lastLineVisibleIndex,
   height,
   width,
+  updateVisivility,
 }: {
   firstLineVisibleIndex: number;
   lastLineVisibleIndex: number;
   height: number;
   width: number;
+  updateVisivility: (didShow: boolean) => void;
 }) {
   const { lines, allLines } = useLogLinesContext();
   const firstDate = getValidDateFromStart(allLines);
   const lastDate = getValidDateFromEndOfArray(allLines);
   const firstLineVisible = lines[firstLineVisibleIndex]?.date;
   const lastLineVisible = lines[lastLineVisibleIndex]?.date;
-  if (
+  const timeLineWillHide =
     firstLineVisible == null ||
     lastLineVisible == null ||
     firstDate == null ||
-    lastDate == null
-  ) {
+    lastDate == null;
+  useLayoutEffect(() => {
+    updateVisivility(!timeLineWillHide);
+  });
+
+  if (timeLineWillHide) {
     return null;
   }
+
   return (
     <TimelineInternal
       firstLineVisible={firstLineVisible}
@@ -87,7 +98,6 @@ function TimelineInternal({
     () => timeLine.getActivityIntervals(lines, 100),
     [timeLine, lines]
   );
-
   const visibleWindow = timeLine.getVisibleWindow(
     firstLineVisible,
     lastLineVisible
@@ -103,17 +113,16 @@ function TimelineInternal({
           timezone={project.displayTimezone}
         />
       ))}
-      {activityIntervals.map((interval) => (
-        <div
-          title={getDateStringAtTz(interval.start, project.displayTimezone)}
-          style={{
-            left: 0,
-            top: `${interval.relativePx}px`,
-            height: `${height / activityIntervals.length}px`,
-            width: `${(width * interval.linesCount) / maxCount}px`,
-          }}
-          className="absolute opacity-50 bg-gray-500"
-        ></div>
+      {activityIntervals.map((interval, i) => (
+        <ActivityIntervalBar
+          key={interval.id}
+          interval={interval}
+          maxCount={maxCount}
+          maxHeight={height}
+          maxWidth={width}
+          numberOfIntervals={activityIntervals.length}
+          timezoneOffset={project.displayTimezone}
+        />
       ))}
       <DateRenderer
         date={lastDate}
@@ -130,6 +139,37 @@ function TimelineInternal({
         className="absolute  w-full border bg-teal-200 opacity-50"
       ></div>
     </div>
+  );
+}
+
+function ActivityIntervalBar({
+  interval,
+  timezoneOffset,
+  maxCount,
+  maxHeight,
+  maxWidth,
+  numberOfIntervals,
+}: {
+  maxWidth: number;
+  maxHeight: number;
+  maxCount: number;
+  numberOfIntervals: number;
+  interval: ActivityInterval;
+  timezoneOffset: number;
+}) {
+  const height = maxHeight / numberOfIntervals;
+  return (
+    <div
+      data-testid="timeline-activity-interval"
+      title={getDateStringAtTz(interval.start, timezoneOffset)}
+      style={{
+        left: 0,
+        top: `${interval.relativePx - height}px`,
+        height: `${height}px`,
+        width: `${(maxWidth * interval.linesCount) / maxCount}px`,
+      }}
+      className="absolute opacity-50 bg-gray-500"
+    ></div>
   );
 }
 

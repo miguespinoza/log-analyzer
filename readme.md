@@ -31,6 +31,7 @@ Open multiple files.
   - count hits independetly of other filters
   - navigate to next - previous hit
 - timeline, see a time representation, with hability to highlight some times
+- notes: write notes of what some line means and see them floating or something
 
 ## missing features vs TAT
 

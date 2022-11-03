@@ -92,6 +92,7 @@ export function LinesRenderer({
     startIndex: 0,
     endIndex: 0,
   });
+  const [didTimelineShow, setdidTimelineShow] = useState(true);
 
   return (
     <div className="flex">
@@ -100,10 +101,14 @@ export function LinesRenderer({
         lastLineVisibleIndex={visibleRange.endIndex}
         height={height}
         width={TIMELINE_WIDTH}
+        updateVisivility={setdidTimelineShow}
       ></Timeline>
       <Virtuoso
         ref={listRef as any}
-        style={{ height: `${height}px`, width: `${width - TIMELINE_WIDTH}px` }}
+        style={{
+          height: `${height}px`,
+          width: didTimelineShow ? `${width - TIMELINE_WIDTH}px` : `${width}px`,
+        }}
         totalCount={lines.length}
         itemContent={LineRenderer}
         rangeChanged={setVisibleRange}

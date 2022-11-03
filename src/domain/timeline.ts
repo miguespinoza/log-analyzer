@@ -1,4 +1,5 @@
 import { LogLine } from "./types";
+import { v4 as uuid } from "uuid";
 
 export function getRelativeTimePx(
   startDate: Date,
@@ -51,7 +52,8 @@ interface ITimeline {
     height: number;
   };
 }
-type ActivityInterval = {
+export type ActivityInterval = {
+  id: string;
   start: Date;
   end: Date;
   relativePx: number;
@@ -124,6 +126,7 @@ export class TimelineDomain implements ITimeline {
         end: new Date(date.getTime() + stepSizeMs),
         relativePx,
         linesCount,
+        id: uuid(),
       };
     });
 

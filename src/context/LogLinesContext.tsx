@@ -53,16 +53,22 @@ export const LogLinesContext = React.createContext<LogLinesContextType>({
 });
 
 export const LogLinesContextProvider = ({ children }: any) => {
-  const [lines, setLines] = React.useState<LogLine[]>([]);
   const { logFiles, updateLogFile } = useFilesContext();
   const { project, filters } = useProjectFileContext();
   const { hideUnfiltered, sortBy } = project;
 
-  React.useEffect(() => {
-    const mergedLines = dedupeLogLines(logFiles.filter((f) => f.isVisible));
-    setLines(sortLines(sortBy, project.sortDirection, mergedLines, logFiles));
-  }, [logFiles, sortBy, project.sortDirection]);
+  // merges and dedupes all log lines from all files
+  const mergedLines = React.useMemo(() => {
+    return dedupeLogLines(logFiles.filter((f) => f.isVisible));
+  }, [logFiles]);
 
+  // sorts the lines
+  const lines = useMemo(
+    () => sortLines(sortBy, project.sortDirection, mergedLines, logFiles),
+    [mergedLines, logFiles, sortBy, project.sortDirection]
+  );
+
+  // filters the sorted lines, no need to re-sort since the lines are already sorted
   const filteredLines = useMemo(() => {
     const filtersResult = searchLines(lines, hideUnfiltered, filters);
     return {
@@ -80,21 +86,11 @@ export const LogLinesContextProvider = ({ children }: any) => {
     [updateLogFile]
   );
 
-  // TODO: this second sort can be avoided because we already sort the lines when we merge them, create a test to compare results if same remove this
-  const sortedLines = useMemo(() => {
-    return sortLines(
-      sortBy,
-      project.sortDirection,
-      filteredLines.lines,
-      logFiles
-    );
-  }, [filteredLines, sortBy, logFiles, project.sortDirection]);
-
   const data = useMemo<LogLinesContextType>(
     () => ({
       logFiles,
       allLines: lines,
-      lines: sortedLines,
+      lines: filteredLines.lines,
       apliedFilters: filteredLines.filters,
       updateLogFile,
       updateFileTimezone,
@@ -102,7 +98,7 @@ export const LogLinesContextProvider = ({ children }: any) => {
     [
       logFiles,
       lines,
-      sortedLines,
+      filteredLines.lines,
       filteredLines.filters,
       updateLogFile,
       updateFileTimezone,

@@ -195,10 +195,11 @@ function areLinesSortedAscOrDesc(lines: LogLine[]): SortDirection {
 }
 
 export function searchLines(
-  lines: LogLine[],
+  allLines: LogLine[],
   hideUnmatchedLines: boolean,
   filters?: Filter[]
 ): { lines: LogLine[]; filters: Filter[] } {
+  const lines = [...allLines];
   if (filters == null || filters.length === 0) {
     return { lines, filters: [] };
   }
