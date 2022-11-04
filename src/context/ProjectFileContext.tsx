@@ -14,6 +14,7 @@ import {
   saveFileAs,
   TextFilev2,
 } from "../domain/file-handling";
+import { TimeHighlight } from "../domain/timeline";
 
 export type ProjectType = {
   name: string;
@@ -34,6 +35,10 @@ type ProjectFileContextType = {
   saveProjectFile: () => void;
   saveProjectFileAs: () => void;
   openProjectFile: (file: TextFilev2) => void;
+  // time highlights
+  timeHighlights: TimeHighlight[];
+  addTimeHighlight: (highlight: TimeHighlight) => void;
+  removeTimeHighlight: (highlight: TimeHighlight) => void;
   // filters
   filters: Filter[];
   setFilter: (filter: Filter) => void;
@@ -61,6 +66,9 @@ const ProjectFileContext = React.createContext<ProjectFileContextType>({
   enableFilter: () => {},
   updateFilterPriority: () => {},
   updateFilter: () => {},
+  timeHighlights: [],
+  addTimeHighlight: () => {},
+  removeTimeHighlight: () => {},
 });
 
 export const useProjectFileContext = () => React.useContext(ProjectFileContext);
@@ -153,6 +161,22 @@ export default function ProjectFileContextProvider({
     [setProject]
   );
 
+  const [hightlights, setHightlights] = useState<TimeHighlight[]>([]);
+  const addTimeHighlight = useCallback(
+    (highlight: TimeHighlight) => {
+      setHightlights((highlights) => [...highlights, highlight]);
+    },
+    [setHightlights]
+  );
+  const removeTimeHighlight = useCallback(
+    (highlight: TimeHighlight) => {
+      setHightlights((highlights) =>
+        highlights.filter((h) => h.id !== highlight.id)
+      );
+    },
+    [setHightlights]
+  );
+
   const value = React.useMemo(
     () => ({
       filtersFile,
@@ -172,6 +196,10 @@ export default function ProjectFileContextProvider({
       openProjectFile,
       saveProjectFile,
       saveProjectFileAs,
+      // time highlights
+      timeHighlights: hightlights,
+      addTimeHighlight,
+      removeTimeHighlight,
     }),
     [
       filtersFile,
@@ -188,6 +216,9 @@ export default function ProjectFileContextProvider({
       saveProjectFile,
       saveProjectFileAs,
       openProjectFile,
+      hightlights,
+      addTimeHighlight,
+      removeTimeHighlight,
     ]
   );
   return (

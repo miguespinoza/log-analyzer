@@ -96,8 +96,8 @@ function TimelineInternal({
   width: number;
 }) {
   const { lines } = useLogLinesContext();
-  const [hightlights, setHightlights] = useState<TimeHighlight[]>([]);
-  const { project } = useProjectFileContext();
+  const { project, timeHighlights, addTimeHighlight, removeTimeHighlight } =
+    useProjectFileContext();
 
   const timeLineService = useMemo(
     () => new TimelineService(firstDate, lastDate, height),
@@ -148,14 +148,12 @@ function TimelineInternal({
         top={getRelativeTimePx(firstDate, lastDate, lastDate, height) - 14}
         timezone={project.displayTimezone}
       />
-      {hightlights.map((h) => (
+      {timeHighlights.map((h) => (
         <TimeHighlightRenderer
           key={h.id}
           highlight={h}
           onDoubleClick={() => {
-            setHightlights((highlights) =>
-              highlights.filter((h2) => h2.id !== h.id)
-            );
+            removeTimeHighlight(h);
           }}
         />
       ))}
@@ -173,7 +171,7 @@ function TimelineInternal({
         setShowModal={() => setCreatingNewHighlight(null)}
         forwardProps={{
           addHighlight: (h) => {
-            setHightlights((highlights) => [...highlights, h]);
+            addTimeHighlight(h);
             setCreatingNewHighlight(null);
           },
           relativePixel: creatingNewHighlight as number,
