@@ -144,7 +144,15 @@ function TimelineInternal({
         timezone={project.displayTimezone}
       />
       {hightlights.map((h) => (
-        <TimeHighlightRenderer key={h.id} highlight={h} />
+        <TimeHighlightRenderer
+          key={h.id}
+          highlight={h}
+          onDoubleClick={() => {
+            setHightlights((highlights) =>
+              highlights.filter((h2) => h2.id !== h.id)
+            );
+          }}
+        />
       ))}
       <div
         title="visible time window"
@@ -159,14 +167,28 @@ function TimelineInternal({
   );
 }
 
-function TimeHighlightRenderer({ highlight }: { highlight: TimeHighlight }) {
+function TimeHighlightRenderer({
+  highlight,
+  onClick = () => {},
+  onDoubleClick = () => {},
+}: {
+  highlight: TimeHighlight;
+  onClick?: () => void;
+  onDoubleClick?: () => void;
+}) {
   return (
     <div
+      onClick={onClick}
+      onDoubleClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        onDoubleClick();
+      }}
       className="absolute w-full"
       data-testid="timeline-time-highlight"
       style={{
-        top: highlight.relativePx - 1,
-        height: "2px",
+        top: highlight.relativePx - 2,
+        height: "4px",
         backgroundColor: highlight.color,
       }}
     ></div>

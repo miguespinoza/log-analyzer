@@ -71,19 +71,26 @@ export function LogViewer() {
     layout.bottombar.height,
   ]);
 
+  const bottomMinSize = statusBarHeight + toolbarHeight;
+  const screenHeightBeforeResize = React.useRef(screenHeight);
+
   const onResize = useCallback(
     (e: any, { size }: any) => {
       setLayout((prev) => {
+        let logsHeight = size.height;
+        if (size.height > screenHeightBeforeResize.current - bottomMinSize) {
+          logsHeight = screenHeightBeforeResize.current - bottomMinSize;
+        }
         const bottomBarHeight =
-          prev.bottombar.height + (prev.logs.height - size.height);
+          prev.bottombar.height + (prev.logs.height - logsHeight);
         return {
           ...prev,
-          logs: { ...prev.logs, height: size.height },
+          logs: { ...prev.logs, height: logsHeight },
           bottombar: { ...prev.bottombar, height: bottomBarHeight },
         };
       });
     },
-    [setLayout]
+    [setLayout, bottomMinSize]
   );
 
   const onResizeDebounced = useDebouncedCallback(onResize, 200);
@@ -100,6 +107,7 @@ export function LogViewer() {
         height={layout.logs.height}
         width={layout.logs.width}
         onResizeStop={onResizeDebounced}
+        onResizeStart={() => (screenHeightBeforeResize.current = screenHeight)}
         axis="y"
         resizeHandles={["s"]}
         className="flex"
