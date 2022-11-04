@@ -4,6 +4,31 @@ our app downloads logs everytime a call ends
 
 but sometimes the logs overlap making hard the analisys
 
+## Architecture
+
+### Structure
+
+Progressive web app, must do all the processing locally
+
+### Architecture characteristics
+
+must be performant,  must be cheap to host
+
+### Architecture desisions
+
+1. reactjs
+2. do all the processing locally
+3. create web workes if processing is slowing down app
+4. log files should not be mutated
+5. Business logic resides on the domain files
+6. domain files can't depend on react
+7. domain files are stateless
+
+### Design principles
+
+- test all domain files
+- test react files only if strictly necessary
+
 ## features
 
 - Open Multiple log files at the same time
@@ -23,6 +48,8 @@ Open multiple files.
 
 ## BUGs
 
+- resize can hide toolbar completely
+
 ## missing features
 
 - filter by date
@@ -35,4 +62,4 @@ Open multiple files.
 
 ## missing features vs TAT
 
--- resize bottom part (filters and files) with mouse
+--none!

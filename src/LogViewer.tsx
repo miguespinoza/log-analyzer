@@ -31,12 +31,7 @@ function makeLayout({
 }): Layout {
   const logsHeight =
     windowSize.height - statusBarHeight - toolbarHeight - bottombarHeight;
-  console.log("logsHeight", logsHeight, {
-    windowSize: windowSize.height,
-    statusBarHeight,
-    toolbarHeight,
-    bottombarHeight,
-  });
+
   return {
     logs: { width: windowSize.width, height: logsHeight },
     bottombar: { width: windowSize.width, height: bottombarHeight },

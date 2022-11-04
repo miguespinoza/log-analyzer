@@ -2,9 +2,11 @@ import { BarsArrowUpIcon } from "@heroicons/react/24/solid";
 import React, { useLayoutEffect, useMemo, useState } from "react";
 import { useLogLinesContext } from "../context/LogLinesContext";
 import { useProjectFileContext } from "../context/ProjectFileContext";
+import { getFileColor } from "../domain/file-handling";
 import {
   ActivityInterval,
   getRelativeTimePx,
+  TimeHighlight,
   TimelineDomain,
 } from "../domain/timeline";
 import { getDateStringAtTz } from "../domain/timezone";
@@ -88,6 +90,7 @@ function TimelineInternal({
   width: number;
 }) {
   const { lines } = useLogLinesContext();
+  const [hightlights, setHightlights] = useState<TimeHighlight[]>([]);
   const { project } = useProjectFileContext();
 
   const timeLine = useMemo(
@@ -104,12 +107,23 @@ function TimelineInternal({
   );
 
   return (
-    <div style={{ width: `${width}px` }} className="border relative">
+    <div
+      style={{ width: `${width}px` }}
+      className="border relative"
+      onDoubleClick={({ pageY }) => {
+        const newHighlight = timeLine.makeTimeHighlight(
+          pageY,
+          "",
+          getFileColor()
+        );
+        setHightlights((h) => [...h, newHighlight]);
+      }}
+    >
       {timeLine.getIntervals().map(({ date, relativePx }, i) => (
         <DateRenderer
           key={i}
           date={date}
-          top={relativePx - 7}
+          top={Math.max(0, relativePx - 14)}
           timezone={project.displayTimezone}
         />
       ))}
@@ -126,9 +140,12 @@ function TimelineInternal({
       ))}
       <DateRenderer
         date={lastDate}
-        top={getRelativeTimePx(firstDate, lastDate, lastDate, height) - 7}
+        top={getRelativeTimePx(firstDate, lastDate, lastDate, height) - 14}
         timezone={project.displayTimezone}
       />
+      {hightlights.map((h) => (
+        <TimeHighlightRenderer key={h.id} highlight={h} />
+      ))}
       <div
         title="visible time window"
         data-testid="timeline-visible-window"
@@ -139,6 +156,20 @@ function TimelineInternal({
         className="absolute  w-full border bg-teal-200 opacity-50"
       ></div>
     </div>
+  );
+}
+
+function TimeHighlightRenderer({ highlight }: { highlight: TimeHighlight }) {
+  return (
+    <div
+      className="absolute w-full"
+      data-testid="timeline-time-highlight"
+      style={{
+        top: highlight.relativePx - 1,
+        height: "2px",
+        backgroundColor: highlight.color,
+      }}
+    ></div>
   );
 }
 
@@ -206,7 +237,6 @@ function DraggableButton({ onChange }: { onChange: (value: number) => void }) {
       onDrag={(e) => {
         if (e.screenY !== 0) {
           setPosition(e.pageY);
-          console.log("onDrag", e, position);
         }
       }}
       onDragEnd={(e) => {
