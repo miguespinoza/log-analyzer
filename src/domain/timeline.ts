@@ -75,7 +75,7 @@ export class TimeHighlight {
   }
 }
 
-export class TimelineDomain implements ITimeline {
+export class TimelineService implements ITimeline {
   private startDate: Date;
   private endDate: Date;
   private height: number;

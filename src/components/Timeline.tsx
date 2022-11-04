@@ -1,5 +1,5 @@
 import { BarsArrowUpIcon } from "@heroicons/react/24/solid";
-import React, { useLayoutEffect, useMemo, useState } from "react";
+import React, { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useLogLinesContext } from "../context/LogLinesContext";
 import { useProjectFileContext } from "../context/ProjectFileContext";
 import { getFileColor } from "../domain/file-handling";
@@ -7,11 +7,17 @@ import {
   ActivityInterval,
   getRelativeTimePx,
   TimeHighlight,
-  TimelineDomain,
+  TimelineService,
 } from "../domain/timeline";
 import { getDateStringAtTz } from "../domain/timezone";
 import { LogLine } from "../domain/types";
+import { Button } from "./Button";
 import { IconButton } from "./IconButton";
+import { LabeledTextField } from "./LabeledTextField";
+import { withModal } from "./withModal";
+import { Tooltip } from "./Tooltip";
+import clsx from "clsx";
+import { TimeHighlightFormModal, TimeHighlightRenderer } from "./TimeHighlight";
 
 function getValidDateFromEndOfArray(lines: LogLine[]): Date | undefined {
   for (let i = lines.length - 1; i >= 0; i--) {
@@ -93,33 +99,32 @@ function TimelineInternal({
   const [hightlights, setHightlights] = useState<TimeHighlight[]>([]);
   const { project } = useProjectFileContext();
 
-  const timeLine = useMemo(
-    () => new TimelineDomain(firstDate, lastDate, height),
+  const timeLineService = useMemo(
+    () => new TimelineService(firstDate, lastDate, height),
     [firstDate, lastDate, height]
   );
   const { maxCount, intervals: activityIntervals } = useMemo(
-    () => timeLine.getActivityIntervals(lines, 100),
-    [timeLine, lines]
+    () => timeLineService.getActivityIntervals(lines, 100),
+    [timeLineService, lines]
   );
-  const visibleWindow = timeLine.getVisibleWindow(
+  const visibleWindow = timeLineService.getVisibleWindow(
     firstLineVisible,
     lastLineVisible
   );
+
+  const [creatingNewHighlight, setCreatingNewHighlight] = useState<
+    number | null
+  >(null);
 
   return (
     <div
       style={{ width: `${width}px` }}
       className="border relative"
       onDoubleClick={({ pageY }) => {
-        const newHighlight = timeLine.makeTimeHighlight(
-          pageY,
-          "",
-          getFileColor()
-        );
-        setHightlights((h) => [...h, newHighlight]);
+        setCreatingNewHighlight(pageY);
       }}
     >
-      {timeLine.getIntervals().map(({ date, relativePx }, i) => (
+      {timeLineService.getIntervals().map(({ date, relativePx }, i) => (
         <DateRenderer
           key={i}
           date={date}
@@ -163,35 +168,19 @@ function TimelineInternal({
         }}
         className="absolute  w-full border bg-teal-200 opacity-50"
       ></div>
+      <TimeHighlightFormModal
+        showModal={creatingNewHighlight != null}
+        setShowModal={() => setCreatingNewHighlight(null)}
+        forwardProps={{
+          addHighlight: (h) => {
+            setHightlights((highlights) => [...highlights, h]);
+            setCreatingNewHighlight(null);
+          },
+          relativePixel: creatingNewHighlight as number,
+          timelineService: timeLineService,
+        }}
+      />
     </div>
-  );
-}
-
-function TimeHighlightRenderer({
-  highlight,
-  onClick = () => {},
-  onDoubleClick = () => {},
-}: {
-  highlight: TimeHighlight;
-  onClick?: () => void;
-  onDoubleClick?: () => void;
-}) {
-  return (
-    <div
-      onClick={onClick}
-      onDoubleClick={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        onDoubleClick();
-      }}
-      className="absolute w-full"
-      data-testid="timeline-time-highlight"
-      style={{
-        top: highlight.relativePx - 2,
-        height: "4px",
-        backgroundColor: highlight.color,
-      }}
-    ></div>
   );
 }
 

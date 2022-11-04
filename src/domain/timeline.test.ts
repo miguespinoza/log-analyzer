@@ -2,7 +2,7 @@ import { expect, test } from "vitest";
 import {
   getDateFromRelativePx,
   getRelativeTimePx,
-  TimelineDomain,
+  TimelineService,
 } from "./timeline";
 import { LogLine } from "./types";
 
@@ -54,7 +54,7 @@ test("getActivityIntervals", () => {
     makeMockLine(new Date(2021, 0, 1, 6)),
   ];
 
-  const timeline = new TimelineDomain(
+  const timeline = new TimelineService(
     new Date(2021, 0, 1, 1),
     new Date(2021, 0, 1, 6),
     100
@@ -78,7 +78,7 @@ test("getActivityIntervals descending", () => {
     makeMockLine(new Date(2021, 0, 1, 1)),
   ];
 
-  const timeline = new TimelineDomain(
+  const timeline = new TimelineService(
     new Date(2021, 0, 1, 6),
     new Date(2021, 0, 1, 1),
     100
