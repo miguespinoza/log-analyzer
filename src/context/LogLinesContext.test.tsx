@@ -1,19 +1,18 @@
-import {
-  afterAll,
-  beforeAll,
-  beforeEach,
-  describe,
-  expect,
-  test,
-  vi,
-} from "vitest";
-import { makeLogFile } from "../domain/log-lines-domain";
-import { LogLinesContextProvider, useLogLinesContext } from "./LogLinesContext";
+/* eslint-disable import/first */
+import { beforeEach, describe, expect, test, vi } from "vitest";
 import { render } from "@testing-library/react";
 import { Filter, LogLine } from "../domain/types";
 import { ProjectType } from "./ProjectFileContext";
-
-vi.mock("./FileContext.tsx", () => {
+import { makeLogFile } from "../domain/log-file";
+function mockLogFile(content: string) {
+  return makeLogFile({
+    name: "test",
+    content: content,
+    fileHandle: null as any,
+  });
+}
+// import orther matters becaue of doMock
+vi.doMock("./FileContext.tsx", () => {
   const desktopClientLogs = `Wed Sep 28 2022 12:59:57 GMT-0700 (Pacific Daylight Time) <912> -- info -- ...log
 Wed Sep 28 2022 13:00:27 GMT-0700 (Pacific Daylight Time) <912> -- info -- ...log target
 Wed Sep 28 2022 13:00:55 GMT-0700 (Pacific Daylight Time) <912> -- info -- ...log 1
@@ -63,6 +62,7 @@ Wed Sep 28 2022 13:01:27 GMT-0700 (Pacific Daylight Time) <912> -- info -- ...lo
     }),
   };
 });
+import { LogLinesContextProvider, useLogLinesContext } from "./LogLinesContext";
 
 vi.mock("./ProjectFileContext", () => ({
   useProjectFileContext: () => ({
@@ -142,7 +142,7 @@ describe("LogLinesContext", () => {
       ]
     `);
   });
-  test("should be able to provide filtered lines to child", () => {
+  test.only("should be able to provide filtered lines to child", () => {
     mockProject = { ...mockProject, hideUnfiltered: true };
     mockFilters = [
       {
@@ -169,11 +169,3 @@ describe("LogLinesContext", () => {
     `);
   });
 });
-
-function mockLogFile(content: string) {
-  return makeLogFile({
-    name: "test",
-    content: content,
-    fileHandle: null as any,
-  });
-}

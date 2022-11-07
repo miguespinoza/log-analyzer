@@ -1,4 +1,4 @@
-export type LogFile = {
+export interface ILogFile {
   name: string;
   color: string;
   id: string;
@@ -7,9 +7,12 @@ export type LogFile = {
   isVisible: boolean;
   linesWithoutDateCount?: number;
   fileHandle?: FileSystemFileHandle;
-  sorted?: "asc" | "desc" | null;
-  lines?: LogLine[];
-};
+  sorted: "asc" | "desc" | null;
+
+  getLogLines(): LogLine[];
+}
+
+export type SortDirection = "asc" | "desc" | null;
 
 export type Filter = {
   id: string;

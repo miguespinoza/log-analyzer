@@ -7,14 +7,14 @@ import {
 } from "../domain/file-handling";
 import { concatMap, Subscription } from "rxjs";
 import { MemoComponent } from "../components/MemoComponent";
-import { LogFile } from "../domain/types";
+import { ILogFile } from "../domain/types";
 import { toast, ToastOptions } from "react-toastify";
 
 export type LogFilesContextType = {
-  logFiles: LogFile[];
+  logFiles: ILogFile[];
   projectFile?: TextFilev2;
-  updateLogFile: (file: LogFile) => void;
-  removeLogFile: (file: LogFile) => void;
+  updateLogFile: (file: ILogFile) => void;
+  removeLogFile: (file: ILogFile) => void;
 };
 const LogFilesContext = React.createContext<LogFilesContextType>({
   logFiles: [],
@@ -27,7 +27,7 @@ export const useFilesContext = () => React.useContext(LogFilesContext);
 export class FilesProvider extends React.Component<
   { children: React.ReactNode },
   {
-    logFiles: LogFile[];
+    logFiles: ILogFile[];
     projectFile?: TextFilev2;
   }
 > {
@@ -77,7 +77,7 @@ export class FilesProvider extends React.Component<
     this.projectFilesSubscription?.unsubscribe();
   }
 
-  updateLogFiles(file: LogFile) {
+  updateLogFiles(file: ILogFile) {
     const { logFiles } = this.state;
     const index = logFiles.findIndex((f) => f.name === file.name);
     if (index !== -1) {
@@ -93,7 +93,7 @@ export class FilesProvider extends React.Component<
     }
   }
 
-  removeLogFile(file: LogFile) {
+  removeLogFile(file: ILogFile) {
     const { logFiles } = this.state;
     const index = logFiles.findIndex((f) => f.name === file.name);
     if (index !== -1) {

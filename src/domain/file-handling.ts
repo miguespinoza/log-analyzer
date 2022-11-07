@@ -1,5 +1,5 @@
 import { ChangeEvent, ChangeEventHandler } from "react";
-import { makeLogFile } from "./log-lines-domain";
+import { makeLogFile } from "./log-file";
 import { map, ReplaySubject } from "rxjs";
 import randomColor from "randomcolor";
 import { getCurrentTheme } from "../components/useThemeActions";

@@ -1,21 +1,20 @@
 import React, { useCallback, useMemo, useState } from "react";
 import {
   dedupeLogLines,
-  processFileLogLines,
   searchLines,
   sortLines,
 } from "../domain/log-lines-domain";
 import { useFilesContext } from "./FileContext";
 import { MemoComponent } from "../components/MemoComponent";
-import { Filter, LogFile, LogLine } from "../domain/types";
+import { Filter, ILogFile, LogLine } from "../domain/types";
 import { useProjectFileContext } from "./ProjectFileContext";
 
 export type LogLinesContextType = {
-  logFiles: LogFile[];
+  logFiles: ILogFile[];
   lines: LogLine[];
   allLines: LogLine[];
-  updateLogFile: (file: LogFile) => void;
-  updateFileTimezone: (file: LogFile, timezone: number) => void;
+  updateLogFile: (file: ILogFile) => void;
+  updateFileTimezone: (file: ILogFile, timezone: number) => void;
   apliedFilters: Filter[];
 };
 
@@ -78,10 +77,9 @@ export const LogLinesContextProvider = ({ children }: any) => {
   }, [lines, filters, hideUnfiltered]);
 
   const updateFileTimezone = useCallback(
-    (file: LogFile, newTimezone: number) => {
+    (file: ILogFile, newTimezone: number) => {
       const newFile = { ...file, timezone: newTimezone };
-      const processedFile = processFileLogLines(newFile);
-      updateLogFile(processedFile);
+      updateLogFile(newFile);
     },
     [updateLogFile]
   );

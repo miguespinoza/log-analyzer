@@ -1,165 +1,14 @@
-import { v4 as uuidv4, v5 as uuidHash } from "uuid";
-import { Filter, LogFile } from "./types";
+import { Filter, ILogFile, SortDirection } from "./types";
 import { LogLine } from "./types";
-import { extractLineDate, removeOriginalDate } from "./date-parsing";
-import { getFileColor, TextFilev2 } from "./file-handling";
 
 // line starts with date 2022-09-26T15:49:53.444Z
-function isNewLogLine(line: string) {
-  const date = getLineDate(line);
-  return date !== null && !isNaN(date.getTime());
-}
 
-function getLineDate(line: string, fileTimeZone: number = 0) {
-  return extractLineDate(line, fileTimeZone);
-}
-
-function splitTextByLines(text: string): string[] {
-  return text.split(/\r?\n/);
-}
-
-function isEmptyOrhasOnlySpaces(text: string) {
-  return text.trim().length === 0;
-}
-
-function separateLogLines(text: string): string[] {
-  const rawLines = splitTextByLines(text);
-  const logLines = [];
-  let processedLinesCount = 0;
-  for (const line of rawLines) {
-    if (isNewLogLine(line)) {
-      logLines.push(line);
-      processedLinesCount++;
-    } else {
-      if (logLines[logLines.length - 1]) {
-        logLines[logLines.length - 1] += `\n${line}`;
-        if (isEmptyOrhasOnlySpaces(line)) {
-          processedLinesCount++;
-        }
-      } else {
-        if (isEmptyOrhasOnlySpaces(line)) {
-          processedLinesCount++;
-        }
-        logLines.push(line);
-      }
-    }
-  }
-  if (processedLinesCount / rawLines.length < 0.5) {
-    console.log("too many lines were not parsed, returning raw lines");
-    return rawLines;
-  }
-  return logLines;
-}
-
-const MY_NAMESPACE = "1b671a64-40d5-491e-99b0-da01ff1f3341";
-
-export function parseLogLines({
-  text,
-  fileId,
-  fileName,
-  color,
-}: {
-  text: string;
-  fileName: string;
-  color: string;
-  fileId: string;
-}): {
-  lines: LogLine[];
-  linesWithoutDateCount: number;
-  sorted: "asc" | "desc" | null;
-} {
-  const lines = separateLogLines(text);
-  const logLines: LogLine[] = [];
-  let count = 0;
-  let linesWithoutDateCount = 0;
-  for (const line of lines) {
-    count++;
-    const date = getLineDate(line);
-    if (date) {
-      logLines.push({
-        id: uuidv4(),
-        fileId,
-        hash: uuidHash(line, MY_NAMESPACE),
-        date,
-        count,
-        fileName,
-        text: line,
-        textWithoutDate: removeOriginalDate(line),
-        fileColor: color,
-      });
-    } else {
-      linesWithoutDateCount++;
-      logLines.push({
-        id: uuidv4(),
-        fileId,
-        hash: uuidHash(line, MY_NAMESPACE),
-        date: null,
-        count,
-        fileName,
-        text: line,
-        textWithoutDate: removeOriginalDate(line),
-        fileColor: color,
-      });
-    }
-  }
-  return {
-    lines: logLines,
-    linesWithoutDateCount,
-    sorted: areLinesSortedAscOrDesc(logLines),
-  };
-}
-
-export function makeLogFile(file: TextFilev2): LogFile {
-  const color = getFileColor();
-  const fileId = uuidv4();
-
-  return {
-    color,
-    fileHandle: file.fileHandle,
-    id: fileId,
-    isVisible: file.isClosedByDefault ? false : true,
-    name: file.name,
-    text: file.content,
-    timezone: 0,
-  };
-}
-
-/**
- * Will extract and process log lines from text, will mutate the param object for performance
- * @param file
- */
-export function processFileLogLines(file: LogFile): Required<LogFile> {
-  console.time(`processing file ${file.name}`);
-  const { lines, linesWithoutDateCount, sorted } = parseLogLines({
-    text: file.text,
-    fileId: file.id,
-    fileName: file.name,
-    color: file.color,
-  });
-  console.timeEnd(`processing file ${file.name}`);
-  file.lines = lines;
-  file.linesWithoutDateCount = linesWithoutDateCount;
-  file.sorted = sorted;
-  return {
-    ...file,
-    fileHandle: file.fileHandle as FileSystemFileHandle,
-    lines,
-    linesWithoutDateCount,
-    sorted,
-  };
-}
-
-export function dedupeLogLines(
-  logFiles: LogFile[],
-): LogLine[] {
+export function dedupeLogLines(logFiles: ILogFile[]): LogLine[] {
   // identify duplicates by date and text and remove them, return merged array
   const existingLinesHashes = new Set();
   const mergedLines = [];
   for (let file of logFiles) {
-    if (file.lines == null) {
-      file = processFileLogLines(file);
-    }
-    for (const line of file.lines ?? []) {
+    for (const line of file.getLogLines() ?? []) {
       if (!existingLinesHashes.has(line.hash)) {
         mergedLines.push(line);
         existingLinesHashes.add(line.hash);
@@ -167,31 +16,6 @@ export function dedupeLogLines(
     }
   }
   return mergedLines;
-}
-type SortDirection = "asc" | "desc" | null;
-function areLinesSortedAscOrDesc(lines: LogLine[]): SortDirection {
-  if (lines.length < 2) {
-    return null;
-  }
-  const firstLineWithDate = lines.find((line) => line.date !== null);
-  let lastLineWithDate = null;
-  for (let i = lines.length - 1; i >= 0; i--) {
-    if (lines[i].date !== null) {
-      lastLineWithDate = lines[i];
-      break;
-    }
-  }
-  if (!firstLineWithDate || !lastLineWithDate) {
-    return null;
-  }
-  if (firstLineWithDate.date && lastLineWithDate.date) {
-    if (firstLineWithDate.date < lastLineWithDate.date) {
-      return "asc";
-    } else {
-      return "desc";
-    }
-  }
-  return null;
 }
 
 export function searchLines(
@@ -250,7 +74,7 @@ export function sortLines(
   sortBy: "date" | "file",
   direction: SortDirection,
   lines: LogLine[],
-  files: LogFile[]
+  files: ILogFile[]
 ): LogLine[] {
   if (sortBy === "date") {
     const dateLogLines = lines.filter((l) => l.date != null);
