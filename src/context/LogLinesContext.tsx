@@ -1,9 +1,5 @@
 import React, { useCallback, useMemo, useState } from "react";
-import {
-  dedupeLogLines,
-  searchLines,
-  sortLines,
-} from "../domain/log-lines-domain";
+import { LogFilesService } from "../domain/log-lines-domain";
 import { useFilesContext } from "./FileContext";
 import { MemoComponent } from "../components/MemoComponent";
 import { Filter, ILogFile, LogLine } from "../domain/types";
@@ -58,18 +54,28 @@ export const LogLinesContextProvider = ({ children }: any) => {
 
   // merges and dedupes all log lines from all files
   const mergedLines = React.useMemo(() => {
-    return dedupeLogLines(logFiles.filter((f) => f.isVisible));
+    return LogFilesService.mergeLogFiles(logFiles.filter((f) => f.isVisible));
   }, [logFiles]);
 
   // sorts the lines
   const lines = useMemo(
-    () => sortLines(sortBy, project.sortDirection, mergedLines, logFiles),
+    () =>
+      LogFilesService.sortLogLines(
+        sortBy,
+        project.sortDirection,
+        mergedLines,
+        logFiles
+      ),
     [mergedLines, logFiles, sortBy, project.sortDirection]
   );
 
   // filters the sorted lines, no need to re-sort since the lines are already sorted
   const filteredLines = useMemo(() => {
-    const filtersResult = searchLines(lines, hideUnfiltered, filters);
+    const filtersResult = LogFilesService.filterLogLines(
+      lines,
+      filters,
+      hideUnfiltered
+    );
     return {
       lines: filtersResult.lines,
       filters: filtersResult.filters,
