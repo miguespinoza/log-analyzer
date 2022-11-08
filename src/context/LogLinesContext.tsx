@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from "react";
-import { LogFilesService } from "../domain/log-lines-domain";
+import { LogFilesService } from "../domain/log-files-service";
 import { useFilesContext } from "./FileContext";
 import { MemoComponent } from "../components/MemoComponent";
 import { Filter, ILogFile, LogLine } from "../domain/types";
