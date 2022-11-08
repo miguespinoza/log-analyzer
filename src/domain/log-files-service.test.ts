@@ -1,6 +1,9 @@
 import { describe, expect, test, vi } from "vitest";
 import type { TextFilev2 } from "./file-handling";
-import { LogFilesService } from "./log-files-service";
+import {
+  LogFilesService,
+  ScenarioDiscoveryServiceImplementation,
+} from "./log-files-service";
 import { Filter } from "./types";
 import { makeLogFile } from "./log-file";
 
@@ -220,5 +223,47 @@ Wed Sep 28 2022 13:01:27 GMT-0700 (Pacific Daylight Time) <912> -- info -- ...lo
         "2022-09-26T15:50:18.624Z Inf	CDL: ...log",
       ]
     `);
+  });
+});
+
+describe("ScenarioDiscovery", () => {
+  const logs = `2022-09-26T15:50:18.624Z Inf	CDL: ...log
+2022-09-26T15:50:18.632Z Inf	CDL: ...log
+2022-09-26T15:50:18.634Z Inf	CDL: ...log
+2022-09-26T15:50:18.636Z Inf	CDL: [Scenario]test-scenario [step](1)error (56ms)
+2022-09-26T15:50:18.636Z Inf	CDL: [Scenario]test-scenario [step](0)error (56ms)
+2022-09-26T15:50:18.636Z Inf	CDL: [Scenario]test-scenario start
+2022-09-26T15:50:18.636Z Inf	CDL: [Scenario]do-stuff-scenario [step](1)stuff (56ms)
+2022-09-26T15:50:18.636Z Inf	CDL: [Scenario]do-stuff-scenario [step](0)doing (56ms)
+2022-09-26T15:50:18.636Z Inf	CDL: [Scenario]do-stuff-scenario start
+2022-09-26T15:50:18.636Z Inf	CDL: ...log
+2022-09-26T15:50:18.637Z Inf	CDL: ...log
+2022-09-26T15:50:18.653Z Inf	...log
+2022-09-26T15:51:00.311Z Inf	...log
+  `;
+
+  test("test scenario discovery", () => {
+    const file1 = makeLogFile({
+      fileHandle: {} as any,
+      content: logs,
+      name: "one",
+    });
+
+    const scenarioDiscovery = new ScenarioDiscoveryServiceImplementation();
+
+    scenarioDiscovery.indexScenarios(file1.getLogLines());
+
+    expect(scenarioDiscovery.searchScenarios("test-scenario"))
+      .toMatchInlineSnapshot(`
+        [
+          {
+            "lineHash": "f6d2bdde-00b8-511d-9f8d-0b7fe7f5b909",
+            "name": "test-scenario",
+            "step": "error (56ms)",
+            "stepNumber": 1,
+            "timestamp": NaN,
+          },
+        ]
+      `);
   });
 });

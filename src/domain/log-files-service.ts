@@ -1,3 +1,4 @@
+import Fuse from "fuse.js";
 import { Filter, ILogFile, SortDirection } from "./types";
 import { LogLine } from "./types";
 
@@ -170,5 +171,85 @@ class LogFilesServiceImplementation implements ILogFilesService {
     });
   }
 }
+
+export type ScenarioStep = {
+  name: string;
+  step: string;
+  stepNumber: number;
+  lineHash: string;
+  timestamp: number;
+};
+interface ScenarioDiscoveryService {
+  indexScenarios(lines: LogLine[]): void;
+  searchScenarios(search: string): ScenarioStep[];
+}
+
+export class ScenarioDiscoveryServiceImplementation
+  implements ScenarioDiscoveryService
+{
+  public scenarios: Set<string> = new Set();
+  private fuse: Fuse<LogLine> | null = null;
+
+  public indexScenarios(lines: LogLine[]): void {
+    const linesWithScenarios = [];
+
+    for (const line of lines) {
+      const scenario = this.parseScenarioLine(line);
+      if (scenario) {
+        this.scenarios.add(scenario.name);
+        linesWithScenarios.push(line);
+      }
+    }
+    console.time("indexing scenarios");
+    this.fuse = new Fuse(linesWithScenarios, { keys: ["text"] });
+    console.timeEnd("indexing scenarios");
+  }
+
+  public searchScenarios(search: string) {
+    if (this.fuse == null) {
+      console.error("scenarios not indexed");
+      return [];
+    }
+
+    const results = this.fuse.search(search);
+    const scenarios = [];
+    for (const result of results) {
+      const scenario = this.parseScenarioLine(result.item);
+      if (scenario) {
+        scenarios.push(scenario);
+      }
+    }
+    return scenarios;
+  }
+
+  private parseScenarioLine(line: LogLine): ScenarioStep | undefined {
+    // match [Scenario]people_get_all_short_profile [step](0)error (56ms)
+    // [Scenario]video_stream_rendering start
+    const match = line.text.match(/\[Scenario\](\S*)/);
+    if (match) {
+      const step = this.getScenarioStep(line.text);
+      return {
+        name: match[1],
+        step: step?.name ?? "",
+        stepNumber: step?.stepNumber ?? 0,
+        lineHash: line.hash,
+        timestamp: parseInt(match[4]),
+      };
+    }
+  }
+
+  private getScenarioStep(line: string) {
+    const match = line.match(/\[step\]\((\d*)\)(.*)/);
+    if (match) {
+      return {
+        stepNumber: parseInt(match[1]),
+        name: match[2],
+      };
+    }
+  }
+}
+
+export const scenarioDiscoveryService =
+  new ScenarioDiscoveryServiceImplementation();
 
 export const LogFilesService = new LogFilesServiceImplementation();
