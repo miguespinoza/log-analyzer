@@ -1,23 +1,19 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { useLogLinesContext } from "../context/LogLinesContext";
+import React, { useCallback, useState } from "react";
 import { useProjectFileContext } from "../context/ProjectFileContext";
 import { getFileColor } from "../domain/file-handling";
-import {
-  scenarioDiscoveryService,
-  ScenarioStep,
-} from "../domain/log-files-service";
 import useDebouncedCallback from "../domain/useDebouncedCallback";
 import { LabeledTextField } from "./LabeledTextField";
 import { withModal } from "./withModal";
 import { v4 as uuid } from "uuid";
+import {
+  scenarioDiscoveryService,
+  ScenarioStep,
+} from "../domain/scenario-discovery-service";
 
 // simple component that renders an input and a button to introduce commands
-export function CommandBar({ onComplete }: { onComplete: () => void }) {
-  const { lines } = useLogLinesContext();
+export function ScenarioSerachBar({ onComplete }: { onComplete: () => void }) {
   const [scenariosResult, setScenariosResult] = useState<ScenarioStep[]>([]);
   const { setFilter } = useProjectFileContext();
-
-  useEffect(() => scenarioDiscoveryService.indexScenarios(lines), [lines]);
 
   const searchScenarios = useCallback((query: string) => {
     const result = scenarioDiscoveryService.searchScenarios(query);
@@ -43,20 +39,28 @@ export function CommandBar({ onComplete }: { onComplete: () => void }) {
   );
 
   return (
-    <div className="flex flex-col ">
+    <div className="flex flex-col dark:bg-[#011627] p-1">
       <LabeledTextField
         label="search scenarios"
         inputProps={{
           autoFocus: true,
           onChange: (e) => {
             const query = e.target.value;
-            searchScenariosDebounced(query);
+            if (query === "*") {
+              setScenariosResult(scenarioDiscoveryService.getAllScenarios());
+            } else {
+              searchScenariosDebounced(query);
+            }
           },
         }}
       />
       <div className="border-t flex flex-col justify-start max-h-[30rem] overflow-auto">
         {scenariosResult.map((scenario) => (
-          <button onClick={() => onScenarioClick(scenario)}>
+          <button
+            key={scenario.name}
+            className="text-start p-1 border-b hover:bg-slate-200 dark:hover:bg-slate-800"
+            onClick={() => onScenarioClick(scenario)}
+          >
             <span>{scenario.name}</span>
           </button>
         ))}
@@ -65,4 +69,4 @@ export function CommandBar({ onComplete }: { onComplete: () => void }) {
   );
 }
 
-export const CommandBarModal = withModal(CommandBar);
+export const ScenarioSerachBarModal = withModal(ScenarioSerachBar);

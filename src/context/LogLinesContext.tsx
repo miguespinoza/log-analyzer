@@ -1,9 +1,10 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { LogFilesService } from "../domain/log-files-service";
 import { useFilesContext } from "./FileContext";
 import { MemoComponent } from "../components/MemoComponent";
 import { Filter, ILogFile, LogLine } from "../domain/types";
 import { useProjectFileContext } from "./ProjectFileContext";
+import { scenarioDiscoveryService } from "../domain/scenario-discovery-service";
 
 export type LogLinesContextType = {
   logFiles: ILogFile[];
@@ -68,6 +69,8 @@ export const LogLinesContextProvider = ({ children }: any) => {
       ),
     [mergedLines, logFiles, sortBy, project.sortDirection]
   );
+
+  useEffect(() => scenarioDiscoveryService.indexScenarios(lines), [lines]);
 
   // filters the sorted lines, no need to re-sort since the lines are already sorted
   const filteredLines = useMemo(() => {

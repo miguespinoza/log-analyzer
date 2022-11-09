@@ -65,6 +65,7 @@ class LogFile implements ILogFile {
     this._sorted = sorted;
   }
 
+  // do not access in this method this.lineswithoutDateCount directly, or this.sorted it would create an infinite loop
   private parseLogLines({
     text,
     fileId,

@@ -3,7 +3,7 @@ import { getFileColor } from "../domain/file-handling";
 import { v4 as uuid } from "uuid";
 import { useProjectFileContext } from "../context/ProjectFileContext";
 import { useState } from "react";
-import { CommandBarModal } from "./CommandBar";
+import { ScenarioSerachBarModal } from "./ScenarioSerachBar";
 
 export function KeyboardShortCuts() {
   const { updateProject, project } = useProjectFileContext();
@@ -43,9 +43,10 @@ export function KeyboardShortCuts() {
 
   return (
     <>
-      <CommandBarModal
+      <ScenarioSerachBarModal
         showModal={commandBarIsOpen}
         setShowModal={setCommandBarIsOpen}
+        forwardProps={{ onComplete: () => setCommandBarIsOpen(false) }}
       />
     </>
   );
