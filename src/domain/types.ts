@@ -5,11 +5,11 @@ export interface ILogFile {
   text: string;
   timezone: number;
   isVisible: boolean;
-  linesWithoutDateCount?: number;
   fileHandle?: FileSystemFileHandle;
-  sorted: "asc" | "desc" | null;
 
-  getLogLines(): LogLine[];
+  getFileSortDirection(): Promise<SortDirection>;
+  getLinesWithoutDateCount(): Promise<number>;
+  getLogLines(): Promise<LogLine[]>;
 }
 
 export type SortDirection = "asc" | "desc" | null;

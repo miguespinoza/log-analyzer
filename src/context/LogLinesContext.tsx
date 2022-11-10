@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { LogFilesService } from "../domain/log-files-service";
 import { useFilesContext } from "./FileContext";
 import { MemoComponent } from "../components/MemoComponent";
@@ -52,27 +52,30 @@ export const LogLinesContextProvider = ({ children }: any) => {
   const { project, filters } = useProjectFileContext();
   const { hideUnfiltered, sortBy } = project;
 
+  const [mergedLines, setMergedLines] = useState<LogLine[]>([]);
+  const [sortedLines, setSortedLines] = useState<LogLine[]>([]);
+
   // merges and dedupes all log lines from all files
-  const mergedLines = React.useMemo(() => {
-    return LogFilesService.mergeLogFiles(logFiles.filter((f) => f.isVisible));
+  useEffect(() => {
+    LogFilesService.mergeLogFiles(logFiles.filter((f) => f.isVisible)).then(
+      (lines) => setMergedLines(lines)
+    );
   }, [logFiles]);
 
   // sorts the lines
-  const lines = useMemo(
-    () =>
-      LogFilesService.sortLogLines(
-        sortBy,
-        project.sortDirection,
-        mergedLines,
-        logFiles
-      ),
-    [mergedLines, logFiles, sortBy, project.sortDirection]
-  );
+  const lines = useEffect(() => {
+    LogFilesService.sortLogLines(
+      sortBy,
+      project.sortDirection,
+      mergedLines,
+      logFiles
+    ).then((lines) => setSortedLines(lines));
+  }, [mergedLines, logFiles, sortBy, project.sortDirection]);
 
   // filters the sorted lines, no need to re-sort since the lines are already sorted
   const filteredLines = useMemo(() => {
     const filtersResult = LogFilesService.filterLogLines(
-      lines,
+      sortedLines,
       filters,
       hideUnfiltered
     );
@@ -80,7 +83,7 @@ export const LogLinesContextProvider = ({ children }: any) => {
       lines: filtersResult.lines,
       filters: filtersResult.filters,
     };
-  }, [lines, filters, hideUnfiltered]);
+  }, [sortedLines, filters, hideUnfiltered]);
 
   const updateFileTimezone = useCallback(
     (file: ILogFile, newTimezone: number) => {
@@ -93,7 +96,7 @@ export const LogLinesContextProvider = ({ children }: any) => {
   const data = useMemo<LogLinesContextType>(
     () => ({
       logFiles,
-      allLines: lines,
+      allLines: sortedLines,
       lines: filteredLines.lines,
       apliedFilters: filteredLines.filters,
       updateLogFile,
@@ -101,7 +104,7 @@ export const LogLinesContextProvider = ({ children }: any) => {
     }),
     [
       logFiles,
-      lines,
+      sortedLines,
       filteredLines.lines,
       filteredLines.filters,
       updateLogFile,
