@@ -1,8 +1,9 @@
+import Fuse from "fuse.js";
 import { Filter, ILogFile, SortDirection } from "./types";
 import { LogLine } from "./types";
 
 interface ILogFilesService {
-  mergeLogFiles(logFiles: ILogFile[]): LogLine[];
+  mergeLogFiles(logFiles: ILogFile[]): Promise<LogLine[]>;
   filterLogLines(
     lines: LogLine[],
     filters: Filter[],
@@ -13,17 +14,18 @@ interface ILogFilesService {
     direction: SortDirection,
     lines: LogLine[],
     files: ILogFile[]
-  ): LogLine[];
+  ): Promise<LogLine[]>;
 }
 
 // like a static class
 class LogFilesServiceImplementation implements ILogFilesService {
-  public mergeLogFiles(logFiles: ILogFile[]): LogLine[] {
+  public async mergeLogFiles(logFiles: ILogFile[]): Promise<LogLine[]> {
     // identify duplicates by date and text and remove them, return merged array
     const existingLinesHashes = new Set();
     const mergedLines = [];
     for (let file of logFiles) {
-      for (const line of file.getLogLines() ?? []) {
+      const lines = await file.getLogLines();
+      for (const line of lines) {
         if (!existingLinesHashes.has(line.hash)) {
           mergedLines.push(line);
           existingLinesHashes.add(line.hash);
@@ -80,7 +82,7 @@ class LogFilesServiceImplementation implements ILogFilesService {
     };
   }
 
-  public sortLogLines(
+  public async sortLogLines(
     sortBy: "date" | "file",
     direction: SortDirection,
     lines: LogLine[],
@@ -95,12 +97,17 @@ class LogFilesServiceImplementation implements ILogFilesService {
           } ommited due to sorting by date`
         );
       }
+
+      const fileSortedDirectionMap = new Map<string, SortDirection>();
+      const promises = files.map(async (file) => {
+        file.getFileSortDirection().then((d) => {
+          fileSortedDirectionMap.set(file.id, d);
+        });
+      });
+      await Promise.all(promises);
       const fileSortedBy: (id: string) => SortDirection = (id) => {
-        const file = files.find((l) => l.id === id);
-        if (file) {
-          return file.sorted ?? null;
-        }
-        return null;
+        const direction = fileSortedDirectionMap.get(id);
+        return direction ?? null;
       };
       return this.sortLogLineByDate(
         dateLogLines,
@@ -170,5 +177,85 @@ class LogFilesServiceImplementation implements ILogFilesService {
     });
   }
 }
+
+export type ScenarioStep = {
+  name: string;
+  step: string;
+  stepNumber: number;
+  lineHash: string;
+  timestamp: number;
+};
+interface ScenarioDiscoveryService {
+  indexScenarios(lines: LogLine[]): void;
+  searchScenarios(search: string): ScenarioStep[];
+}
+
+export class ScenarioDiscoveryServiceImplementation
+  implements ScenarioDiscoveryService
+{
+  public scenarios: Set<string> = new Set();
+  private fuse: Fuse<LogLine> | null = null;
+
+  public indexScenarios(lines: LogLine[]): void {
+    const linesWithScenarios = [];
+
+    for (const line of lines) {
+      const scenario = this.parseScenarioLine(line);
+      if (scenario) {
+        this.scenarios.add(scenario.name);
+        linesWithScenarios.push(line);
+      }
+    }
+    console.time("indexing scenarios");
+    this.fuse = new Fuse(linesWithScenarios, { keys: ["text"] });
+    console.timeEnd("indexing scenarios");
+  }
+
+  public searchScenarios(search: string) {
+    if (this.fuse == null) {
+      console.error("scenarios not indexed");
+      return [];
+    }
+
+    const results = this.fuse.search(search);
+    const scenarios = [];
+    for (const result of results) {
+      const scenario = this.parseScenarioLine(result.item);
+      if (scenario) {
+        scenarios.push(scenario);
+      }
+    }
+    return scenarios;
+  }
+
+  private parseScenarioLine(line: LogLine): ScenarioStep | undefined {
+    // match [Scenario]people_get_all_short_profile [step](0)error (56ms)
+    // [Scenario]video_stream_rendering start
+    const match = line.text.match(/\[Scenario\](\S*)/);
+    if (match) {
+      const step = this.getScenarioStep(line.text);
+      return {
+        name: match[1],
+        step: step?.name ?? "",
+        stepNumber: step?.stepNumber ?? 0,
+        lineHash: line.hash,
+        timestamp: parseInt(match[4]),
+      };
+    }
+  }
+
+  private getScenarioStep(line: string) {
+    const match = line.match(/\[step\]\((\d*)\)(.*)/);
+    if (match) {
+      return {
+        stepNumber: parseInt(match[1]),
+        name: match[2],
+      };
+    }
+  }
+}
+
+export const scenarioDiscoveryService =
+  new ScenarioDiscoveryServiceImplementation();
 
 export const LogFilesService = new LogFilesServiceImplementation();
