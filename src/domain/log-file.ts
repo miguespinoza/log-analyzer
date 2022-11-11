@@ -1,18 +1,17 @@
 import { getFileColor, TextFilev2 } from "./file-handling";
 import { ILogFile, LogLine, SortDirection } from "./types";
 import { v4 as uuidv4 } from "uuid";
-import { extractLineDate } from "./date-parsing";
 import * as Comlink from "comlink";
 import type { LogFilesServiceWorker } from "./log-file-service-worker";
-
-const WORKER_URL = new URL("./log-file-service-worker", import.meta.url);
+import MyWorker from "./log-file-service-worker?worker&inline";
+//const WORKER_URL = new URL("./log-file-service-worker", import.meta.url);
 
 async function initWorker() {
-  const worker = new Worker(WORKER_URL, {
-    type: "module",
-  });
+  // const worker = new Worker(WORKER_URL, {
+  //   type: "module",
+  // });
   // WebWorkers use `postMessage` and therefore work with Comlink.
-  const obj = Comlink.wrap<LogFilesServiceWorker>(worker);
+  const obj = Comlink.wrap<LogFilesServiceWorker>(new MyWorker());
   return obj;
 }
 
