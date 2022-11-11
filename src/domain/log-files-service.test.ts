@@ -1,6 +1,6 @@
 import { describe, expect, test, vi } from "vitest";
 import type { TextFilev2 } from "./file-handling";
-import { LogFilesService } from "./log-lines-domain";
+import { LogFilesService } from "./log-files-service";
 import { Filter } from "./types";
 import { makeLogFile } from "./log-file";
 
