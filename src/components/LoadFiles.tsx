@@ -62,8 +62,8 @@ export default function LoadFiles() {
                 type="checkbox"
                 checked={file.isVisible}
                 onChange={(e) => {
-                  const newFile = { ...file, isVisible: e.target.checked };
-                  updateLogFile(newFile);
+                  file.isVisible = e.target.checked;
+                  updateLogFile(file);
                 }}
               />
               <LabeledTextField
