@@ -2,21 +2,15 @@ import { BarsArrowUpIcon } from "@heroicons/react/24/solid";
 import React, { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useLogLinesContext } from "../context/LogLinesContext";
 import { useProjectFileContext } from "../context/ProjectFileContext";
-import { getFileColor } from "../domain/file-handling";
 import {
   ActivityInterval,
   getRelativeTimePx,
-  TimeHighlight,
   TimelineService,
 } from "../domain/timeline";
 import { getDateStringAtTz } from "../domain/timezone";
 import { LogLine } from "../domain/types";
-import { Button } from "./Button";
 import { IconButton } from "./IconButton";
-import { LabeledTextField } from "./LabeledTextField";
-import { withModal } from "./withModal";
-import { Tooltip } from "./Tooltip";
-import clsx from "clsx";
+
 import { TimeHighlightFormModal, TimeHighlightRenderer } from "./TimeHighlight";
 
 function getValidDateFromEndOfArray(lines: LogLine[]): Date | undefined {
@@ -55,10 +49,12 @@ export function Timeline({
   const lastDate = getValidDateFromEndOfArray(allLines);
   const firstLineVisible = lines[firstLineVisibleIndex]?.date;
   const lastLineVisible = lines[lastLineVisibleIndex]?.date;
+  const { project } = useProjectFileContext();
   const timeLineWillHide =
     firstLineVisible == null ||
     lastLineVisible == null ||
     firstDate == null ||
+    project.sortBy === "file" ||
     lastDate == null;
   useLayoutEffect(() => {
     updateVisivility(!timeLineWillHide);
