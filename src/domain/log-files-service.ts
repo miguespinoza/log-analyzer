@@ -98,7 +98,7 @@ class LogFilesServiceImplementation implements ILogFilesService {
       const fileSortedBy: (id: string) => SortDirection = (id) => {
         const file = files.find((l) => l.id === id);
         if (file) {
-          return file.sorted ?? null;
+          return file.getSortDirection() ?? null;
         }
         return null;
       };

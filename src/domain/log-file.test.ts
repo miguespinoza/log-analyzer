@@ -35,7 +35,7 @@ describe("LogFile", () => {
       fileHandle: null as any,
     });
     expect(logFile.getLogLines().length).toEqual(9);
-    expect(logFile.linesWithoutDateCount).toEqual(0);
+    expect(logFile.getLinesWithoutDateCount()).toEqual(0);
   });
 
   test("should parse multiple other date format log lines", () => {
@@ -45,7 +45,7 @@ describe("LogFile", () => {
       fileHandle: null as any,
     });
     expect(logFile.getLogLines().length).toEqual(13);
-    expect(logFile.linesWithoutDateCount).toEqual(0);
+    expect(logFile.getLinesWithoutDateCount()).toEqual(0);
   });
 
   test("should parse multiple desktop log lines", () => {
@@ -55,7 +55,7 @@ describe("LogFile", () => {
       fileHandle: null as any,
     });
     expect(logFile.getLogLines().length).toEqual(9);
-    expect(logFile.linesWithoutDateCount).toEqual(0);
+    expect(logFile.getLinesWithoutDateCount()).toEqual(0);
   });
 
   test("should parse multiple logs without dates lines", () => {
@@ -65,7 +65,7 @@ describe("LogFile", () => {
       fileHandle: null as any,
     });
     expect(logFile.getLogLines().length).toEqual(8);
-    expect(logFile.linesWithoutDateCount).toEqual(8);
+    expect(logFile.getLinesWithoutDateCount()).toEqual(8);
   });
 
   test("should parse multiple etl logs lines", () => {
@@ -75,7 +75,7 @@ describe("LogFile", () => {
       fileHandle: null as any,
     });
     expect(logFile.getLogLines().length).toEqual(12);
-    expect(logFile.linesWithoutDateCount).toEqual(0);
+    expect(logFile.getLinesWithoutDateCount()).toEqual(0);
   });
 });
 

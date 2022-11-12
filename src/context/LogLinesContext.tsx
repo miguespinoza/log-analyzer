@@ -87,8 +87,8 @@ export const LogLinesContextProvider = ({ children }: any) => {
 
   const updateFileTimezone = useCallback(
     (file: ILogFile, newTimezone: number) => {
-      file.timezone = newTimezone;
-      updateLogFile(file);
+      const newFile = { ...file, timezone: newTimezone };
+      updateLogFile(newFile);
     },
     [updateLogFile]
   );

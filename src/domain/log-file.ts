@@ -22,36 +22,36 @@ class LogFile implements ILogFile {
     this.color = getFileColor();
   }
 
-  public getLogLines(): LogLine[] {
+  public getLogLines = () => {
     if (!this.hasBeenProcessed()) {
       this.extractLogLines();
     } else {
       console.log("using cached log lines");
     }
     return this.lines ?? [];
-  }
+  };
 
-  public get linesWithoutDateCount() {
+  public getLinesWithoutDateCount = () => {
     if (!this.hasBeenProcessed()) {
       this.extractLogLines();
     }
     return this._linesWithoutDateCount;
-  }
+  };
 
-  public get sorted() {
+  public getSortDirection = () => {
     if (!this.hasBeenProcessed()) {
       this.extractLogLines();
     }
     return this._sorted;
-  }
+  };
 
-  private hasBeenProcessed() {
+  private hasBeenProcessed = () => {
     return this.lines != null;
-  }
+  };
   /**
    * Will extract and process log lines from text
    */
-  private extractLogLines() {
+  private extractLogLines = () => {
     console.time(`processing file ${this.name}`);
     const { lines, linesWithoutDateCount, sorted } = this.parseLogLines({
       text: this.text,
@@ -63,24 +63,15 @@ class LogFile implements ILogFile {
     this.lines = lines;
     this._linesWithoutDateCount = linesWithoutDateCount;
     this._sorted = sorted;
-  }
+  };
 
   // do not access in this method this.lineswithoutDateCount directly, or this.sorted it would create an infinite loop
-  private parseLogLines({
+  private parseLogLines: ParseLogLinesFunction = ({
     text,
     fileId,
     fileName,
     color,
-  }: {
-    text: string;
-    fileName: string;
-    color: string;
-    fileId: string;
-  }): {
-    lines: LogLine[];
-    linesWithoutDateCount: number;
-    sorted: "asc" | "desc" | null;
-  } {
+  }) => {
     const lines = this.separateLogLines(text);
     const logLines: LogLine[] = [];
     let count = 0;
@@ -120,9 +111,9 @@ class LogFile implements ILogFile {
       linesWithoutDateCount,
       sorted: this.areLinesSortedAscOrDesc(logLines),
     };
-  }
+  };
 
-  private separateLogLines(text: string): string[] {
+  private separateLogLines: (text: string) => string[] = (text) => {
     const rawLines = this.splitTextByLines(text);
     const logLines = [];
     let processedLinesCount = 0;
@@ -149,9 +140,11 @@ class LogFile implements ILogFile {
       return rawLines;
     }
     return logLines;
-  }
+  };
 
-  private areLinesSortedAscOrDesc(lines: LogLine[]): SortDirection {
+  private areLinesSortedAscOrDesc: (lines: LogLine[]) => SortDirection = (
+    lines
+  ) => {
     if (lines.length < 2) {
       return null;
     }
@@ -174,26 +167,40 @@ class LogFile implements ILogFile {
       }
     }
     return null;
-  }
+  };
 
-  private splitTextByLines(text: string): string[] {
+  private splitTextByLines: (text: string) => string[] = (text) => {
     return text.split(/\r?\n/);
-  }
+  };
 
-  private isEmptyOrhasOnlySpaces(text: string) {
+  private isEmptyOrhasOnlySpaces: (text: string) => boolean = (text) => {
     return text.trim().length === 0;
-  }
+  };
 
-  private getLineDate(line: string, fileTimeZone: number = 0) {
+  private getLineDate: (line: string, fileTimeZone?: number) => Date | null = (
+    line,
+    fileTimeZone = 0
+  ) => {
     return extractLineDate(line, fileTimeZone);
-  }
+  };
 
-  private isNewLogLine(line: string) {
+  private isNewLogLine: (line: string) => boolean = (line) => {
     const date = this.getLineDate(line);
     return date !== null && !isNaN(date.getTime());
-  }
+  };
 }
 
 export function makeLogFile(file: TextFilev2): ILogFile {
   return new LogFile(file.name, file.content, 0, true, file.fileHandle);
 }
+
+type ParseLogLinesFunction = (params: {
+  text: string;
+  fileName: string;
+  color: string;
+  fileId: string;
+}) => {
+  lines: LogLine[];
+  linesWithoutDateCount: number;
+  sorted: "asc" | "desc" | null;
+};

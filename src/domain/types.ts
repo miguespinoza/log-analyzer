@@ -5,10 +5,10 @@ export interface ILogFile {
   text: string;
   timezone: number;
   isVisible: boolean;
-  linesWithoutDateCount?: number;
   fileHandle?: FileSystemFileHandle;
-  sorted: "asc" | "desc" | null;
 
+  getSortDirection(): SortDirection;
+  getLinesWithoutDateCount(): number | undefined;
   getLogLines(): LogLine[];
 }
 

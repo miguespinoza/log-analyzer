@@ -62,8 +62,8 @@ export default function LoadFiles() {
                 type="checkbox"
                 checked={file.isVisible}
                 onChange={(e) => {
-                  file.isVisible = e.target.checked;
-                  updateLogFile(file);
+                  const newFile = { ...file, isVisible: e.target.checked };
+                  updateLogFile(newFile);
                 }}
               />
               <LabeledTextField
@@ -87,10 +87,10 @@ export default function LoadFiles() {
                 }}
               />
 
-              {file.linesWithoutDateCount != null &&
-                file.linesWithoutDateCount > 0 && (
+              {file.getLinesWithoutDateCount() != null &&
+                (file.getLinesWithoutDateCount() as number) > 0 && (
                   <span
-                    title={`${file.linesWithoutDateCount} lines without date, to see them switch to sort by file`}
+                    title={`${file.getLinesWithoutDateCount()} lines without date, to see them switch to sort by file`}
                   >
                     <ExclamationTriangleIcon className="h-6 w-6 text-yellow-500" />
                   </span>
