@@ -1,7 +1,12 @@
 import clsx from "clsx";
 import { useRef } from "react";
 import { getFileColor } from "../domain/file-handling";
-import { TimeHighlight, TimelineService } from "../domain/timeline";
+import { v4 as uuid } from "uuid";
+import {
+  getTimeHighlightPosition,
+  TimeHighlight,
+  TimelineService,
+} from "../domain/timeline";
 import { Button } from "./Button";
 import { LabeledTextField } from "./LabeledTextField";
 import { Tooltip } from "./Tooltip";
@@ -11,12 +16,10 @@ export const TimeHighlightFormModal = withModal(TimeHighlightForm);
 
 function TimeHighlightForm({
   addHighlight,
-  relativePixel,
-  timelineService,
+  date,
 }: {
   addHighlight: (h: TimeHighlight) => void;
-  relativePixel: number;
-  timelineService: TimelineService;
+  date?: Date;
 }) {
   return (
     <form
@@ -27,12 +30,8 @@ function TimeHighlightForm({
         const name = data.get("name") as string;
         const color = data.get("color") as string;
 
-        if (name && color) {
-          const newHighlight = timelineService.makeTimeHighlight(
-            relativePixel,
-            name,
-            color
-          );
+        if (name && color && date) {
+          const newHighlight = new TimeHighlight(uuid(), date, name, color);
           addHighlight(newHighlight);
         }
       }}
@@ -57,14 +56,27 @@ function TimeHighlightForm({
 
 export function TimeHighlightRenderer({
   highlight,
+  containerEndDate,
+  containerStartDate,
+  containerHeight,
   onClick = () => {},
   onDoubleClick = () => {},
 }: {
   highlight: TimeHighlight;
+  containerStartDate: Date;
+  containerEndDate: Date;
+  containerHeight: number;
   onClick?: () => void;
   onDoubleClick?: () => void;
 }) {
   const refElement = useRef<HTMLDivElement>(null);
+
+  const position = getTimeHighlightPosition(
+    highlight.date,
+    containerStartDate,
+    containerEndDate,
+    containerHeight
+  );
 
   return (
     <>
@@ -79,7 +91,7 @@ export function TimeHighlightRenderer({
         className="absolute w-full"
         data-testid="timeline-time-highlight"
         style={{
-          top: highlight.relativePx - 2,
+          top: position - 2,
           height: "4px",
           backgroundColor: highlight.color,
         }}

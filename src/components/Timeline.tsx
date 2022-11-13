@@ -4,6 +4,7 @@ import { useLogLinesContext } from "../context/LogLinesContext";
 import { useProjectFileContext } from "../context/ProjectFileContext";
 import {
   ActivityInterval,
+  getDateFromRelativePx,
   getRelativeTimePx,
   TimelineService,
 } from "../domain/timeline";
@@ -147,6 +148,9 @@ function TimelineInternal({
       {timeHighlights.map((h) => (
         <TimeHighlightRenderer
           key={h.id}
+          containerEndDate={lastDate}
+          containerStartDate={firstDate}
+          containerHeight={height}
           highlight={h}
           onDoubleClick={() => {
             removeTimeHighlight(h);
@@ -170,8 +174,15 @@ function TimelineInternal({
             addTimeHighlight(h);
             setCreatingNewHighlight(null);
           },
-          relativePixel: creatingNewHighlight as number,
-          timelineService: timeLineService,
+          date:
+            creatingNewHighlight != null
+              ? getDateFromRelativePx(
+                  firstDate,
+                  lastDate,
+                  creatingNewHighlight as number,
+                  height
+                )
+              : undefined,
         }}
       />
     </div>
