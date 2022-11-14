@@ -144,10 +144,11 @@ function LogLineRenderer({
   showOGDate?: boolean;
 }) {
   const color = line.matchedFilters?.color ?? undefined;
-  const date =
-    line.date == null || isNaN(line.date?.getTime() ?? NaN)
+  const date = useMemo(() => {
+    return line.date == null || isNaN(line.date?.getTime() ?? NaN)
       ? null
       : getDateStringAtTz(line.date, displayTimezoneOffset);
+  }, [line.date, displayTimezoneOffset]);
   return (
     <div
       className="flex gap-1"

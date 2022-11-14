@@ -194,10 +194,14 @@ function ActivityIntervalBar({
   timezoneOffset: number;
 }) {
   const height = maxHeight / numberOfIntervals;
+  const date = useMemo(
+    () => getDateStringAtTz(interval.start, timezoneOffset),
+    [interval.start, timezoneOffset]
+  );
   return (
     <div
       data-testid="timeline-activity-interval"
-      title={getDateStringAtTz(interval.start, timezoneOffset)}
+      title={date}
       style={{
         left: 0,
         top: `${interval.relativePx - height}px`,
