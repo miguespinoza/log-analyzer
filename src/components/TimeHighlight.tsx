@@ -2,11 +2,7 @@ import clsx from "clsx";
 import { useRef } from "react";
 import { getFileColor } from "../domain/file-handling";
 import { v4 as uuid } from "uuid";
-import {
-  getTimeHighlightPosition,
-  TimeHighlight,
-  TimelineService,
-} from "../domain/timeline";
+import { getTimeHighlightPosition, TimeHighlight } from "../domain/timeline";
 import { Button } from "./Button";
 import { LabeledTextField } from "./LabeledTextField";
 import { Tooltip } from "./Tooltip";

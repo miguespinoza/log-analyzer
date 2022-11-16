@@ -7,6 +7,8 @@ import { LogLine } from "../domain/types";
 import { useProjectFileContext } from "../context/ProjectFileContext";
 import { getDateStringAtTz } from "../domain/timezone";
 import { Timeline } from "./Timeline";
+import { IconButton } from "./IconButton";
+import { ClockIcon } from "@heroicons/react/24/outline";
 
 const TIMELINE_WIDTH = 135;
 
@@ -143,6 +145,7 @@ function LogLineRenderer({
   displayTimezoneOffset: number;
   showOGDate?: boolean;
 }) {
+  const { setAddingTimeHighlightAt } = useProjectFileContext();
   const color = line.matchedFilters?.color ?? undefined;
   const date =
     line.date == null || isNaN(line.date?.getTime() ?? NaN)
@@ -167,9 +170,17 @@ function LogLineRenderer({
         {line.count}
       </span>
       {date != null && (
-        <span className="noWrap bg-stone-300 dark:bg-cyan-900 pl-1 pr-1">
-          {date}
-        </span>
+        <>
+          <span className="noWrap bg-stone-300 dark:bg-cyan-900 pl-1 pr-1">
+            {date}
+          </span>
+          <IconButton
+            title="Add time highlight"
+            className="border-l border-r rounded-none"
+            icon={<ClockIcon className="h-4 w-4" />}
+            onClick={() => setAddingTimeHighlightAt(line.date)}
+          ></IconButton>
+        </>
       )}
       <span
         style={{

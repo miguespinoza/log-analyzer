@@ -37,17 +37,5 @@ export function KeyboardShortCuts() {
     [setFilter]
   );
 
-  useHotkeys("ctrl+alt+q", () => {
-    setCommandBarIsOpen(true);
-  });
-
-  return (
-    <>
-      <ScenarioSerachBarModal
-        showModal={commandBarIsOpen}
-        setShowModal={setCommandBarIsOpen}
-        forwardProps={{ onComplete: () => setCommandBarIsOpen(false) }}
-      />
-    </>
-  );
+  return null;
 }
