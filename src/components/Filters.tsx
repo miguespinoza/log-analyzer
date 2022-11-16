@@ -114,7 +114,6 @@ const ActiveFilter = ({ filter, order }: { filter: Filter; order: number }) => {
       <IconButton
         icon={<TrashIcon className="h-4 w-4" />}
         onClick={() => {
-          console.log("remove filter", filter.id);
           removeFilter(filter.id);
         }}
       ></IconButton>

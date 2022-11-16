@@ -1,6 +1,13 @@
 import { useLogLinesContext } from "../context/LogLinesContext";
 import { Virtuoso } from "react-virtuoso";
-import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
+import {
+  memo,
+  useCallback,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { FilterFormModal } from "./Filters";
 import { LogLine } from "../domain/types";
@@ -130,67 +137,64 @@ export function LinesRenderer({
 //calm blue
 const calmBlue = "#1e90ff";
 
-function LogLineRenderer({
-  line,
-  onClick,
-  focusedLine,
-  onDoubleClick,
-  displayTimezoneOffset,
-  showOGDate,
-}: {
-  line: LogLine;
-  focusedLine: LogLine | null;
-  onClick?: (line: LogLine) => void;
-  onDoubleClick?: (line: LogLine) => void;
-  displayTimezoneOffset: number;
-  showOGDate?: boolean;
-}) {
-  const { setAddingTimeHighlightAt } = useProjectFileContext();
-  const color = line.matchedFilters?.color ?? undefined;
-  const date = useMemo(() => {
-    return line.date == null || isNaN(line.date?.getTime() ?? NaN)
-      ? null
-      : getDateStringAtTz(line.date, displayTimezoneOffset);
-  }, [line.date, displayTimezoneOffset]);
-  return (
-    <div
-      className="flex gap-1"
-      style={{
-        backgroundColor: focusedLine?.hash === line.hash ? calmBlue : color,
-      }}
-      onClick={() => onClick && onClick(line)}
-      onDoubleClick={() => onDoubleClick && onDoubleClick(line)}
-    >
-      <span
-        style={{
-          backgroundColor: line.fileColor,
-        }}
-        title={line.fileName}
-        className="noWrap bg-stone-300 min-w-[3rem] text-sm text-center"
-      >
-        {line.count}
-      </span>
-      {date != null && (
-        <>
-          <span className="noWrap bg-stone-300 dark:bg-cyan-900 pl-1 pr-1">
-            {date}
-          </span>
-          <IconButton
-            title="Add time highlight"
-            className="border-l border-r rounded-none"
-            icon={<ClockIcon className="h-4 w-4" />}
-            onClick={() => setAddingTimeHighlightAt(line.date)}
-          ></IconButton>
-        </>
-      )}
-      <span
+/**
+ * Performance of this component is critical, it is rendered thousands of times in the app
+ */
+const LogLineRenderer = memo(
+  ({
+    line,
+    onClick,
+    focusedLine,
+    onDoubleClick,
+    displayTimezoneOffset,
+    showOGDate,
+  }: {
+    line: LogLine;
+    focusedLine: LogLine | null;
+    onClick?: (line: LogLine) => void;
+    onDoubleClick?: (line: LogLine) => void;
+    displayTimezoneOffset: number;
+    showOGDate?: boolean;
+  }) => {
+    const color = line.matchedFilters?.color ?? undefined;
+    const date = useMemo(() => {
+      return line.date == null || isNaN(line.date?.getTime() ?? NaN)
+        ? null
+        : getDateStringAtTz(line.date, displayTimezoneOffset);
+    }, [line.date, displayTimezoneOffset]);
+    return (
+      <div
+        className="flex gap-1"
         style={{
           backgroundColor: focusedLine?.hash === line.hash ? calmBlue : color,
         }}
-        className="noWrap align-text-top "
+        onClick={() => onClick && onClick(line)}
+        onDoubleClick={() => onDoubleClick && onDoubleClick(line)}
       >
-        {showOGDate ? line.text : line.textWithoutDate}
-      </span>
-    </div>
-  );
-}
+        <span
+          style={{
+            backgroundColor: line.fileColor,
+          }}
+          title={line.fileName}
+          className="noWrap bg-stone-300 min-w-[3rem] text-sm text-center"
+        >
+          {line.count}
+        </span>
+        {date != null && (
+          <span className="noWrap bg-stone-300 dark:bg-cyan-900 pl-1 pr-1">
+            {date}
+          </span>
+        )}
+        <span
+          style={{
+            backgroundColor: focusedLine?.hash === line.hash ? calmBlue : color,
+          }}
+          className="noWrap align-text-top "
+        >
+          {showOGDate ? line.text : line.textWithoutDate}
+        </span>
+      </div>
+    );
+  }
+);
+LogLineRenderer.displayName = "LogLineRenderer";
