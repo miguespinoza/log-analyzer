@@ -1,3 +1,4 @@
+import { EyeIcon } from "@heroicons/react/24/solid";
 import React, { memo, useCallback, useLayoutEffect, useMemo } from "react";
 import { useLogLinesContext } from "../context/LogLinesContext";
 import { useProjectFileContext } from "../context/ProjectFileContext";
@@ -153,7 +154,11 @@ function TimelineInternal({
           height: visibleWindow.height,
         }}
         className="absolute  w-full border bg-teal-200 opacity-50"
-      ></div>
+      >
+        <button className=" absolute right-0 top-0" title="Visibility window">
+          <EyeIcon className="w-4 h-4" />
+        </button>
+      </div>
     </div>
   );
 }
