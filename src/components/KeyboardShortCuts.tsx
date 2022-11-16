@@ -2,13 +2,10 @@ import { useHotkeys } from "react-hotkeys-hook";
 import { getFileColor } from "../domain/file-handling";
 import { v4 as uuid } from "uuid";
 import { useProjectFileContext } from "../context/ProjectFileContext";
-import { useState } from "react";
-import { ScenarioSerachBarModal } from "./ScenarioSerachBar";
 
 export function KeyboardShortCuts() {
   const { updateProject, project } = useProjectFileContext();
   const { setFilter } = useProjectFileContext();
-  const [commandBarIsOpen, setCommandBarIsOpen] = useState(false);
   useHotkeys(
     "ctrl+alt+h",
     () => {

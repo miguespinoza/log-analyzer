@@ -1,13 +1,4 @@
-import { BarsArrowUpIcon } from "@heroicons/react/24/solid";
-import React, {
-  memo,
-  useCallback,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import { last } from "rxjs";
+import React, { memo, useCallback, useLayoutEffect, useMemo } from "react";
 import { useLogLinesContext } from "../context/LogLinesContext";
 import { useProjectFileContext } from "../context/ProjectFileContext";
 import {
@@ -19,7 +10,6 @@ import {
 } from "../domain/timeline";
 import { getDateStringAtTz } from "../domain/timezone";
 import { LogLine } from "../domain/types";
-import { IconButton } from "./IconButton";
 
 import { TimeHighlightRenderer } from "./TimeHighlight";
 
@@ -313,24 +303,24 @@ const DateRenderer = memo(
 DateRenderer.displayName = "DateRenderer";
 
 // scrolls the button vertically on the timeline with mouse drag
-function DraggableButton({ onChange }: { onChange: (value: number) => void }) {
-  const [position, setPosition] = useState(0);
-  return (
-    <IconButton
-      className="absolute"
-      style={{
-        top: position,
-      }}
-      onDrag={(e) => {
-        if (e.screenY !== 0) {
-          setPosition(e.pageY);
-        }
-      }}
-      onDragEnd={(e) => {
-        onChange(position);
-      }}
-      draggable={true}
-      icon={<BarsArrowUpIcon className="h-5 w-5" />}
-    />
-  );
-}
+// function DraggableButton({ onChange }: { onChange: (value: number) => void }) {
+//   const [position, setPosition] = useState(0);
+//   return (
+//     <IconButton
+//       className="absolute"
+//       style={{
+//         top: position,
+//       }}
+//       onDrag={(e) => {
+//         if (e.screenY !== 0) {
+//           setPosition(e.pageY);
+//         }
+//       }}
+//       onDragEnd={(e) => {
+//         onChange(position);
+//       }}
+//       draggable={true}
+//       icon={<BarsArrowUpIcon className="h-5 w-5" />}
+//     />
+//   );
+// }
