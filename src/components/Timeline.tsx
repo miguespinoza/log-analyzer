@@ -1,9 +1,17 @@
 import { BarsArrowUpIcon } from "@heroicons/react/24/solid";
-import React, { useLayoutEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { last } from "rxjs";
 import { useLogLinesContext } from "../context/LogLinesContext";
 import { useProjectFileContext } from "../context/ProjectFileContext";
 import {
   ActivityInterval,
+  getDateFromRelativePx,
   getRelativeTimePx,
   TimelineService,
 } from "../domain/timeline";
@@ -92,8 +100,12 @@ function TimelineInternal({
   width: number;
 }) {
   const { lines } = useLogLinesContext();
-  const { project, timeHighlights, addTimeHighlight, removeTimeHighlight } =
-    useProjectFileContext();
+  const {
+    project,
+    timeHighlights,
+    setAddingTimeHighlightAt,
+    removeTimeHighlight,
+  } = useProjectFileContext();
 
   const timeLineService = useMemo(
     () => new TimelineService(firstDate, lastDate, height),
@@ -108,17 +120,20 @@ function TimelineInternal({
     lastLineVisible
   );
 
-  const [creatingNewHighlight, setCreatingNewHighlight] = useState<
-    number | null
-  >(null);
+  const onDoubleClick = useCallback(
+    ({ pageY }: { pageY: number }) => {
+      setAddingTimeHighlightAt(
+        getDateFromRelativePx(firstDate, lastDate, pageY, height)
+      );
+    },
+    [setAddingTimeHighlightAt, firstDate, lastDate, height]
+  );
 
   return (
     <div
       style={{ width: `${width}px` }}
       className="border relative"
-      onDoubleClick={({ pageY }) => {
-        setCreatingNewHighlight(pageY);
-      }}
+      onDoubleClick={onDoubleClick}
     >
       {timeLineService.getIntervals().map(({ date, relativePx }, i) => (
         <DateRenderer
@@ -147,6 +162,9 @@ function TimelineInternal({
       {timeHighlights.map((h) => (
         <TimeHighlightRenderer
           key={h.id}
+          containerEndDate={lastDate}
+          containerStartDate={firstDate}
+          containerHeight={height}
           highlight={h}
           onDoubleClick={() => {
             removeTimeHighlight(h);
@@ -162,18 +180,6 @@ function TimelineInternal({
         }}
         className="absolute  w-full border bg-teal-200 opacity-50"
       ></div>
-      <TimeHighlightFormModal
-        showModal={creatingNewHighlight != null}
-        setShowModal={() => setCreatingNewHighlight(null)}
-        forwardProps={{
-          addHighlight: (h) => {
-            addTimeHighlight(h);
-            setCreatingNewHighlight(null);
-          },
-          relativePixel: creatingNewHighlight as number,
-          timelineService: timeLineService,
-        }}
-      />
     </div>
   );
 }

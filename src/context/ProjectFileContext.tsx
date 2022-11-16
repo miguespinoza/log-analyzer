@@ -39,6 +39,8 @@ type ProjectFileContextType = {
   timeHighlights: TimeHighlight[];
   addTimeHighlight: (highlight: TimeHighlight) => void;
   removeTimeHighlight: (highlight: TimeHighlight) => void;
+  addingTimeHighlightAt: Date | null;
+  setAddingTimeHighlightAt: (date: Date | null) => void;
   // filters
   filters: Filter[];
   setFilter: (filter: Filter) => void;
@@ -69,6 +71,8 @@ const ProjectFileContext = React.createContext<ProjectFileContextType>({
   timeHighlights: [],
   addTimeHighlight: () => {},
   removeTimeHighlight: () => {},
+  addingTimeHighlightAt: null,
+  setAddingTimeHighlightAt: () => {},
 });
 
 export const useProjectFileContext = () => React.useContext(ProjectFileContext);
@@ -92,6 +96,10 @@ export default function ProjectFileContextProvider({
   const { projectFile } = useFilesContext();
   const [filtersFile, setFiltersFile] = useState<FileSystemFileHandle>();
   const [project, setProject] = useState(getDefaultProject());
+  const [addingTimeHighlightAt, setAddingTimeHighlightAt] =
+    useState<Date | null>(null);
+
+  console.log("project addingTimeHighlightAt", addingTimeHighlightAt);
   const {
     filters,
     setFilter,
@@ -200,6 +208,8 @@ export default function ProjectFileContextProvider({
       timeHighlights: hightlights,
       addTimeHighlight,
       removeTimeHighlight,
+      addingTimeHighlightAt,
+      setAddingTimeHighlightAt,
     }),
     [
       filtersFile,
@@ -219,6 +229,8 @@ export default function ProjectFileContextProvider({
       hightlights,
       addTimeHighlight,
       removeTimeHighlight,
+      addingTimeHighlightAt,
+      setAddingTimeHighlightAt,
     ]
   );
   return (

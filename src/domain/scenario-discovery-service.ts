@@ -39,7 +39,6 @@ class ScenarioDiscoveryServiceImplementation
     console.time("indexing scenarios");
     this.fuse = new Fuse(this.scenarios, { keys: ["name"] });
     console.timeEnd("indexing scenarios");
-    console.log("test", this.fuse.search("call"));
   }
 
   public getAllScenarios(): ScenarioStep[] {

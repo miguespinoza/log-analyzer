@@ -61,18 +61,21 @@ export type ActivityInterval = {
 };
 
 export class TimeHighlight {
-  public date: Date;
   constructor(
     public id: string,
-    public relativePx: number,
+    public date: Date,
     public label: string,
-    public color: string,
-    containerHeight: number,
-    start: Date,
-    end: Date
-  ) {
-    this.date = getDateFromRelativePx(start, end, relativePx, containerHeight);
-  }
+    public color: string
+  ) {}
+}
+
+export function getTimeHighlightPosition(
+  date: Date,
+  start: Date,
+  end: Date,
+  containerHeight: number
+) {
+  return getRelativeTimePx(start, end, date, containerHeight);
 }
 
 export class TimelineService implements ITimeline {
@@ -83,22 +86,6 @@ export class TimelineService implements ITimeline {
     this.startDate = startDate;
     this.endDate = endDate;
     this.height = height;
-  }
-
-  public makeTimeHighlight(
-    relativePx: number,
-    label: string,
-    color: string
-  ): TimeHighlight {
-    return new TimeHighlight(
-      uuid(),
-      relativePx,
-      label,
-      color,
-      this.height,
-      this.startDate,
-      this.endDate
-    );
   }
 
   getIntervals(steps = 10) {

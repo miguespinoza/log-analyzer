@@ -28,7 +28,7 @@ export async function saveFileAs(sugestedName: string, contents: string) {
 export async function saveFile(handle: FileSystemFileHandle, contents: string) {
   try {
     const writable = await (handle as any).createWritable();
-    await writable.write(contents).then(console.log);
+    await writable.write(contents);
     await writable.close();
   } catch (e) {
     console.error(e);

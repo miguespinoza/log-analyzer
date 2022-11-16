@@ -14,6 +14,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useApplyTheme } from "./components/useThemeActions";
 import { LogViewer } from "./LogViewer";
 import { KeyboardShortCuts } from "./components/KeyboardShortCuts";
+import { GlobalModals } from "./components/GlobalModals";
 
 function App() {
   useApplyTheme();
@@ -31,6 +32,7 @@ function App() {
               <DropFileZone>
                 <LogViewer />
                 <KeyboardShortCuts />
+                <GlobalModals />
                 <ShowToastToPromptPWAInstall />
               </DropFileZone>
             </LogLinesContextProvider>

@@ -25,5 +25,5 @@ ReactDOM.createRoot(element).render(
     <App />
   </React.StrictMode>
 );
-const modalRoot = document.getElementById("App") as HTMLElement;
-ReactModal.setAppElement(modalRoot);
+
+ReactModal.setAppElement("body");
