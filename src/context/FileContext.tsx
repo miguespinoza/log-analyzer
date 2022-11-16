@@ -47,9 +47,19 @@ export class FilesProvider extends React.Component<
       .pipe(
         concatMap(async (file) => {
           const promise = new Promise((resolve) => {
-            this.setState({ logFiles: [...this.state.logFiles, file] }, () => {
+            if (
+              this.state.logFiles.findIndex((f) => f.name === file.name) === -1
+            ) {
+              this.setState(
+                { logFiles: [...this.state.logFiles, file] },
+                () => {
+                  resolve(file);
+                }
+              );
+            } else {
+              console.log("File already opened", file.name);
               resolve(file);
-            });
+            }
           });
 
           return promise;

@@ -48,24 +48,7 @@ export default function AppSettings() {
             containerProps={{ className: "w-full flex justify-between" }}
             inputProps={{ name: "projectName", defaultValue: project.name }}
           />
-          <LabeledTextField
-            label="Create Quick Filter Shortcut"
-            containerProps={{ className: "w-full flex justify-between" }}
-            inputProps={{
-              name: "createFilterSC",
-              defaultValue: "ctrl+alt+f",
-              disabled: true,
-            }}
-          />
-          <LabeledTextField
-            label="Show/hide Shortcut"
-            containerProps={{ className: "w-full flex justify-between" }}
-            inputProps={{
-              name: "createFilterSC",
-              defaultValue: "ctrl+alt+h",
-              disabled: true,
-            }}
-          />
+
           <LabeledSelectField
             label="Theme"
             containerProps={{ className: "w-full flex justify-between" }}

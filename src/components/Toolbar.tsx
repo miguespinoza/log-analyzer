@@ -5,6 +5,7 @@ import { Button } from "./Button";
 import FilterForm from "./FilterForm";
 import { OpenFilesInput } from "./LoadFiles";
 import { useProjectFileContext } from "../context/ProjectFileContext";
+import { KeyboardShortcutsInfoModalButton } from "./KeyboardShortcutsInfo";
 
 export const Toolbar = forwardRef<HTMLDivElement>((props, ref) => {
   const { project, updateProject: setProjectProperty } =
@@ -86,6 +87,7 @@ export const Toolbar = forwardRef<HTMLDivElement>((props, ref) => {
             setShowModal={setShowSettingsModal}
           />
         </div>
+        <KeyboardShortcutsInfoModalButton />
       </div>
       <OpenFilesInput />
     </div>

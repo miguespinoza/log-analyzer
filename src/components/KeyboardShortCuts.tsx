@@ -1,5 +1,5 @@
 import { useHotkeys } from "react-hotkeys-hook";
-import { getFileColor } from "../domain/file-handling";
+import { getFileColor, onLogFilePickerClick } from "../domain/file-handling";
 import { v4 as uuid } from "uuid";
 import { useProjectFileContext } from "../context/ProjectFileContext";
 
@@ -33,6 +33,14 @@ export function KeyboardShortCuts() {
     },
     [setFilter]
   );
+
+  useHotkeys("ctrl+alt+o", () => {
+    try {
+      onLogFilePickerClick();
+    } catch (e) {
+      console.error(e);
+    }
+  });
 
   return null;
 }

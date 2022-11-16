@@ -12,7 +12,9 @@ import {
 
 // simple component that renders an input and a button to introduce commands
 export function ScenarioSerachBar({ onComplete }: { onComplete: () => void }) {
-  const [scenariosResult, setScenariosResult] = useState<ScenarioStep[]>([]);
+  const [scenariosResult, setScenariosResult] = useState<ScenarioStep[]>(() =>
+    scenarioDiscoveryService.getAllScenarios()
+  );
   const { setFilter } = useProjectFileContext();
 
   const searchScenarios = useCallback((query: string) => {
