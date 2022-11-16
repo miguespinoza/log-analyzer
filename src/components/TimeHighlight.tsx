@@ -63,9 +63,9 @@ export function TimeHighlightRenderer({
   containerEndDate: Date;
   containerHeight: number;
   onClick?: () => void;
-  onDoubleClick?: () => void;
+  onDoubleClick?: (highlight: TimeHighlight) => void;
 }) {
-  const refElement = useRef<HTMLDivElement>(null);
+  const refElement = useRef<HTMLButtonElement>(null);
 
   const position = getTimeHighlightPosition(
     highlight.date,
@@ -76,13 +76,13 @@ export function TimeHighlightRenderer({
 
   return (
     <>
-      <div
+      <button
         ref={refElement}
         onClick={onClick}
         onDoubleClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
-          onDoubleClick();
+          onDoubleClick(highlight);
         }}
         className="absolute w-full"
         data-testid="timeline-time-highlight"
@@ -91,7 +91,8 @@ export function TimeHighlightRenderer({
           height: "4px",
           backgroundColor: highlight.color,
         }}
-      ></div>
+      ></button>
+
       <Tooltip triggerRef={refElement} placement="right">
         <span className="bg-slate-400 p-1 rounded">{highlight.label}</span>
       </Tooltip>

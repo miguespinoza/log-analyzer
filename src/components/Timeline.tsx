@@ -1,5 +1,6 @@
 import { BarsArrowUpIcon } from "@heroicons/react/24/solid";
 import React, {
+  memo,
   useCallback,
   useLayoutEffect,
   useMemo,
@@ -13,13 +14,14 @@ import {
   ActivityInterval,
   getDateFromRelativePx,
   getRelativeTimePx,
+  TimeHighlight,
   TimelineService,
 } from "../domain/timeline";
 import { getDateStringAtTz } from "../domain/timezone";
 import { LogLine } from "../domain/types";
 import { IconButton } from "./IconButton";
 
-import { TimeHighlightFormModal, TimeHighlightRenderer } from "./TimeHighlight";
+import { TimeHighlightRenderer } from "./TimeHighlight";
 
 function getValidDateFromEndOfArray(lines: LogLine[]): Date | undefined {
   for (let i = lines.length - 1; i >= 0; i--) {
@@ -100,24 +102,20 @@ function TimelineInternal({
   width: number;
 }) {
   const { lines } = useLogLinesContext();
-  const {
-    project,
-    timeHighlights,
-    setAddingTimeHighlightAt,
-    removeTimeHighlight,
-  } = useProjectFileContext();
+  const { project, timeHighlights, setAddingTimeHighlightAt } =
+    useProjectFileContext();
 
   const timeLineService = useMemo(
     () => new TimelineService(firstDate, lastDate, height),
     [firstDate, lastDate, height]
   );
   const { maxCount, intervals: activityIntervals } = useMemo(
-    () => timeLineService.getActivityIntervals(lines, 100),
+    () => timeLineService.getActivityIntervals(lines, 200),
     [timeLineService, lines]
   );
-  const visibleWindow = timeLineService.getVisibleWindow(
-    firstLineVisible,
-    lastLineVisible
+  const visibleWindow = useMemo(
+    () => timeLineService.getVisibleWindow(firstLineVisible, lastLineVisible),
+    [timeLineService, firstLineVisible, lastLineVisible]
   );
 
   const onDoubleClick = useCallback(
@@ -135,42 +133,28 @@ function TimelineInternal({
       className="border relative"
       onDoubleClick={onDoubleClick}
     >
-      {timeLineService.getIntervals().map(({ date, relativePx }, i) => (
-        <DateRenderer
-          key={i}
-          date={date}
-          top={Math.max(0, relativePx - 14)}
-          timezone={project.displayTimezone}
-        />
-      ))}
-      {activityIntervals.map((interval, i) => (
-        <ActivityIntervalBar
-          key={interval.id}
-          interval={interval}
-          maxCount={maxCount}
-          maxHeight={height}
-          maxWidth={width}
-          numberOfIntervals={activityIntervals.length}
-          timezoneOffset={project.displayTimezone}
-        />
-      ))}
+      <TimelineDats
+        timeLineService={timeLineService}
+        timezoneOffset={project.displayTimezone}
+      />
+      <ActivityIntervals
+        activityIntervals={activityIntervals}
+        maxCount={maxCount}
+        height={height}
+        width={width}
+        timezoneOffset={project.displayTimezone}
+      />
       <DateRenderer
         date={lastDate}
         top={getRelativeTimePx(firstDate, lastDate, lastDate, height) - 14}
         timezone={project.displayTimezone}
       />
-      {timeHighlights.map((h) => (
-        <TimeHighlightRenderer
-          key={h.id}
-          containerEndDate={lastDate}
-          containerStartDate={firstDate}
-          containerHeight={height}
-          highlight={h}
-          onDoubleClick={() => {
-            removeTimeHighlight(h);
-          }}
-        />
-      ))}
+      <TimelineHighlights
+        timeHighlights={timeHighlights}
+        firstDate={firstDate}
+        lastDate={lastDate}
+        height={height}
+      />
       <div
         title="visible time window"
         data-testid="timeline-visible-window"
@@ -183,6 +167,99 @@ function TimelineInternal({
     </div>
   );
 }
+
+const TimelineDats = memo(
+  ({
+    timeLineService,
+    timezoneOffset,
+  }: {
+    timeLineService: TimelineService;
+    timezoneOffset: number;
+  }) => {
+    return (
+      <>
+        {timeLineService.getIntervals().map(({ date, relativePx }, i) => (
+          <DateRenderer
+            key={i}
+            date={date}
+            top={Math.max(0, relativePx - 14)}
+            timezone={timezoneOffset}
+          />
+        ))}
+      </>
+    );
+  }
+);
+
+const TimelineHighlights = memo(
+  ({
+    timeHighlights,
+    firstDate,
+    lastDate,
+    height,
+  }: {
+    timeHighlights: TimeHighlight[];
+    firstDate: Date;
+    lastDate: Date;
+    height: number;
+  }) => {
+    const { removeTimeHighlight } = useProjectFileContext();
+
+    const onDoubleClickHandler = useCallback(
+      (h: TimeHighlight) => {
+        removeTimeHighlight(h);
+      },
+      [removeTimeHighlight]
+    );
+    return (
+      <>
+        {timeHighlights.map((h) => (
+          <TimeHighlightRenderer
+            key={h.id}
+            containerEndDate={lastDate}
+            containerStartDate={firstDate}
+            containerHeight={height}
+            highlight={h}
+            onDoubleClick={onDoubleClickHandler}
+          />
+        ))}
+      </>
+    );
+  }
+);
+
+const ActivityIntervals = memo(
+  ({
+    activityIntervals,
+    width,
+    height,
+    maxCount,
+    timezoneOffset,
+  }: {
+    activityIntervals: ActivityInterval[];
+    maxCount: number;
+    height: number;
+    width: number;
+    timezoneOffset: number;
+  }) => {
+    return (
+      <>
+        {activityIntervals.map((interval, i) => (
+          <ActivityIntervalBar
+            key={interval.id}
+            interval={interval}
+            maxCount={maxCount}
+            maxHeight={height}
+            maxWidth={width}
+            numberOfIntervals={activityIntervals.length}
+            timezoneOffset={timezoneOffset}
+          />
+        ))}
+      </>
+    );
+  }
+);
+ActivityIntervals.displayName = "ActivityIntervals";
 
 function ActivityIntervalBar({
   interval,
@@ -219,26 +296,21 @@ function ActivityIntervalBar({
   );
 }
 
-function DateRenderer({
-  date,
-  top,
-  timezone,
-}: {
-  date: Date;
-  top: number;
-  timezone: number;
-}) {
-  return (
-    <span
-      style={{
-        top: top,
-      }}
-      className="text-[0.6rem] absolute w-full noWrap"
-    >
-      {getDateStringAtTz(date, timezone)}
-    </span>
-  );
-}
+const DateRenderer = memo(
+  ({ date, top, timezone }: { date: Date; top: number; timezone: number }) => {
+    return (
+      <span
+        style={{
+          top: top,
+        }}
+        className="text-[0.6rem] absolute w-full noWrap"
+      >
+        {getDateStringAtTz(date, timezone)}
+      </span>
+    );
+  }
+);
+DateRenderer.displayName = "DateRenderer";
 
 // scrolls the button vertically on the timeline with mouse drag
 function DraggableButton({ onChange }: { onChange: (value: number) => void }) {
