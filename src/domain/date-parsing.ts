@@ -13,6 +13,12 @@ const ThirddateRegex = /^(\[\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}\.\d{3})/;
 const TeamsDesktopDateRegex =
   /^([A-Z][a-z]{2} [A-Z][a-z]{2} \d{2} \d{4} \d{2}:\d{2}:\d{2} GMT(\+|-)\d{4})/;
 
+// regex to match 2022-11-15 12:31:13 PM
+const YearFirstDateRegex = /^(\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}\s(AM|PM))/;
+
+// regex to match 17/11/2022 10:00:38
+const DDmmyyy24hour = /^(\d{2}\/\d{2}\/\d{4}\s\d{2}:\d{2}:\d{2})/;
+
 export function removeOriginalDate(line: string) {
   for (const parser of dateParsers) {
     if (parser.regex.test(line)) {
@@ -33,6 +39,8 @@ const dateParsers: DateParser[] = [
   { regex: EtldateRegex, parser: parseEtlDate },
   { regex: ThirddateRegex, parser: parseThirdDate },
   { regex: TeamsDesktopDateRegex, parser: parseTeamsDesktopDate },
+  { regex: YearFirstDateRegex, parser: parseYearFirstDate },
+  { regex: DDmmyyy24hour, parser: parseDDmmyyy24hour },
 ];
 
 export function extractLineDate(
@@ -64,6 +72,28 @@ function parseDesktopDate(line: string, timezoneDelta: number) {
   if (dateString) {
     const dString = `${dateString.trim()} ${getTimeZoneString(timezoneDelta)}`;
     const date = parse(dString, "M/dd/yyyy h:mm:ss a X", new Date());
+    return date;
+  }
+  return null;
+}
+
+// parse 17/11/2022 10:00:38
+function parseDDmmyyy24hour(line: string, timezoneDelta: number) {
+  const dateString = line.match(DDmmyyy24hour)?.[0];
+  if (dateString) {
+    const dString = `${dateString.trim()} ${getTimeZoneString(timezoneDelta)}`;
+    const date = parse(dString, "dd/MM/yyyy HH:mm:ss X", new Date());
+    return new Date(date.getTime() + timezoneDelta);
+  }
+  return null;
+}
+
+// parse 2022-11-15 12:31:13 PM
+function parseYearFirstDate(line: string, timezoneDelta: number) {
+  const dateString = line.match(YearFirstDateRegex)?.[0];
+  if (dateString) {
+    const dString = `${dateString.trim()} ${getTimeZoneString(timezoneDelta)}`;
+    const date = parse(dString, "yyyy-MM-dd h:mm:ss a X", new Date());
     return date;
   }
   return null;
