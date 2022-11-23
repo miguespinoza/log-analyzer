@@ -23,6 +23,14 @@ test("should parse date of TMP TSW logs", () => {
   expect(date).toEqual(new Date("2022-09-26T21:01:15.972Z"));
 });
 
+test.only("should parse date DDmmyyy24hour", () => {
+  const line = "22-11-2022 20:41:06,INFO";
+  const date = extractLineDate(line);
+  expect(date).not.toBe(null);
+  expect(!isNaN((date as Date).valueOf())).toBe(true);
+  expect(date).toEqual(new Date("2022-09-26T21:01:15.972Z"));
+});
+
 test("should parse date of UWP logs", () => {
   const line =
     "9/12/2022 11:15:00 PM,INFO,[9152][29][AgentConnection.cs:517:HandlePingRequest] [0:Crestron OEM Agent] Responding to agent ping";

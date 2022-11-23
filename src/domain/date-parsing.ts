@@ -16,8 +16,11 @@ const TeamsDesktopDateRegex =
 // regex to match 2022-11-15 12:31:13 PM
 const YearFirstDateRegex = /^(\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}\s(AM|PM))/;
 
-// regex to match 17/11/2022 10:00:38
+// regex to match 17/11/2022 10:00:38 or
 const DDmmyyy24hour = /^(\d{2}\/\d{2}\/\d{4}\s\d{2}:\d{2}:\d{2})/;
+
+// match 23-11-2022 10:54:07
+const DDmmyyy24hourDashed = /^(\d{2}-\d{2}-\d{4}\s\d{2}:\d{2}:\d{2})/;
 
 export function removeOriginalDate(line: string) {
   for (const parser of dateParsers) {
@@ -46,7 +49,14 @@ const dateParsers: DateParser[] = [
   { regex: ThirddateRegex, parser: parseThirdDate },
   { regex: TeamsDesktopDateRegex, parser: parseTeamsDesktopDate },
   { regex: YearFirstDateRegex, parser: parseYearFirstDate },
-  { regex: DDmmyyy24hour, parser: parseDDmmyyy24hour },
+  {
+    regex: DDmmyyy24hour,
+    parser: getSimpleParser(DDmmyyy24hour, "dd/MM/yyyy HH:mm:ss X"),
+  },
+  {
+    regex: DDmmyyy24hourDashed,
+    parser: getSimpleParser(DDmmyyy24hourDashed, "dd-MM-yyyy HH:mm:ss X"),
+  },
 ];
 
 export function extractLineDate(
@@ -83,15 +93,18 @@ function parseDesktopDate(line: string, timezoneDelta: number) {
   return null;
 }
 
-// parse 17/11/2022 10:00:38
-function parseDDmmyyy24hour(line: string, timezoneDelta: number) {
-  const dateString = line.match(DDmmyyy24hour)?.[0];
-  if (dateString) {
-    const dString = `${dateString.trim()} ${getTimeZoneString(timezoneDelta)}`;
-    const date = parse(dString, "dd/MM/yyyy HH:mm:ss X", new Date());
-    return new Date(date.getTime() + timezoneDelta);
-  }
-  return null;
+function getSimpleParser(regex: RegExp, format: string) {
+  return (line: string, timezoneDelta: number) => {
+    const dateString = line.match(regex)?.[0];
+    if (dateString) {
+      const dString = `${dateString.trim()} ${getTimeZoneString(
+        timezoneDelta
+      )}`;
+      const date = parse(dString, format, new Date());
+      return new Date(date.getTime() + timezoneDelta);
+    }
+    return null;
+  };
 }
 
 // parse 2022-11-15 12:31:13 PM
