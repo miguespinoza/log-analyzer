@@ -1,6 +1,6 @@
 // Component that has a file input and returns the text of the file
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   makeHandleHTMLFileInputReactive,
   onLogFilePickerClick,
@@ -11,6 +11,8 @@ import { ExclamationTriangleIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { useFilesContext } from "../context/FileContext";
 import { LabeledTextField } from "./LabeledTextField";
 import { Button } from "./Button";
+import useDebouncedCallback from "../domain/useDebouncedCallback";
+import { ILogFile } from "../domain/types";
 const fileNameLength = 60;
 const getFileName = (name: string) => {
   if (name.length > fileNameLength) {
@@ -48,8 +50,46 @@ export function OpenFilesInput() {
   );
 }
 
+function UpdateTimezoneInput({ file }: { file: ILogFile }) {
+  const { updateFileTimezone } = useLogLinesContext();
+  const [timezone, setTimezone] = useState(file.timezone);
+
+  const updateFileTimezoneDebounced = useDebouncedCallback(
+    updateFileTimezone as any,
+    500
+  );
+
+  useEffect(() => {
+    if (timezone !== file.timezone) {
+      updateFileTimezoneDebounced(file, timezone);
+    }
+  }, [timezone, file, updateFileTimezoneDebounced]);
+
+  return !file.getHasTimezoneInfo() ? (
+    <LabeledTextField
+      label="TZ"
+      inputProps={{
+        title: "The file does not have timezone information, please provide it",
+        type: "number",
+        value: timezone,
+        onChange: (e) => {
+          const newTimezone = parseInt(e.target.value);
+          if (!isNaN(newTimezone)) {
+            setTimezone(newTimezone);
+          } else {
+            console.error("cannot parse int", e.target.value);
+          }
+        },
+        min: -12,
+        max: 12,
+        className: "p-0 w-[2rem]",
+      }}
+    />
+  ) : null;
+}
+
 export default function LoadFiles() {
-  const { logFiles, updateLogFile, updateFileTimezone } = useLogLinesContext();
+  const { logFiles, updateLogFile } = useLogLinesContext();
   const { removeLogFile } = useFilesContext();
 
   return (
@@ -66,27 +106,7 @@ export default function LoadFiles() {
                   updateLogFile(newFile);
                 }}
               />
-              <LabeledTextField
-                label="TZ"
-                inputProps={{
-                  title:
-                    "Timezone offset only in case the date in the log does not include it",
-                  type: "number",
-                  value: file.timezone,
-                  onChange: (e) => {
-                    const newTimezone = parseInt(e.target.value);
-                    if (!isNaN(newTimezone)) {
-                      updateFileTimezone(file, newTimezone);
-                    } else {
-                      console.error("cannot parse int", e.target.value);
-                    }
-                  },
-                  min: -12,
-                  max: 12,
-                  className: "p-0 w-[2rem]",
-                }}
-              />
-
+              <UpdateTimezoneInput file={file} />
               {file.getLinesWithoutDateCount() != null &&
                 (file.getLinesWithoutDateCount() as number) > 0 && (
                   <span

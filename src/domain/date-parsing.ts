@@ -33,6 +33,12 @@ type DateParser = {
   parser: (line: string, timezoneDelta: number) => Date | null;
 };
 
+export function doesLogLineHasTimezonInfo(stringDate: string) {
+  return (
+    WebdateRegex.test(stringDate) || TeamsDesktopDateRegex.test(stringDate)
+  );
+}
+
 const dateParsers: DateParser[] = [
   { regex: WebdateRegex, parser: parseWebDate },
   { regex: DesktopdateRegex, parser: parseDesktopDate },

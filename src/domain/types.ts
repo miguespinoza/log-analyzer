@@ -7,6 +7,8 @@ export interface ILogFile {
   isVisible: boolean;
   fileHandle?: FileSystemFileHandle;
 
+  getHasTimezoneInfo(): boolean;
+  updateTimezone: (timezone: number) => void;
   getSortDirection(): SortDirection;
   getLinesWithoutDateCount(): number | undefined;
   getLogLines(): LogLine[];

@@ -1,7 +1,11 @@
 import { getFileColor, TextFilev2 } from "./file-handling";
 import { ILogFile, LogLine, SortDirection } from "./types";
 import { v4 as uuidv4, v5 as uuidHash } from "uuid";
-import { extractLineDate, removeOriginalDate } from "./date-parsing";
+import {
+  doesLogLineHasTimezonInfo,
+  extractLineDate,
+  removeOriginalDate,
+} from "./date-parsing";
 
 const NAMESPACE = "1b671a64-40d5-491e-99b0-da01ff1f3341";
 
@@ -11,6 +15,8 @@ class LogFile implements ILogFile {
   private lines?: LogLine[];
   private _sorted: "asc" | "desc" | null = null;
   private _linesWithoutDateCount?: number;
+  private _hasTimezoneInfo?: boolean;
+
   constructor(
     public name: string,
     public text: string,
@@ -45,6 +51,18 @@ class LogFile implements ILogFile {
     return this._sorted;
   };
 
+  public getHasTimezoneInfo = () => {
+    if (!this.hasBeenProcessed()) {
+      this.extractLogLines();
+    }
+    return this._hasTimezoneInfo ?? false;
+  };
+
+  public updateTimezone = (timezoneOffset: number) => {
+    this.timezone = timezoneOffset;
+    this.extractLogLines();
+  };
+
   private hasBeenProcessed = () => {
     return this.lines != null;
   };
@@ -58,11 +76,25 @@ class LogFile implements ILogFile {
       fileId: this.id,
       fileName: this.name,
       color: this.color,
+      timezoneOffset: this.timezone,
     });
     console.timeEnd(`processing file ${this.name}`);
+
     this.lines = lines;
     this._linesWithoutDateCount = linesWithoutDateCount;
     this._sorted = sorted;
+    this.setHasTimezoneInfo();
+  };
+
+  private setHasTimezoneInfo = () => {
+    if (this.lines && this.lines.length > 0) {
+      const firstLineWithDate = this.lines.find((line) => line.date != null);
+      if (firstLineWithDate) {
+        this._hasTimezoneInfo = doesLogLineHasTimezonInfo(
+          firstLineWithDate.text
+        );
+      }
+    }
   };
 
   // do not access in this method this.lineswithoutDateCount directly, or this.sorted it would create an infinite loop
@@ -71,6 +103,7 @@ class LogFile implements ILogFile {
     fileId,
     fileName,
     color,
+    timezoneOffset,
   }) => {
     const lines = this.separateLogLines(text);
     const logLines: LogLine[] = [];
@@ -78,7 +111,7 @@ class LogFile implements ILogFile {
     let linesWithoutDateCount = 0;
     for (const line of lines) {
       count++;
-      const date = this.getLineDate(line);
+      const date = this.getLineDate(line, timezoneOffset);
       if (date) {
         logLines.push({
           id: uuidv4(),
@@ -199,6 +232,7 @@ type ParseLogLinesFunction = (params: {
   fileName: string;
   color: string;
   fileId: string;
+  timezoneOffset: number;
 }) => {
   lines: LogLine[];
   linesWithoutDateCount: number;
