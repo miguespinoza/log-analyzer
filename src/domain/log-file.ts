@@ -15,6 +15,7 @@ class LogFile implements ILogFile {
   private lines?: LogLine[];
   private _sorted: "asc" | "desc" | null = null;
   private _linesWithoutDateCount?: number;
+  private _linesCount?: number;
   private _hasTimezoneInfo?: boolean;
 
   constructor(
@@ -42,6 +43,13 @@ class LogFile implements ILogFile {
       this.extractLogLines();
     }
     return this._linesWithoutDateCount;
+  };
+
+  public getLinesCount = () => {
+    if (!this.hasBeenProcessed()) {
+      this.extractLogLines();
+    }
+    return this._linesCount;
   };
 
   public getSortDirection = () => {
@@ -82,6 +90,7 @@ class LogFile implements ILogFile {
 
     this.lines = lines;
     this._linesWithoutDateCount = linesWithoutDateCount;
+    this._linesCount = lines.length;
     this._sorted = sorted;
     this.setHasTimezoneInfo();
   };

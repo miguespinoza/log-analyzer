@@ -48,9 +48,26 @@ export const LogLinesContext = React.createContext<LogLinesContextType>({
   allLines: [],
 });
 
+// if 80% of the lines do not have date, then we want to see the lines sorted by file
+function shouldChangeToSortByDate(logFiles: ILogFile[]) {
+  const linesWithoutDate = logFiles.reduce((acc, file) => {
+    const linesWithoutDate = file.getLinesWithoutDateCount() ?? 0;
+    return acc + linesWithoutDate;
+  }, 0);
+  const totalLines = logFiles.reduce((acc, file) => {
+    const totalLines = file.getLinesCount() ?? 0;
+    return acc + totalLines;
+  }, 0);
+  return linesWithoutDate / totalLines > 0.8;
+}
+
 export const LogLinesContextProvider = ({ children }: any) => {
   const { logFiles, updateLogFile } = useFilesContext();
-  const { project, filters } = useProjectFileContext();
+  const {
+    project,
+    filters,
+    updateProject: setProjectProperty,
+  } = useProjectFileContext();
   const { hideUnfiltered, sortBy } = project;
 
   // merges and dedupes all log lines from all files
@@ -58,6 +75,12 @@ export const LogLinesContextProvider = ({ children }: any) => {
     return LogFilesService.mergeLogFiles(logFiles.filter((f) => f.isVisible));
   }, [logFiles]);
 
+  useEffect(() => {
+    if (shouldChangeToSortByDate(logFiles)) {
+      console.log("switching to sort by file");
+      setProjectProperty({ sortBy: "file", sortDirection: "asc" });
+    }
+  }, [logFiles, setProjectProperty]);
   // sorts the lines
   const lines = useMemo(
     () =>

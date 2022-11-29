@@ -11,6 +11,7 @@ export interface ILogFile {
   updateTimezone: (timezone: number) => void;
   getSortDirection(): SortDirection;
   getLinesWithoutDateCount(): number | undefined;
+  getLinesCount(): number | undefined;
   getLogLines(): LogLine[];
 }
 
