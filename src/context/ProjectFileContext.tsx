@@ -99,7 +99,6 @@ export default function ProjectFileContextProvider({
   const [addingTimeHighlightAt, setAddingTimeHighlightAt] =
     useState<Date | null>(null);
 
-  console.log("project addingTimeHighlightAt", addingTimeHighlightAt);
   const {
     filters,
     setFilter,
