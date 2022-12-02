@@ -58,7 +58,8 @@ function shouldChangeToSortByDate(logFiles: ILogFile[]) {
     const totalLines = file.getLinesCount() ?? 0;
     return acc + totalLines;
   }, 0);
-  return linesWithoutDate / totalLines > 0.8;
+  console.log("shouldChangeToSortByDate", linesWithoutDate / totalLines > 0.8);
+  return false;
 }
 
 export const LogLinesContextProvider = ({ children }: any) => {
