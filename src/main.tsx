@@ -8,7 +8,8 @@ import * as Sentry from "@sentry/react";
 import { BrowserTracing } from "@sentry/tracing";
 const element = document.getElementById("root") as HTMLElement;
 
-if (process.env.NODE_ENV === "production") {
+if (true || process.env.NODE_ENV === "production") {
+  console.log(import.meta.env.VITE_SENTRY_URL);
   Sentry.init({
     dsn: import.meta.env.VITE_SENTRY_URL,
     integrations: [new BrowserTracing()],
