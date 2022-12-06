@@ -6,9 +6,13 @@ import * as Sentry from "@sentry/browser";
 export const FeedbackForm = ({
   exception,
   onComplete,
+  title,
+  onCancel,
 }: {
   exception?: Error;
+  title?: string;
   onComplete: () => void;
+  onCancel: () => void;
 }) => {
   return (
     <div className="dark:bg-[#011627] p-2 rounded">
@@ -22,17 +26,17 @@ export const FeedbackForm = ({
           const data = new FormData(form);
           const feedback = data.get("feedback") as string | undefined;
           if (exception) {
-            if (feedback)
-              exception.message =
-                exception.message + "USER_Fedback: " + feedback;
             Sentry.captureException(exception);
-          } else if (feedback) {
+          }
+          if (feedback) {
             Sentry.captureMessage(feedback);
           }
           onComplete();
         }}
+        className="flex flex-col gap-1"
       >
-        <span className="text-lg text-red font-bold">
+        <span className="text-lg font-bold">{title ? title : "Feedback"}</span>
+        <span className="text-lg text-red-700">
           Important!: Don't include sentitive information in feedback
         </span>
         <LabeledTextField
@@ -44,7 +48,14 @@ export const FeedbackForm = ({
             className: "w-full",
           }}
         />
-        <Button look="primary">Send</Button>
+        <div className="flex justify-between">
+          <Button onClick={onCancel} look="secondary" type="button">
+            Cancel
+          </Button>
+          <Button look="primary" type="submit">
+            Send Feedback
+          </Button>
+        </div>
       </form>
     </div>
   );

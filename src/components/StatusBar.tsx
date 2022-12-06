@@ -39,6 +39,9 @@ export const StatusBar = forwardRef<HTMLDivElement>((props, ref) => {
           onComplete: () => {
             setIsFilingFeedback(false);
           },
+          onCancel: () => {
+            setIsFilingFeedback(false);
+          },
         }}
       ></FeedbackFormModal>
       <div className="flex gap-3">
