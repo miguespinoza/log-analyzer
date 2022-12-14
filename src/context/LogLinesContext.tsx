@@ -5,6 +5,7 @@ import { MemoComponent } from "../components/MemoComponent";
 import { Filter, ILogFile, LogLine } from "../domain/types";
 import { useProjectFileContext } from "./ProjectFileContext";
 import { scenarioDiscoveryService } from "../domain/scenario-discovery-service";
+import { toast } from "react-toastify";
 
 export type LogLinesContextType = {
   logFiles: ILogFile[];
@@ -50,6 +51,7 @@ export const LogLinesContext = React.createContext<LogLinesContextType>({
 
 // if 80% of the lines do not have date, then we want to see the lines sorted by file
 function shouldChangeToSortByDate(logFiles: ILogFile[]) {
+  if (logFiles.length > 1 || logFiles.length === 0) return false;
   const linesWithoutDate = logFiles.reduce((acc, file) => {
     const linesWithoutDate = file.getLinesWithoutDateCount() ?? 0;
     return acc + linesWithoutDate;
@@ -59,7 +61,7 @@ function shouldChangeToSortByDate(logFiles: ILogFile[]) {
     return acc + totalLines;
   }, 0);
   console.log("shouldChangeToSortByDate", linesWithoutDate / totalLines > 0.8);
-  return false;
+  return linesWithoutDate / totalLines > 0.8;
 }
 
 export const LogLinesContextProvider = ({ children }: any) => {
@@ -79,6 +81,9 @@ export const LogLinesContextProvider = ({ children }: any) => {
   useEffect(() => {
     if (shouldChangeToSortByDate(logFiles)) {
       console.log("switching to sort by file");
+      toast.info(
+        "Switching to sort by file, because the file opended does not have enough date lines"
+      );
       setProjectProperty({ sortBy: "file", sortDirection: "asc" });
     }
   }, [logFiles, setProjectProperty]);
