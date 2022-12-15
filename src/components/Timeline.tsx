@@ -45,9 +45,9 @@ export function Timeline({
   width: number;
   updateVisivility: (didShow: boolean) => void;
 }) {
-  const { lines, allLines } = useLogLinesContext();
-  const firstDate = getValidDateFromStart(allLines);
-  const lastDate = getValidDateFromEndOfArray(allLines);
+  const { lines } = useLogLinesContext();
+  const firstDate = getValidDateFromStart(lines);
+  const lastDate = getValidDateFromEndOfArray(lines);
   const firstLineVisible = lines[firstLineVisibleIndex]?.date;
   const lastLineVisible = lines[lastLineVisibleIndex]?.date;
   const { project } = useProjectFileContext();

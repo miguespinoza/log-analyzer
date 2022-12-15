@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useProjectFileContext } from "../context/ProjectFileContext";
+import { LabeledTextField } from "./LabeledTextField";
 import { ScenarioSerachBarModal } from "./ScenarioSerachBar";
 import { TimeHighlightFormModal } from "./TimeHighlight";
 

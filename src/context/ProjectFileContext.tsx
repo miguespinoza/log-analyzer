@@ -50,6 +50,11 @@ type ProjectFileContextType = {
   enableFilter: (filter: string) => void;
   updateFilter: (filter: Filter) => void;
   updateFilterPriority: (filter: Filter, delta: number) => void;
+  // date filter
+  startDate?: Date;
+  endDate?: Date;
+  setStartDate: (date?: Date) => void;
+  setEndDate: (date?: Date) => void;
 };
 
 const ProjectFileContext = React.createContext<ProjectFileContextType>({
@@ -73,6 +78,8 @@ const ProjectFileContext = React.createContext<ProjectFileContextType>({
   removeTimeHighlight: () => {},
   addingTimeHighlightAt: null,
   setAddingTimeHighlightAt: () => {},
+  setStartDate: () => {},
+  setEndDate: () => {},
 });
 
 export const useProjectFileContext = () => React.useContext(ProjectFileContext);
@@ -184,6 +191,9 @@ export default function ProjectFileContextProvider({
     [setHightlights]
   );
 
+  const [startDate, setStartDate] = useState<Date | undefined>();
+  const [endDate, setEndDate] = useState<Date | undefined>();
+
   const value = React.useMemo(
     () => ({
       filtersFile,
@@ -209,6 +219,10 @@ export default function ProjectFileContextProvider({
       removeTimeHighlight,
       addingTimeHighlightAt,
       setAddingTimeHighlightAt,
+      startDate,
+      endDate,
+      setStartDate,
+      setEndDate,
     }),
     [
       filtersFile,
@@ -230,6 +244,10 @@ export default function ProjectFileContextProvider({
       removeTimeHighlight,
       addingTimeHighlightAt,
       setAddingTimeHighlightAt,
+      startDate,
+      endDate,
+      setStartDate,
+      setEndDate,
     ]
   );
   return (

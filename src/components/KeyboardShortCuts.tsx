@@ -5,7 +5,7 @@ import { useProjectFileContext } from "../context/ProjectFileContext";
 
 export function KeyboardShortCuts() {
   const { updateProject, project } = useProjectFileContext();
-  const { setFilter } = useProjectFileContext();
+  const { setFilter, setEndDate, setStartDate } = useProjectFileContext();
   useHotkeys(
     "ctrl+alt+h",
     () => {
@@ -27,6 +27,19 @@ export function KeyboardShortCuts() {
             id: uuid(),
           });
         }
+      } catch (e) {
+        console.error(e);
+      }
+    },
+    [setFilter]
+  );
+
+  useHotkeys(
+    "ctrl+alt+d",
+    () => {
+      try {
+        setStartDate(undefined);
+        setEndDate(undefined);
       } catch (e) {
         console.error(e);
       }

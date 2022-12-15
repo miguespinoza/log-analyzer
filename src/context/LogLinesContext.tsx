@@ -69,6 +69,8 @@ export const LogLinesContextProvider = ({ children }: any) => {
   const {
     project,
     filters,
+    startDate,
+    endDate,
     updateProject: setProjectProperty,
   } = useProjectFileContext();
   const { hideUnfiltered, sortBy } = project;
@@ -106,13 +108,15 @@ export const LogLinesContextProvider = ({ children }: any) => {
     const filtersResult = LogFilesService.filterLogLines(
       lines,
       filters,
+      startDate ?? null,
+      endDate ?? null,
       hideUnfiltered
     );
     return {
       lines: filtersResult.lines,
       filters: filtersResult.filters,
     };
-  }, [lines, filters, hideUnfiltered]);
+  }, [lines, filters, hideUnfiltered, startDate, endDate]);
 
   const updateFileTimezone = useCallback(
     (file: ILogFile, newTimezone: number) => {

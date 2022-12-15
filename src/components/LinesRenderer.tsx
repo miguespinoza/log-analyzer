@@ -15,7 +15,8 @@ import { useProjectFileContext } from "../context/ProjectFileContext";
 import { getDateStringAtTz } from "../domain/timezone";
 import { Timeline } from "./Timeline";
 import { IconButton } from "./IconButton";
-import { ClockIcon } from "@heroicons/react/24/outline";
+import { ChevronDoubleDownIcon, ClockIcon } from "@heroicons/react/24/outline";
+import { ChevronDoubleUpIcon } from "@heroicons/react/24/solid";
 
 const TIMELINE_WIDTH = 135;
 
@@ -31,7 +32,8 @@ export function LinesRenderer({
   const linesLengthRef = useRef<number>();
   const [isNewFilterModalOpen, setIsNewFilterModalOpen] = useState(false);
   const [focusedLine, setFocusedLine] = useState<LogLine | null>(null);
-  const { project } = useProjectFileContext();
+  const { project, startDate, endDate, setStartDate, setEndDate } =
+    useProjectFileContext();
   const focusedLineIndex = useMemo(
     () => lines.findIndex((l) => l.id === focusedLine?.id),
     [focusedLine, lines]
@@ -103,33 +105,65 @@ export function LinesRenderer({
   });
   const [didTimelineShow, setdidTimelineShow] = useState(true);
 
+  const hasDateFilter = startDate != null || endDate != null;
+
   return (
-    <div className="flex">
-      <Timeline
-        firstLineVisibleIndex={visibleRange.startIndex}
-        lastLineVisibleIndex={visibleRange.endIndex}
-        height={height}
-        width={TIMELINE_WIDTH}
-        updateVisivility={setdidTimelineShow}
-      ></Timeline>
-      <Virtuoso
-        ref={listRef as any}
-        style={{
-          height: `${height}px`,
-          width: didTimelineShow ? `${width - TIMELINE_WIDTH}px` : `${width}px`,
-        }}
-        totalCount={lines.length}
-        itemContent={LineRenderer}
-        rangeChanged={setVisibleRange}
-      ></Virtuoso>
-      <FilterFormModal
-        forwardProps={{
-          hint: focusedLine?.text,
-          isModal: true,
-        }}
-        showModal={isNewFilterModalOpen}
-        setShowModal={setIsNewFilterModalOpen}
-      ></FilterFormModal>
+    <div>
+      {hasDateFilter && (
+        <button
+          title="click to remove date filter "
+          type="button"
+          onClick={() => {
+            setEndDate(undefined);
+            setStartDate(undefined);
+          }}
+          className="flex gap-2 items-center bg-yellow-400 w-full justify-around"
+        >
+          <span>
+            Start Date:{" "}
+            {startDate
+              ? getDateStringAtTz(startDate, project.displayTimezone)
+              : "None"}
+          </span>
+          <span>
+            End Date:{" "}
+            {endDate
+              ? getDateStringAtTz(endDate, project.displayTimezone)
+              : "None"}
+          </span>
+
+          <span>Click to remove (ctrl + alt + d)</span>
+        </button>
+      )}
+      <div className="flex">
+        <Timeline
+          firstLineVisibleIndex={visibleRange.startIndex}
+          lastLineVisibleIndex={visibleRange.endIndex}
+          height={hasDateFilter ? height - 24 : height}
+          width={TIMELINE_WIDTH}
+          updateVisivility={setdidTimelineShow}
+        ></Timeline>
+        <Virtuoso
+          ref={listRef as any}
+          style={{
+            height: hasDateFilter ? `${height - 24}px` : `${height}px`,
+            width: didTimelineShow
+              ? `${width - TIMELINE_WIDTH}px`
+              : `${width}px`,
+          }}
+          totalCount={lines.length}
+          itemContent={LineRenderer}
+          rangeChanged={setVisibleRange}
+        ></Virtuoso>
+        <FilterFormModal
+          forwardProps={{
+            hint: focusedLine?.text,
+            isModal: true,
+          }}
+          showModal={isNewFilterModalOpen}
+          setShowModal={setIsNewFilterModalOpen}
+        ></FilterFormModal>
+      </div>
     </div>
   );
 }
@@ -156,7 +190,8 @@ const LogLineRenderer = memo(
     displayTimezoneOffset: number;
     showOGDate?: boolean;
   }) => {
-    const { setAddingTimeHighlightAt } = useProjectFileContext();
+    const { setAddingTimeHighlightAt, setStartDate, setEndDate, project } =
+      useProjectFileContext();
     const color = line.matchedFilters?.color ?? undefined;
     const date = useMemo(() => {
       return line.date == null || isNaN(line.date?.getTime() ?? NaN)
@@ -183,17 +218,44 @@ const LogLineRenderer = memo(
         </span>
         {date != null && (
           <>
-            <span className="noWrap bg-stone-300 dark:bg-cyan-900 pl-1 pr-1">
-              {date}
-            </span>
             <IconButton
               title="Add time highlight"
               className="border-l border-r rounded-none"
               icon={<ClockIcon className="h-4 w-4" />}
               onClick={() => setAddingTimeHighlightAt(line.date)}
             ></IconButton>
+
+            <IconButton
+              title="Set as START time filter"
+              className="border-l border-r rounded-none"
+              icon={
+                project.sortDirection === "desc" ? (
+                  <ChevronDoubleUpIcon className="h-4 w-4" />
+                ) : (
+                  <ChevronDoubleDownIcon className="h-4 w-4" />
+                )
+              }
+              onClick={() => setStartDate(line.date as Date)}
+            ></IconButton>
+
+            <IconButton
+              title="Set as END time filter"
+              className="border-l border-r rounded-none"
+              icon={
+                project.sortDirection === "desc" ? (
+                  <ChevronDoubleDownIcon className="h-4 w-4" />
+                ) : (
+                  <ChevronDoubleUpIcon className="h-4 w-4" />
+                )
+              }
+              onClick={() => setEndDate(line.date as Date)}
+            ></IconButton>
+            <span className="noWrap bg-stone-300 dark:bg-cyan-900 pl-1 pr-1">
+              {date}
+            </span>
           </>
         )}
+
         <span
           style={{
             backgroundColor: focusedLine?.hash === line.hash ? calmBlue : color,

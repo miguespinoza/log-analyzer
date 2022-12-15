@@ -28,7 +28,7 @@ test.only("should parse date DDmmyyy24hour", () => {
   const date = extractLineDate(line);
   expect(date).not.toBe(null);
   expect(!isNaN((date as Date).valueOf())).toBe(true);
-  expect(date).toEqual(new Date("2022-09-26T21:01:15.972Z"));
+  expect(date).toEqual(new Date("2022-11-22T20:41:06.000Z"));
 });
 
 test("should parse date of UWP logs", () => {

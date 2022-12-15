@@ -25,6 +25,8 @@ describe("LogFilesService", () => {
     const result = LogFilesService.filterLogLines(
       fileA.getLogLines(),
       [filter],
+      null,
+      null,
       false
     );
     expect(result.lines.length).toEqual(9);
@@ -48,11 +50,32 @@ describe("LogFilesService", () => {
     const result = LogFilesService.filterLogLines(
       fileA.getLogLines(),
       [filter],
+      null,
+      null,
       true
     );
     expect(result.lines.length).toEqual(2);
 
     expect(result.filters[0].hitCount).toEqual(2);
+  });
+
+  test.only("should search filter by date", () => {
+    const fileA = makeLogFile({
+      name: "a.log",
+      content: TMPTestLogs,
+      fileHandle: null as any,
+    });
+
+    expect(fileA.getLogLines().length).toEqual(9);
+
+    const result = LogFilesService.filterLogLines(
+      fileA.getLogLines(),
+      [],
+      new Date("2022-09-26T15:49:53.445Z"),
+      new Date("2022-09-26T15:49:53.446Z"),
+      true
+    );
+    expect(result.lines.length).toEqual(4);
   });
 
   test("should sort by date preserving the same file order if timestamp is the same", () => {

@@ -6,6 +6,8 @@ interface ILogFilesService {
   filterLogLines(
     lines: LogLine[],
     filters: Filter[],
+    startDate: Date | null,
+    endDate: Date | null,
     hideUnmatchedLines: boolean
   ): { lines: LogLine[]; filters: Filter[] };
   sortLogLines(
@@ -32,23 +34,49 @@ class LogFilesServiceImplementation implements ILogFilesService {
     }
     return mergedLines;
   }
+
+  private isLineInDateRange(
+    line: LogLine,
+    startDate: Date | null,
+    endDate: Date | null
+  ) {
+    if (startDate == null && endDate == null) {
+      return true;
+    }
+    if (line.date == null) {
+      return true;
+    }
+
+    if (startDate == null) {
+      return line.date <= (endDate as Date);
+    }
+    if (endDate == null) {
+      return line.date >= (startDate as Date);
+    }
+
+    return line.date >= startDate && line.date <= endDate;
+  }
+
   public filterLogLines(
     allLines: LogLine[],
     filters: Filter[],
+    startDate: Date | null,
+    endDate: Date | null,
     hideUnmatchedLines: boolean
   ) {
+    const dateFilterIsDisabled = startDate == null && endDate == null;
     const lines = [...allLines];
-    if (filters == null || filters.length === 0) {
+    if ((filters == null || filters.length === 0) && dateFilterIsDisabled) {
       return { lines, filters: [] };
     }
 
     const activeFilters = (filters ?? []).filter((f) => !f.isDisabled);
     lines.forEach((line) => {
-      line.isVisible = !hideUnmatchedLines;
+      line.isVisible = true;
       line.matchedFilters = undefined;
     });
 
-    if (activeFilters.length === 0) {
+    if (activeFilters.length === 0 && dateFilterIsDisabled) {
       return { lines, filters: filters ?? [] };
     }
     (filters ?? []).forEach((f) => {
@@ -69,7 +97,12 @@ class LogFilesServiceImplementation implements ILogFilesService {
           }
           line.matchedFilters = filter;
           break;
+        } else {
+          line.isVisible = !hideUnmatchedLines;
         }
+      }
+      if (!this.isLineInDateRange(line, startDate, endDate)) {
+        line.isVisible = false;
       }
     }
     const newFilters = filters?.map((f) => f) ?? [];
