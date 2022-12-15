@@ -49,19 +49,19 @@ export const LogLinesContext = React.createContext<LogLinesContextType>({
   allLines: [],
 });
 
-// if 80% of the lines do not have date, then we want to see the lines sorted by file
 function shouldChangeToSortByDate(logFiles: ILogFile[]) {
   if (logFiles.length > 1 || logFiles.length === 0) return false;
   const linesWithoutDate = logFiles.reduce((acc, file) => {
     const linesWithoutDate = file.getLinesWithoutDateCount() ?? 0;
     return acc + linesWithoutDate;
   }, 0);
-  const totalLines = logFiles.reduce((acc, file) => {
-    const totalLines = file.getLinesCount() ?? 0;
-    return acc + totalLines;
+  const linesWithDate = logFiles.reduce((acc, file) => {
+    const linesWithDate = file
+      .getLogLines()
+      .filter((line) => line.date != null).length;
+    return acc + linesWithDate;
   }, 0);
-  console.log("shouldChangeToSortByDate", linesWithoutDate / totalLines > 0.8);
-  return linesWithoutDate / totalLines > 0.8;
+  return linesWithDate === 0 && linesWithoutDate > 0;
 }
 
 export const LogLinesContextProvider = ({ children }: any) => {
