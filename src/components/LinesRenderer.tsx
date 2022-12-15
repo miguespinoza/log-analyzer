@@ -17,6 +17,7 @@ import { Timeline } from "./Timeline";
 import { IconButton } from "./IconButton";
 import { ChevronDoubleDownIcon, ClockIcon } from "@heroicons/react/24/outline";
 import { ChevronDoubleUpIcon } from "@heroicons/react/24/solid";
+import { DateFilterBanner } from "./DateFilterBanner";
 
 const TIMELINE_WIDTH = 135;
 
@@ -109,45 +110,19 @@ export function LinesRenderer({
 
   return (
     <div>
-      {hasDateFilter && (
-        <button
-          title="click to remove date filter "
-          type="button"
-          onClick={() => {
-            setEndDate(undefined);
-            setStartDate(undefined);
-          }}
-          className="flex gap-2 items-center bg-yellow-400 w-full justify-around"
-        >
-          <span className="font-bold">Date Filter in use</span>
-          <span>
-            Start Date:{" "}
-            {startDate
-              ? getDateStringAtTz(startDate, project.displayTimezone)
-              : "None"}
-          </span>
-          <span>
-            End Date:{" "}
-            {endDate
-              ? getDateStringAtTz(endDate, project.displayTimezone)
-              : "None"}
-          </span>
-
-          <span>Click to remove (ctrl + alt + d)</span>
-        </button>
-      )}
+      {hasDateFilter && <DateFilterBanner />}
       <div className="flex">
         <Timeline
           firstLineVisibleIndex={visibleRange.startIndex}
           lastLineVisibleIndex={visibleRange.endIndex}
-          height={hasDateFilter ? height - 24 : height}
+          height={hasDateFilter ? height - 36 : height}
           width={TIMELINE_WIDTH}
           updateVisivility={setdidTimelineShow}
         ></Timeline>
         <Virtuoso
           ref={listRef as any}
           style={{
-            height: hasDateFilter ? `${height - 24}px` : `${height}px`,
+            height: hasDateFilter ? `${height - 36}px` : `${height}px`,
             width: didTimelineShow
               ? `${width - TIMELINE_WIDTH}px`
               : `${width}px`,

@@ -112,6 +112,9 @@ export class TimelineService implements ITimeline {
     lines: LogLine[],
     steps: number = 10
   ): { maxCount: number; intervals: ActivityInterval[] } {
+    if (lines.length === 1) {
+      return { maxCount: 1, intervals: [] };
+    }
     const oldestDate =
       this.startDate.getTime() > this.endDate.getTime()
         ? this.startDate
