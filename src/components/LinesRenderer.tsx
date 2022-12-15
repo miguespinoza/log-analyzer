@@ -119,6 +119,7 @@ export function LinesRenderer({
           }}
           className="flex gap-2 items-center bg-yellow-400 w-full justify-around"
         >
+          <span className="font-bold">Date Filter</span>
           <span>
             Start Date:{" "}
             {startDate
