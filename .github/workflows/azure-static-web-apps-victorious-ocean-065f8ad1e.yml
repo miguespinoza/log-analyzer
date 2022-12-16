@@ -32,7 +32,7 @@ jobs:
           output_location: "dist" # Built app content directory - optional
           ###### End of Repository/Build Configurations ######
         env: # Add environment variables here
-          VITE_SENTRY_URL: ${{ secrets.VITE_SENTRY_URL }}
+          VITE_SENTRY_URL: https://f755097c93b645ea9e04fb01c235b24b@o335319.ingest.sentry.io/4504143348105216
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
