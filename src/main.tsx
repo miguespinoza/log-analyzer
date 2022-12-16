@@ -8,8 +8,8 @@ import * as Sentry from "@sentry/react";
 import { BrowserTracing } from "@sentry/tracing";
 const element = document.getElementById("root") as HTMLElement;
 
-if (true || process.env.NODE_ENV === "production") {
-  console.log(import.meta.env.VITE_SENTRY_URL);
+if (process.env.NODE_ENV === "production") {
+  console.log("ingest", import.meta.env.VITE_SENTRY_URL);
   Sentry.init({
     dsn: import.meta.env.VITE_SENTRY_URL,
     integrations: [new BrowserTracing()],
@@ -19,6 +19,8 @@ if (true || process.env.NODE_ENV === "production") {
     // We recommend adjusting this value in production
     tracesSampleRate: 1.0,
   });
+} else {
+  console.log("development environment, not sending errors");
 }
 
 ReactDOM.createRoot(element).render(
