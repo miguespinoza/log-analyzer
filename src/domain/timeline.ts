@@ -199,3 +199,14 @@ export class TimelineService implements ITimeline {
     };
   }
 }
+
+export function splitLinesByFile(lines: LogLine[]) {
+  const files = new Map<string, LogLine[]>();
+  lines.forEach((line) => {
+    if (!files.has(line.fileId)) {
+      files.set(line.fileId, []);
+    }
+    files.get(line.fileId)?.push(line);
+  });
+  return files;
+}

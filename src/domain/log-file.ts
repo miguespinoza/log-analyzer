@@ -15,6 +15,7 @@ class LogFile implements ILogFile {
   private lines?: LogLine[];
   private _sorted: "asc" | "desc" | null = null;
   private _linesWithoutDateCount?: number;
+  private _linesWithDateCount?: number;
   private _linesCount?: number;
   private _hasTimezoneInfo?: boolean;
 
@@ -44,6 +45,13 @@ class LogFile implements ILogFile {
     }
     return this._linesWithoutDateCount;
   };
+
+  public getLinesWithDateCount(): number | undefined {
+    if (!this.hasBeenProcessed()) {
+      this.extractLogLines();
+    }
+    return this._linesWithDateCount;
+  }
 
   public getLinesCount = () => {
     if (!this.hasBeenProcessed()) {
@@ -118,6 +126,7 @@ class LogFile implements ILogFile {
     const logLines: LogLine[] = [];
     let count = 0;
     let linesWithoutDateCount = 0;
+    let linesWithDateCount = 0;
     for (const line of lines) {
       count++;
       const date = this.getLineDate(line, timezoneOffset);
@@ -133,6 +142,7 @@ class LogFile implements ILogFile {
           textWithoutDate: removeOriginalDate(line),
           fileColor: color,
         });
+        linesWithDateCount++;
       } else {
         linesWithoutDateCount++;
         logLines.push({
@@ -151,6 +161,7 @@ class LogFile implements ILogFile {
     return {
       lines: logLines,
       linesWithoutDateCount,
+      linesWithDateCount,
       sorted: this.areLinesSortedAscOrDesc(logLines),
     };
   };
@@ -245,5 +256,6 @@ type ParseLogLinesFunction = (params: {
 }) => {
   lines: LogLine[];
   linesWithoutDateCount: number;
+  linesWithDateCount: number;
   sorted: "asc" | "desc" | null;
 };

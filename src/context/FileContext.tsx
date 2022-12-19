@@ -12,12 +12,16 @@ import { toast, ToastOptions } from "react-toastify";
 
 export type LogFilesContextType = {
   logFiles: ILogFile[];
+  getLogFileById: (id: string) => ILogFile | undefined;
   projectFile?: TextFilev2;
   updateLogFile: (file: ILogFile) => void;
   removeLogFile: (file: ILogFile) => void;
 };
 const LogFilesContext = React.createContext<LogFilesContextType>({
   logFiles: [],
+  getLogFileById: () => {
+    return undefined;
+  },
   updateLogFile: () => {},
   removeLogFile: () => {},
 });
@@ -115,6 +119,10 @@ export class FilesProvider extends React.Component<
     }
   }
 
+  getLogFileById(id: string) {
+    return this.state.logFiles.find((f) => f.id === id);
+  }
+
   render() {
     return (
       <LogFilesContext.Provider
@@ -123,6 +131,7 @@ export class FilesProvider extends React.Component<
           projectFile: this.state.projectFile,
           updateLogFile: this.updateLogFiles.bind(this),
           removeLogFile: this.removeLogFile.bind(this),
+          getLogFileById: this.getLogFileById.bind(this),
         }}
       >
         <MemoComponent>{this.props.children}</MemoComponent>

@@ -1,16 +1,18 @@
 import { EyeIcon } from "@heroicons/react/24/solid";
 import React, { memo, useCallback, useLayoutEffect, useMemo } from "react";
+import { useFilesContext } from "../context/FileContext";
 import { useLogLinesContext } from "../context/LogLinesContext";
 import { useProjectFileContext } from "../context/ProjectFileContext";
 import {
   ActivityInterval,
   getDateFromRelativePx,
   getRelativeTimePx,
+  splitLinesByFile,
   TimeHighlight,
   TimelineService,
 } from "../domain/timeline";
 import { getDateStringAtTz } from "../domain/timezone";
-import { LogLine } from "../domain/types";
+import { ILogFile, LogLine } from "../domain/types";
 
 import { TimeHighlightRenderer } from "./TimeHighlight";
 
@@ -140,6 +142,12 @@ function TimelineInternal({
         top={getRelativeTimePx(firstDate, lastDate, lastDate, height) - 14}
         timezone={project.displayTimezone}
       />
+      <TimelineFileIndicators
+        timelineHeight={height}
+        timelineWidth={width}
+        startTime={firstDate}
+        endTime={lastDate}
+      />
       <TimelineHighlights
         timeHighlights={timeHighlights}
         firstDate={firstDate}
@@ -219,6 +227,100 @@ const TimelineHighlights = memo(
           />
         ))}
       </>
+    );
+  }
+);
+
+const TimelineFileIndicators = memo(
+  ({
+    timelineWidth,
+    timelineHeight,
+    startTime,
+    endTime,
+  }: {
+    timelineWidth: number;
+    timelineHeight: number;
+    startTime: Date;
+    endTime: Date;
+  }) => {
+    const { lines } = useLogLinesContext();
+    const linesByFile = useMemo(() => splitLinesByFile(lines), [lines]);
+    //const availableSpace = Math.floor(timelineWidth / 10);
+
+    return (
+      <>
+        {Array.from(linesByFile.entries()).map(([fileId, lines], i) => {
+          return (
+            <TimelineFileIndicator
+              key={fileId}
+              fileId={fileId}
+              index={i}
+              timelineHeight={timelineHeight}
+              startTime={startTime}
+              endTime={endTime}
+              lines={lines}
+            />
+          );
+        })}
+      </>
+    );
+  }
+);
+
+const TimelineFileIndicator = memo(
+  ({
+    timelineHeight,
+    startTime,
+    endTime,
+    lines,
+    fileId,
+    index,
+  }: {
+    timelineHeight: number;
+    startTime: Date;
+    endTime: Date;
+    fileId: string;
+    index: number;
+    lines: LogLine[];
+  }) => {
+    const fileFirstDate = getValidDateFromStart(lines);
+    const fileLastDate = getValidDateFromEndOfArray(lines);
+    const { getLogFileById } = useFilesContext();
+    const file = getLogFileById(fileId);
+    if (!fileFirstDate || !fileLastDate || !file) {
+      return null;
+    }
+
+    return (
+      <div
+        title={file.name}
+        style={{
+          position: "absolute",
+          right: `${index * 10}px`,
+          top: getRelativeTimePx(
+            startTime,
+            endTime,
+            fileFirstDate,
+            timelineHeight
+          ),
+          height:
+            getRelativeTimePx(
+              startTime,
+              endTime,
+              fileLastDate,
+              timelineHeight
+            ) -
+            getRelativeTimePx(
+              startTime,
+              endTime,
+              fileFirstDate,
+              timelineHeight
+            ),
+          width: "10px",
+          backgroundColor: file.color,
+          opacity: 0.5,
+        }}
+      ></div>
     );
   }
 );
