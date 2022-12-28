@@ -53,8 +53,12 @@ export const Toolbar = forwardRef<HTMLDivElement>((props, ref) => {
               setProjectProperty({ sortBy: e.target.value as any });
             }}
           >
-            <option value="date">Date</option>
-            <option value="file">File</option>
+            <option value="date" selected={project.sortBy === "date"}>
+              Date
+            </option>
+            <option value="file" selected={project.sortBy === "file"}>
+              File
+            </option>
           </select>
         </div>
         <div>
@@ -66,8 +70,12 @@ export const Toolbar = forwardRef<HTMLDivElement>((props, ref) => {
               setProjectProperty({ sortDirection: e.target.value as any });
             }}
           >
-            <option value="desc">Descending</option>
-            <option value="asc">Ascending</option>
+            <option value="desc" selected={project.sortDirection === "desc"}>
+              Descending
+            </option>
+            <option value="asc" selected={project.sortDirection === "asc"}>
+              Ascending
+            </option>
           </select>
         </div>
         <div>
